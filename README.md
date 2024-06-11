@@ -1797,6 +1797,11 @@ A list of IDs for the credits which are of this credit type.
 credits: list[Credit]
 ```
 
+A list of credits which are of this credit type.
+
+This fetches the full records from Odoo once,
+and caches them for subsequent accesses.
+
 #### `name`
 
 ```python
