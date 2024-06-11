@@ -61,7 +61,7 @@ class RecordBase:
 
     @cached_property
     def create_user(self) -> partner.Partner:
-        """The object of the partner that created this record.
+        """The partner that created this record.
 
         This fetches the full record from Odoo once,
         and caches it for subsequent accesses.
@@ -83,7 +83,7 @@ class RecordBase:
 
     @cached_property
     def write_user(self) -> partner.Partner:
-        """The object of the partner that last modified this record.
+        """The partner that last modified this record.
 
         This fetches a full Partner object from Odoo once,
         and caches it for subsequence access.
@@ -172,7 +172,7 @@ class RecordBase:
         Set ``raw=True`` to instead get the raw record dictionary
         fields and values as returned by OdooRPC.
 
-        :param raw: Return raw dictionary, defaults to False
+        :param raw: Return raw dictionary from OdooRPC, defaults to False
         :type raw: bool, optional
         :return: Record dictionary
         :rtype: Dict[str, Any]
@@ -188,6 +188,9 @@ class RecordBase:
 
     def refresh(self) -> Self:
         """Fetch the latest version of this record from Odoo.
+
+        This does not update the record object in place,
+        a new object is returned with the up-to-date field values.
 
         :return: Latest version of the record object
         :rtype: Self

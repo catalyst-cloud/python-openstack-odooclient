@@ -15,8 +15,9 @@
 
 from __future__ import annotations
 
+from datetime import date
 from functools import cached_property
-from typing import TYPE_CHECKING, Any, List, Literal, Mapping, Optional
+from typing import TYPE_CHECKING, Any, List, Literal, Mapping, Optional, Union
 
 from . import record
 
@@ -24,7 +25,6 @@ if TYPE_CHECKING:
     from . import (
         account_move_line,
         currency as currency_module,
-        partner,
         project,
     )
 
@@ -35,30 +35,6 @@ class AccountMove(record.RecordBase):
 
     amount_untaxed: float
     """Total (untaxed) amount charged on the account move (invoice)."""
-
-    @property
-    def attention_id(self) -> Optional[int]:
-        """The ID of the partner to send invoice emails to."""
-        return self._get_ref_id("attention", optional=True)
-
-    @property
-    def attention_name(self) -> Optional[str]:
-        """The name of the partner to send invoice emails to."""
-        return self._get_ref_name("attention", optional=True)
-
-    @cached_property
-    def attention(self) -> Optional[partner.Partner]:
-        """The partner to send invoice emails to.
-
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.attention_id
-        return (
-            self._client.partners.get(record_id)
-            if record_id is not None
-            else None
-        )
 
     @property
     def currency_id(self) -> int:
@@ -79,10 +55,8 @@ class AccountMove(record.RecordBase):
         """
         return self._client.currencies.get(self.currency_id)
 
-    invoice_date: str
-    """Date associated with the account move (invoice),
-    in YYYY-MM-DD format.
-    """
+    invoice_date: date
+    """Date associated with the account move (invoice)."""
 
     invoice_line_ids: List[int]
     """The list of the IDs for the account move (invoice) lines
@@ -102,38 +76,80 @@ class AccountMove(record.RecordBase):
     is_move_sent: bool
     """Whether or not the account move (invoice) has been sent."""
 
-    move_type: str
-    """The type of account move (invoice)."""
+    move_type: Literal[
+        "entry",
+        "out_invoice",
+        "out_refund",
+        "in_invoice",
+        "in_refund",
+        "out_receipt",
+        "in_receipt",
+    ]
+    """The type of account move (invoice).
 
-    name: Optional[str]
+    Values:
+
+    * ``entry`` - Journal Entry
+    * ``out_invoice`` - Customer Invoice
+    * ``out_refund`` - Customer Credit Note
+    * ``in_invoice`` - Vendor Bill
+    * ``in_refund`` - Vendor Credit Note
+    * ``out_receipt`` - Sales Receipt
+    * ``in_receipt`` - Purchase Receipt
+    """
+
+    name: Union[str, Literal[False]]
     """Name assigned to the account move (invoice), if posted."""
 
     @property
-    def os_project_id(self) -> int:
-        """The ID of the OpenStack Project this Account Move (Invoice)
-        was generated for.
+    def os_project_id(self) -> Optional[int]:
+        """The ID of the OpenStack project this account move (invoice)
+        was generated for, if this is an invoice for OpenStack project usage.
         """
-        return self._get_ref_id("os_project")
+        return self._get_ref_id("os_project", optional=True)
 
     @property
-    def os_project_name(self) -> str:
-        """The name of the OpenStack Project this Account Move (Invoice)
-        was generated for.
+    def os_project_name(self) -> Optional[str]:
+        """The name of the OpenStack project this account move (invoice)
+        was generated for, if this is an invoice for OpenStack project usage.
         """
-        return self._get_ref_name("os_project")
+        return self._get_ref_name("os_project", optional=True)
 
     @cached_property
-    def os_project(self) -> project.Project:
-        """The OpenStack Project this Account Move (Invoice)
-        was generated for.
+    def os_project(self) -> Optional[project.Project]:
+        """The OpenStack project this account move (invoice)
+        was generated for, if this is an invoice for OpenStack project usage.
 
         This fetches the full record from Odoo once,
         and caches it for subsequent accesses.
         """
-        return self._client.projects.get(self.os_project_id)
+        record_id = self.os_project_id
+        return (
+            self._client.projects.get(record_id)
+            if record_id is not None
+            else None
+        )
 
-    payment_state: str
-    """The current payment state of the account move (invoice)."""
+    payment_state: Literal[
+        "not_paid",
+        "in_payment",
+        "paid",
+        "partial",
+        "reversed",
+        "invoicing_legacy",
+    ]
+    """
+    The current payment state of the account move (invoice).
+
+    Values:
+
+    * ``not_paid`` - Not Paid
+    * ``in_payment`` - In Payment
+    * ``paid`` - Paid
+    * ``partial`` - Partially Paid
+    * ``reversed`` - Reversed
+    * ``invoicing_legacy`` - Invoicing App Legacy
+    """
 
     state: Literal["draft", "posted", "cancel"]
     """The current state of the account move (invoice).

@@ -16,7 +16,7 @@
 from __future__ import annotations
 
 from functools import cached_property
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal, Optional, Union
 
 from . import record
 
@@ -60,55 +60,60 @@ class AccountMoveLine(record.RecordBase):
     """Name of the product charged on the account move (invoice) line."""
 
     @property
-    def os_project_id(self) -> int:
-        """The ID for the OpenStack Project this Account Move (Invoice) line
+    def os_project_id(self) -> Optional[int]:
+        """The ID for the OpenStack project this account move (invoice) line
         was generated for.
         """
-        return self._get_ref_id("os_project")
+        return self._get_ref_id("os_project", optional=True)
 
     @property
-    def os_project_name(self) -> str:
-        """The name of the OpenStack Project this Account Move (Invoice) line
+    def os_project_name(self) -> Optional[str]:
+        """The name of the OpenStack project this account move (invoice) line
         was generated for.
         """
-        return self._get_ref_name("os_project")
+        return self._get_ref_name("os_project", optional=True)
 
     @cached_property
-    def os_project(self) -> project.Project:
-        """The OpenStack Project this Account Move (Invoice) line
+    def os_project(self) -> Optional[project.Project]:
+        """The OpenStack project this account move (invoice) line
         was generated for.
 
         This fetches the full record from Odoo once,
         and caches it for subsequent accesses.
         """
-        return self._client.projects.get(self.os_project_id)
+        record_id = self.os_project_id
+        return (
+            self._client.projects.get(record_id)
+            if record_id is not None
+            else None
+        )
 
-    os_region: str
-    """The OpenStack region the Account Move (Invoice) Line
+    os_region: Union[str, Literal[False]]
+    """The OpenStack region the account move (invoice) line
     was created from.
     """
 
-    os_resource_id: str
+    os_resource_id: Union[str, Literal[False]]
     """The OpenStack resource ID for the resource that generated
-    this Account Move (Invoice) Line.
+    this account move (invoice) line.
     """
 
-    os_resource_name: str
+    os_resource_name: Union[str, Literal[False]]
     """The name of the OpenStack resource tier or flavour,
     as used by services such as Distil for rating purposes.
 
-    For example, if this is the Account Move (Invoice) Line
+    For example, if this is the account move (invoice) line
     for a compute instance, this would be set to the instance's flavour name.
     """
 
-    os_resource_type: str
+    os_resource_type: Union[str, Literal[False]]
     """A human-readable description of the type of resource captured
-    by this Account Move (Invoice) Line.
+    by this account move (invoice) line.
     """
 
     price_subtotal: float
     """Amount charged for the product (untaxed) on the
-    Account Move (Invoice) Line.
+    account move (invoice) line.
     """
 
     price_unit: float
@@ -138,7 +143,7 @@ class AccountMoveLine(record.RecordBase):
         """
         return self._client.products.get(self.product_id)
 
-    quantity: int
+    quantity: float
     """Quantity of product charged on the account move (invoice) line."""
 
     _alias_mapping = {
