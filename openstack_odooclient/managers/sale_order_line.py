@@ -363,7 +363,7 @@ class SaleOrderLine(record.RecordBase):
         "order": "order_id",
         "order_partner": "order_partner_id",
         "product": "product_id",
-        "product_uom": "product_uom_id",
+        "product_uom_id": "product_uom",
         "salesman": "salesman_id",
         "tax": "tax_id",
     }

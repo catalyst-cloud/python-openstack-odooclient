@@ -1129,6 +1129,12 @@ openstack_odooclient.exceptions.RecordNotFoundError: User record not found with 
 
 ### Account Move
 
+To import the class for type hinting purposes:
+
+```python
+from openstack_odooclient import AccountMove
+```
+
 #### `amount_total`
 
 ```python
@@ -1313,6 +1319,12 @@ Values:
 
 ### Account Move Line
 
+To import the class for type hinting purposes:
+
+```python
+from openstack_odooclient import AccountMoveLine
+```
+
 #### `currency_id`
 
 ```python
@@ -1483,6 +1495,12 @@ Quantity of product charged on the account move (invoice) line.
 
 ### Company
 
+To import the class for type hinting purposes:
+
+```python
+from openstack_odooclient import Company
+```
+
 #### `active`
 
 ```python
@@ -1582,3 +1600,177 @@ The partner for the company.
 
 This fetches the full record from Odoo once,
 and caches it for subsequent accesses.
+
+### Credit
+
+To import the class for type hinting purposes:
+
+```python
+from openstack_odooclient import Credit
+```
+
+#### `credit_type_id`
+
+```python
+credit_type_id: int
+```
+The ID of the type of this credit.
+
+#### `credit_type_name`
+
+```python
+ credit_type_name: str
+```
+The name of this type of credit.
+
+#### `credit_type`
+
+```python
+credit_type: CreditType
+```
+
+The type of this credit.
+
+This fetches the full record from Odoo once,
+and caches it for subsequent accesses.
+
+#### `current_balance`
+
+```python
+current_balance: float
+```
+
+The current remaining balance on the credit.
+
+#### `expiry_date`
+
+```python
+expiry_date: date
+```
+
+The date the credit expires.
+
+#### `initial_balance`
+
+```python
+initial_balance: float
+```
+
+The initial balance this credit started off with.
+
+#### `name`
+
+```python
+name: str
+```
+
+The automatically generated name of the credit.
+
+#### `start_date`
+
+```python
+start_date: date
+```
+
+The start date of the credit.
+
+#### `transaction_ids`
+
+```python
+transaction_ids: list[int]
+```
+
+A list of IDs for the transactions that have been made
+using this credit.
+
+#### `transactions`
+
+```python
+transactions: list[CreditTransaction]
+```
+
+The transactions that have been made using this credit.
+
+This fetches the full records from Odoo once,
+and caches them for subsequent accesses.
+
+
+#### `voucher_code_id`
+
+```python
+voucher_code_id: int | None
+```
+
+The ID of the voucher code used when applying for the credit,
+if one was supplied.
+
+#### `voucher_code_name`
+
+```python
+voucher_code_name: str | None
+```
+
+The name of the voucher code used when applying for the credit,
+if one was supplied.
+
+#### `voucher_code`
+
+```python
+voucher_code: VoucherCode | None
+```
+
+Voucher code used when applying for the credit,
+if one was supplied.
+
+This fetches the full record from Odoo once,
+and caches it for subsequent accesses.
+
+### Credit Transaction
+
+To import the class for type hinting purposes:
+
+```python
+from openstack_odooclient import CreditTransaction
+```
+
+#### `credit_id`
+
+```python
+credit_id: int
+```
+
+The ID of the credit this transaction was made against.
+
+#### `credit_name`
+
+```python
+credit_name: str
+```
+
+The name of the credit this transaction was made against.
+
+#### `credit`
+
+```python
+credit: Credit
+```
+The credit this transaction was made against.
+
+This fetches the full record from Odoo once,
+and caches it for subsequent accesses.
+
+#### `description`
+
+```python
+description: str
+```
+
+A description of this credit transaction.
+
+#### `value`
+
+```python
+value: float
+```
+
+The value of the credit transaction.
