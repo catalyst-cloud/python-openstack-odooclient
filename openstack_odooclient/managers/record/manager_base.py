@@ -141,7 +141,7 @@ class RecordManagerBase(Generic[Record]):
         _fields = (
             list(
                 dict.fromkeys(
-                    (self._get_remote_field(f) for f in fields),
+                    (self._encode_field(f) for f in fields),
                 ).keys(),
             )
             if fields is not None
@@ -402,7 +402,7 @@ class RecordManagerBase(Generic[Record]):
         res: Union[int, List[int]] = self._env.create(
             [
                 {
-                    self._get_remote_field(field): value
+                    self._encode_field(field): self._encode_value(value)
                     for field, value in record.items()
                 }
                 for record in records
