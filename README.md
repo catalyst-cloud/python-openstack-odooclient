@@ -961,7 +961,7 @@ the record IDs will be made available as type `list[int]`.
 
 The following attributes and methods are available on all record types.
 
-#### id
+#### `id`
 
 ```python
 id: int
@@ -969,7 +969,7 @@ id: int
 
 The record's ID in Odoo.
 
-#### create_date
+#### `create_date`
 
 ```python
 create_date: datetime
@@ -977,7 +977,7 @@ create_date: datetime
 
 The time the record was created.
 
-#### create_uid
+#### `create_uid`
 
 ```python
 create_uid: int
@@ -985,7 +985,7 @@ create_uid: int
 
 The ID of the partner that created this record.
 
-#### create_name
+#### `create_name`
 
 ```python
 create_name: str
@@ -993,7 +993,7 @@ create_name: str
 
 The name of the partner that created this record.
 
-#### create_user
+#### `create_user`
 
 ```python
 create_user: Partner
@@ -1004,7 +1004,7 @@ The partner that created this record.
 This fetches the full record from Odoo once,
 and caches it for subsequent accesses.
 
-#### write_date
+#### `write_date`
 
 ```python
 write_date: datetime
@@ -1012,7 +1012,7 @@ write_date: datetime
 
 The time the record was last modified.
 
-#### write_uid
+#### `write_uid`
 
 ```python
 write_uid: int
@@ -1020,7 +1020,7 @@ write_uid: int
 
 The ID of the partner that last modified this record.
 
-#### write_name
+#### `write_name`
 
 ```python
 write_name: str
@@ -1028,7 +1028,7 @@ write_name: str
 
 The name of the partner that modified this record.
 
-#### write_user
+#### `write_user`
 
 ```python
 write_user: Partner
@@ -1129,7 +1129,7 @@ openstack_odooclient.exceptions.RecordNotFoundError: User record not found with 
 
 ### Account Move
 
-#### amount_total
+#### `amount_total`
 
 ```python
 amount_total: float
@@ -1137,7 +1137,7 @@ amount_total: float
 
 Total (taxed) amount charged on the account move (invoice).
 
-#### amount_untaxed
+#### `amount_untaxed`
 
 ```python
 amount_untaxed: float
@@ -1145,7 +1145,7 @@ amount_untaxed: float
 
 Total (untaxed) amount charged on the account move (invoice).
 
-#### currency_id
+#### `currency_id`
 
 ```python
 currency_id: int
@@ -1153,7 +1153,7 @@ currency_id: int
 
 The ID for the currency used in this account move (invoice).
 
-#### currency_name
+#### `currency_name`
 
 ```python
 currency_name: str
@@ -1161,7 +1161,7 @@ currency_name: str
 
 The name of the currency used in this account move (invoice).
 
-#### currency
+#### `currency`
 
 ```python
 currency: Currency
@@ -1172,7 +1172,7 @@ The currency used in this account move (invoice).
 This fetches the full record from Odoo once,
 and caches it for subsequent accesses.
 
-#### invoice_date
+#### `invoice_date`
 
 ```python
 invoice_date: date
@@ -1180,7 +1180,7 @@ invoice_date: date
 
 Date associated with the account move (invoice).
 
-#### invoice_line_ids
+#### `invoice_line_ids`
 
 ```python
 invoice_line_ids: list[int]
@@ -1189,7 +1189,7 @@ invoice_line_ids: list[int]
 The list of the IDs for the account move (invoice) lines
 that comprise this account move (invoice).
 
-#### invoice_lines
+#### `invoice_lines`
 
 ```python
 invoice_lines: list[AccountMoveLine]
@@ -1201,7 +1201,7 @@ that comprise this account move (invoice).
 This fetches the full records from Odoo once,
 and caches them for subsequent accesses.
 
-#### is_move_sent
+#### `is_move_sent`
 
 ```python
 is_move_sent: bool
@@ -1209,7 +1209,7 @@ is_move_sent: bool
 
 Whether or not the account move (invoice) has been sent.
 
-#### move_type
+#### `move_type`
 
 ```python
 move_type: Literal[
@@ -1235,7 +1235,7 @@ Values:
 * ``out_receipt`` - Sales Receipt
 * ``in_receipt`` - Purchase Receipt
 
-#### name
+#### `name`
 
 ```python
 name: str | Literal[False]
@@ -1243,7 +1243,7 @@ name: str | Literal[False]
 
 Name assigned to the account move (invoice), if posted.
 
-#### os_project_id
+#### `os_project_id`
 
 ```python
 os_project_id: int | None
@@ -1252,7 +1252,7 @@ os_project_id: int | None
 The ID of the OpenStack project this account move (invoice)
 was generated for, if this is an invoice for OpenStack project usage.
 
-#### os_project_name
+#### `os_project_name`
 
 ```python
 os_project_name: str | None
@@ -1261,7 +1261,7 @@ os_project_name: str | None
 The name of the OpenStack project this account move (invoice)
 was generated for, if this is an invoice for OpenStack project usage.
 
-#### os_project
+#### `os_project`
 
 ```python
 os_project: Project | None
@@ -1273,7 +1273,7 @@ was generated for, if this is an invoice for OpenStack project usage.
 This fetches the full record from Odoo once,
 and caches it for subsequent accesses.
 
-#### payment_state
+#### `payment_state`
 
 ```python
 payment_state: Literal[
@@ -1313,7 +1313,7 @@ Values:
 
 ### Account Move Line
 
-#### currency_id
+#### `currency_id`
 
 ```python
 currency_id: int
@@ -1321,7 +1321,7 @@ currency_id: int
 
 The ID for the currency used in this account move (invoice) line.
 
-#### currency_name
+#### `currency_name`
 
 ```python
 currency_name: str
@@ -1329,7 +1329,7 @@ currency_name: str
 
 The name of the currency used in this account move (invoice) line.
 
-#### currency
+#### `currency`
 
 ```python
 currency: Currency
@@ -1340,7 +1340,7 @@ The currency used in this account move (invoice) line.
 This fetches the full record from Odoo once,
 and caches it for subsequent accesses.
 
-#### line_tax_amount
+#### `line_tax_amount`
 
 ```python
 line_tax_amount: float
@@ -1348,7 +1348,7 @@ line_tax_amount: float
 
 Amount charged in tax on the account move (invoice) line.
 
-#### name
+#### `name`
 
 ```python
 name: str
@@ -1356,7 +1356,7 @@ name: str
 
 Name of the product charged on the account move (invoice) line.
 
-#### os_project_id
+#### `os_project_id`
 
 ```python
 os_project_id: int | None
@@ -1365,7 +1365,7 @@ os_project_id: int | None
 The ID for the OpenStack project this account move (invoice) line
 was generated for.
 
-#### os_project_name
+#### `os_project_name`
 
 ```python
 os_project_name: str | None
@@ -1374,7 +1374,7 @@ os_project_name: str | None
 The name of the OpenStack project this account move (invoice) line
 was generated for.
 
-#### os_project
+#### `os_project`
 
 ```python
 os_project: Project | None
@@ -1386,7 +1386,7 @@ was generated for.
 This fetches the full record from Odoo once,
 and caches it for subsequent accesses.
 
-#### os_region
+#### `os_region`
 
 ```python
 os_region: str | Literal[False]
@@ -1395,7 +1395,7 @@ os_region: str | Literal[False]
 The OpenStack region the account move (invoice) line
 was created from.
 
-#### os_resource_id
+#### `os_resource_id`
 
 ```python
 os_resource_id: str | Literal[False]
@@ -1404,7 +1404,7 @@ os_resource_id: str | Literal[False]
 The OpenStack resource ID for the resource that generated
 this account move (invoice) line.
 
-#### os_resource_name
+#### `os_resource_name`
 
 ```python
 os_resource_name: str | Literal[False]
@@ -1416,7 +1416,7 @@ as used by services such as Distil for rating purposes.
 For example, if this is the account move (invoice) line
 for a compute instance, this would be set to the instance's flavour name.
 
-#### os_resource_type
+#### `os_resource_type`
 
 ```python
 os_resource_type: str | Literal[False]
@@ -1426,7 +1426,7 @@ A human-readable description of the type of resource captured
 by this account move (invoice) line.
 
 
-#### price_subtotal
+#### `price_subtotal`
 
 ```python
 price_subtotal: float
@@ -1435,7 +1435,7 @@ price_subtotal: float
 Amount charged for the product (untaxed) on the
 account move (invoice) line.
 
-#### price_unit
+#### `price_unit`
 
 ```python
 price_unit: float
@@ -1443,7 +1443,7 @@ price_unit: float
 
 Unit price for the product used on the account move (invoice) line.
 
-#### product_id
+#### `product_id`
 
 ```python
 product_id: int
@@ -1452,7 +1452,7 @@ product_id: int
 The ID for the product charged on the
 account move (invoice) line.
 
-#### product_name
+#### `product_name`
 
 ```python
 product_name: int
@@ -1461,7 +1461,7 @@ product_name: int
 The name of the product charged on the
 account move (invoice) line.
 
-#### product
+#### `product`
 
 ```python
 product: Product
@@ -1473,10 +1473,112 @@ account move (invoice) line.
 This fetches the full record from Odoo once,
 and caches it for subsequent accesses.
 
-#### quantity
+#### `quantity`
 
 ```python
 quantity: float
 ```
 
 Quantity of product charged on the account move (invoice) line.
+
+### Company
+
+#### `active`
+
+```python
+active: bool
+```
+
+Whether or not this company is active (enabled).
+
+#### `child_ids`
+
+```python
+child_ids: list[int]
+```
+
+A list of IDs for the child companies.
+
+#### `children`
+
+```python
+children: list[Company]
+```
+
+The list of child companies.
+
+This fetches the full records from Odoo once,
+and caches them for subsequent accesses.
+
+#### `name`
+
+```python
+name: str
+```
+
+Company name, set from the partner name.
+
+#### `parent_id`
+
+```python
+parent_id: int | None
+```
+
+The ID for the parent company, if this company
+is the child of another company.
+
+#### `parent_name`
+
+```python
+parent_name: str | None
+```
+
+The name of the parent company, if this company
+is the child of another company.
+
+#### `parent`
+
+```python
+parent: Company | None
+```
+
+The parent company, if this company
+is the child of another company.
+
+This fetches the full record from Odoo once,
+and caches it for subsequent accesses.
+
+#### `parent_path`
+
+```python
+parent_path: str | Literal[False]
+```
+
+The path of the parent company, if there is a parent.
+
+#### `partner_id`
+
+```python
+partner_id: int
+```
+
+The ID for the partner for the company.
+
+#### `partner_name`
+
+```python
+partner_name: str
+```
+
+The name of the partner for the company.
+
+#### `partner`
+
+```python
+partner: Partner
+```
+
+The partner for the company.
+
+This fetches the full record from Odoo once,
+and caches it for subsequent accesses.
