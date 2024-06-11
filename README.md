@@ -137,9 +137,9 @@ For example, performing a simple search query would look something like this:
 * `volume_discount_ranges` - OpenStack Volume Discount Ranges (Odoo Model: `openstack.volume_discount_range`)
 * `voucher_codes` - OpenStack Voucher Codes (Odoo Model: `openstack.voucher_code`)
 
-### Methods {#manager-methods}
+### Methods
 
-#### `list` {#manager-list}
+#### `list`
 
 ```python
 list(
@@ -227,7 +227,7 @@ returns an empty list.
 []
 ```
 
-##### Parameters {#manager-list-parameters}
+##### Parameters
 
 | Name      | Type                    | Description                                       | Default    |
 |-----------|-------------------------|---------------------------------------------------|------------|
@@ -235,14 +235,14 @@ returns an empty list.
 | `fields`  | `Iterable[str] \| None` | Fields to select (or `None` to select all fields) | `None`     |
 | `as_dict` | `bool`                  | Return records as dictionaries                    | `False`    |
 
-##### Returns {#manager-list-returns}
+##### Returns
 
 | Type                   | Description                                    |
 |------------------------|------------------------------------------------|
 | `list[Record]`         | Record objects (when `as_dict` is `False`)     |
 | `list[dict[str, Any]]` | Record dictionaries (when `as_dict` is `True`) |
 
-#### `get` {#manager-get}
+#### `get`
 
 ```python
 get(
@@ -331,7 +331,7 @@ a ``dict`` object, instead of a record object.
 {'id': 1234, ...}
 ```
 
-##### Parameters {#manager-get-paramters}
+##### Parameters
 
 | Name       | Type                    | Description                                       | Default    |
 |------------|-------------------------|---------------------------------------------------|------------|
@@ -340,13 +340,13 @@ a ``dict`` object, instead of a record object.
 | `as_dict`  | `bool`                  | Return record as a dictionary                     | `False`    |
 | `optional` | `bool`                  | Return `None` if not found                        | `False`    |
 
-##### Raises {#manager-get-raises}
+##### Raises
 
 | Type                  | Description                                                        |
 |-----------------------|--------------------------------------------------------------------|
 | `RecordNotFoundError` | If the given record ID does not exist (when `optional` is `False`) |
 
-##### Returns {#manager-get-returns}
+##### Returns
 
 | Type             | Description                                                 |
 |------------------|-------------------------------------------------------------|
@@ -354,7 +354,7 @@ a ``dict`` object, instead of a record object.
 | `dict[str, Any]` | Record dictionary (when `as_dict` is `True`)                |
 | `None`           | If the record ID does not exist (when `optional` is `True`) |
 
-#### `search` {#manager-search}
+#### `search`
 
 ```python
 search(
@@ -520,7 +520,7 @@ a list of `dict` objects, instead of record objects.
 [{'id': 1234, ...}, ...]
 ```
 
-##### Parameters {#manager-search-parameters}
+##### Parameters
 
 | Name      | Type                    | Description                                       | Default |
 |-----------|-------------------------|---------------------------------------------------|---------|
@@ -530,7 +530,7 @@ a list of `dict` objects, instead of record objects.
 | `as_id`   | `bool`                  | Return the record IDs only                        | `False` |
 | `as_dict` | `bool`                  | Return records as dictionaries                    | `False` |
 
-##### Returns {#manager-search-parameters}
+##### Returns
 
 | Type                   | Description                                    |
 |------------------------|------------------------------------------------|
@@ -538,7 +538,7 @@ a list of `dict` objects, instead of record objects.
 | `list[int]`            | Record IDs (when `as_id` is `True`)            |
 | `list[dict[str, Any]]` | Record dictionaries (when `as_dict` is `True`) |
 
-#### `create` {#manager-create}
+#### `create`
 
 ```python
 create(**fields: Any) -> int
@@ -580,19 +580,19 @@ pass the returned ID to the [``get``](#get) method.
 SaleOrderLine(record={'id': 1234, ...}, fields=None)
 ```
 
-##### Parameters {#manager-create-parameters}
+##### Parameters
 
 | Name       | Type  | Description                             | Default    |
 |------------|-------|-----------------------------------------|------------|
 | `**fields` | `Any` | Record field values (keyword arguments) | (required) |
 
-##### Returns {#manager-create-returns}
+##### Returns
 
 | Type  | Description                        |
 |-------|------------------------------------|
 | `int` | The ID of the newly created record |
 
-#### `create_multi` {#manager-create_multi}
+#### `create_multi`
 
 ```python
 create_multi(*records: Mapping[str, Any]) -> list[int]
@@ -635,19 +635,19 @@ pass the returned IDs to the [``list``](#list) method.
 [SaleOrderLine(record={'id': 1234, ...}, fields=None), SaleOrderLine(record={'id': 1235, ...}, fields=None)]
 ```
 
-##### Parameters {#manager-create_multi-parameters}
+##### Parameters
 
 | Name       | Type                | Description                                        | Default    |
 |------------|---------------------|----------------------------------------------------|------------|
 | `*records` | `Mapping[str, Any]` | Record field-value mappings (positional arguments) | (required) |
 
-##### Returns {#manager-create_multi-returns}
+##### Returns
 
 | Type        | Description                          |
 |-------------|--------------------------------------|
 | `list[int]` | The IDs of the newly created records |
 
-#### `unlink`/`delete` {#manager-unlink-delete}
+#### `unlink`/`delete`
 
 ```python
 unlink(*records: Record | int | Iterable[Record | int]) -> None
@@ -692,13 +692,13 @@ All specified records will be deleted in a single request.
 >>> odoo_client.sales_order_lines.unlink(line1, 9012, [line2, 3456])
 ```
 
-##### Parameters {#manager-unlink-delete-parameters}
+##### Parameters
 
 | Name       | Type                                       | Description                                                                  | Default    |
 |------------|--------------------------------------------|------------------------------------------------------------------------------|------------|
 | `*records` | `Record \| int \| Iterable[Record \| int]` | The records to delete (object, ID, or record/ID list) (positional arguments) | (required) |
 
-### Named Record Types {#manager-named}
+### Named Record Types
 
 Some record types have a name field that is generally expected to be unique.
 The managers for these record types have additional methods for querying records by name.
@@ -720,7 +720,7 @@ The managers for these record types have additional methods for querying records
 * `tax_groups` - Tax Groups (Odoo Model: `account.tax.group`)
 * `voucher_codes` - OpenStack Voucher Codes (Odoo Model: `openstack.voucher_code`)
 
-#### `get_by_name` {#manager-named-get_by_name}
+#### `get_by_name`
 
 ```python
 get_by_name(
@@ -870,7 +870,7 @@ with the given name does not exist, instead of raising an error.
 None
 ```
 
-##### Parameters {#manager-named-get_by_name-parameters}
+##### Parameters
 
 | Name       | Type                    | Description                                       | Default    |
 |------------|-------------------------|---------------------------------------------------|------------|
@@ -880,14 +880,14 @@ None
 | `as_dict`  | `bool`                  | Return records as dictionaries                    | `False`    |
 | `optional` | `bool`                  | Return `None` if not found                        | `False`    |
 
-##### Raises {#manager-named-get_by_name-raises}
+##### Raises
 
 | Type                        | Description                                                             |
 |-----------------------------|-------------------------------------------------------------------------|
 | `RecordNotFoundError`       | If no record with the given name was found (when `optional` is `False`) |
 | `MultipleRecordsFoundError` | If multiple records were found with the same name                       |
 
-##### Returns {#manager-named-get_by_name-returns}
+##### Returns
 
 | Type             | Description                                                                |
 |------------------|----------------------------------------------------------------------------|
@@ -957,53 +957,89 @@ the record IDs will be made available as type `list[int]`.
 [5678, 9012, ...]
 ```
 
-### Attributes and Methods {#record-attributes-methods}
+### Attributes and Methods
 
 The following attributes and methods are available on all record types.
 
-#### `id: int` {#record-id}
+#### id
+
+```python
+id: int
+```
 
 The record's ID in Odoo.
 
-#### `create_date: datetime` {#record-create_date}
+#### create_date
+
+```python
+create_date: datetime
+```
 
 The time the record was created.
 
-#### `create_uid: int` {#record-create_uid}
+#### create_uid
+
+```python
+create_uid: int
+```
 
 The ID of the partner that created this record.
 
-#### `create_name: str` {#record-create_name}
+#### create_name
+
+```python
+create_name: str
+```
 
 The name of the partner that created this record.
 
-#### `create_user: Partner` {#record-create_user}
+#### create_user
+
+```python
+create_user: Partner
+```
 
 The partner that created this record.
 
 This fetches the full record from Odoo once,
 and caches it for subsequent accesses.
 
-#### `write_date: datetime` {#record-write_date}
+#### write_date
+
+```python
+write_date: datetime
+```
 
 The time the record was last modified.
 
-#### `write_uid: int` {#record-write_uid}
+#### write_uid
+
+```python
+write_uid: int
+```
 
 The ID of the partner that last modified this record.
 
-#### `write_name: str` {#record-write_name}
+#### write_name
+
+```python
+write_name: str
+```
 
 The name of the partner that modified this record.
 
-#### `write_user: Partner` {#record-write_user}
+#### write_user
+
+```python
+write_user: Partner
+```
 
 The partner that last modified this record.
 
 This fetches a full Partner object from Odoo once,
 and caches it for subsequence access.
 
-#### `as_dict` {#record-as_dict}
+#### `as_dict`
 
 ```python
 as_dict(raw: bool = False) -> dict[str, Any]
@@ -1046,7 +1082,7 @@ User(record={'id': 1234, ...}, fields=None)
 |------------------|-------------------|
 | `dict[str, Any]` | Record dictionary |
 
-#### `refresh` {#record-refresh}
+#### `refresh`
 
 ```python
 refresh() -> Self
@@ -1070,7 +1106,7 @@ User(record={'id': 1234, 'name': 'New Name', ...}, fields=None)
 |--------|-------------------------------------|
 | `Self` | Latest version of the record object |
 
-#### `unlink`/`delete` {#record-unlink-delete}
+#### `unlink`/`delete`
 
 ```python
 unlink() -> None
@@ -1093,39 +1129,71 @@ openstack_odooclient.exceptions.RecordNotFoundError: User record not found with 
 
 ### Account Move
 
-#### `amount_total: float` {#account_move-amount_total}
+#### amount_total
+
+```python
+amount_total: float
+```
 
 Total (taxed) amount charged on the account move (invoice).
 
-#### `amount_untaxed: float` {#account_move-amount_untaxed}
+#### amount_untaxed
+
+```python
+amount_untaxed: float
+```
 
 Total (untaxed) amount charged on the account move (invoice).
 
-#### `currency_id: int` {#account_move-currency_id}
+#### currency_id
+
+```python
+currency_id: int
+```
 
 The ID for the currency used in this account move (invoice).
 
-#### `currency_name: str` {#account_move-currency_id}
+#### currency_name
+
+```python
+currency_name: str
+```
 
 The name of the currency used in this account move (invoice).
 
-#### `currency: Currency` {#account_move-currency}
+#### currency
+
+```python
+currency: Currency
+```
 
 The currency used in this account move (invoice).
 
 This fetches the full record from Odoo once,
 and caches it for subsequent accesses.
 
-#### `invoice_date: date` {#account_move-invoice_date}
+#### invoice_date
+
+```python
+invoice_date: date
+```
 
 Date associated with the account move (invoice).
 
-#### `invoice_line_ids: list[int]` {#account_move-invoice_line_ids}
+#### invoice_line_ids
+
+```python
+invoice_line_ids: list[int]
+```
 
 The list of the IDs for the account move (invoice) lines
 that comprise this account move (invoice).
 
-#### `invoice_lines: list[AccountMoveLine]` {#account_move-invoice_lines}
+#### invoice_lines
+
+```python
+invoice_lines: list[AccountMoveLine]
+```
 
 A list of account move (invoice) lines
 that comprise this account move (invoice).
@@ -1133,11 +1201,27 @@ that comprise this account move (invoice).
 This fetches the full records from Odoo once,
 and caches them for subsequent accesses.
 
-#### `is_move_sent: bool` {#account_move-is_move_sent}
+#### is_move_sent
+
+```python
+is_move_sent: bool
+```
 
 Whether or not the account move (invoice) has been sent.
 
-#### `move_type: Literal["entry", "out_invoice", "out_refund", "in_invoice", "in_refund", "out_receipt", "in_receipt"]` {#account_move-move_type}
+#### move_type
+
+```python
+move_type: Literal[
+    "entry",
+    "out_invoice",
+    "out_refund",
+    "in_invoice",
+    "in_refund",
+    "out_receipt",
+    "in_receipt",
+]
+```
 
 The type of account move (invoice).
 
@@ -1151,21 +1235,37 @@ Values:
 * ``out_receipt`` - Sales Receipt
 * ``in_receipt`` - Purchase Receipt
 
-#### `name: str | Literal[False]` {#account_move-name}
+#### name
+
+```python
+name: str | Literal[False]
+```
 
 Name assigned to the account move (invoice), if posted.
 
-#### `os_project_id: int | None` {#account_move-os_project_id}
+#### os_project_id
+
+```python
+os_project_id: int | None
+```
 
 The ID of the OpenStack project this account move (invoice)
 was generated for, if this is an invoice for OpenStack project usage.
 
-#### `os_project_name: str | None` {#account_move-os_project_name}
+#### os_project_name
+
+```python
+os_project_name: str | None
+```
 
 The name of the OpenStack project this account move (invoice)
 was generated for, if this is an invoice for OpenStack project usage.
 
-#### `os_project: Project | None` {#account_move-os_project}
+#### os_project
+
+```python
+os_project: Project | None
+```
 
 The OpenStack project this account move (invoice)
 was generated for, if this is an invoice for OpenStack project usage.
@@ -1173,7 +1273,18 @@ was generated for, if this is an invoice for OpenStack project usage.
 This fetches the full record from Odoo once,
 and caches it for subsequent accesses.
 
-#### `payment_state: Literal["not_paid", "in_payment", "paid", "partial", "reversed", "invoicing_legacy"]` {#account_move-payment_state}
+#### payment_state
+
+```python
+payment_state: Literal[
+    "not_paid",
+    "in_payment",
+    "paid",
+    "partial",
+    "reversed",
+    "invoicing_legacy",
+]
+```
 
 The current payment state of the account move (invoice).
 
@@ -1186,7 +1297,12 @@ Values:
 * ``reversed`` - Reversed
 * ``invoicing_legacy`` - Invoicing App Legacy
 
-#### `state: Literal["draft", "posted", "cancel"]` {#account_move-state}
+#### state
+
+```python
+state: Literal["draft", "posted", "cancel"]
+```
+
 The current state of the account move (invoice).
 
 Values:
@@ -1197,58 +1313,102 @@ Values:
 
 ### Account Move Line
 
-#### `currency_id: int` {#account_move_line-currency_id}
+#### currency_id
+
+```python
+currency_id: int
+```
 
 The ID for the currency used in this account move (invoice) line.
 
-#### `currency_name: str` {#account_move_line-currency_id}
+#### currency_name
+
+```python
+currency_name: str
+```
 
 The name of the currency used in this account move (invoice) line.
 
-#### `currency: Currency` {#account_move_line-currency}
+#### currency
+
+```python
+currency: Currency
+```
 
 The currency used in this account move (invoice) line.
 
 This fetches the full record from Odoo once,
 and caches it for subsequent accesses.
 
-#### `line_tax_amount: float` {#account_move_line-line_tax_amount}
+#### line_tax_amount
+
+```python
+line_tax_amount: float
+```
 
 Amount charged in tax on the account move (invoice) line.
 
-#### `name: str` {#account_move_line-name}
+#### name
+
+```python
+name: str
+```
 
 Name of the product charged on the account move (invoice) line.
 
-#### `os_project_id: int | None` {#account_move_line-os_project_id}
+#### os_project_id
+
+```python
+os_project_id: int | None
+```
 
 The ID for the OpenStack project this account move (invoice) line
 was generated for.
 
-#### `os_project_name: str | None` {#account_move_line-os_project_name}
+#### os_project_name
+
+```python
+os_project_name: str | None
+```
 
 The name of the OpenStack project this account move (invoice) line
 was generated for.
 
-#### `os_project: Project | None` {#account_move_line-os_project
+#### os_project
 
-he OpenStack project this account move (invoice) line
+```python
+os_project: Project | None
+```
+
+The OpenStack project this account move (invoice) line
 was generated for.
 
 This fetches the full record from Odoo once,
 and caches it for subsequent accesses.
 
-#### `os_region: str | Literal[False]` {#account_move_line-os_region}
+#### os_region
+
+```python
+os_region: str | Literal[False]
+```
 
 The OpenStack region the account move (invoice) line
 was created from.
 
-#### `os_resource_id: str | Literal[False]` {#account_move_line-os_resource_id}
+#### os_resource_id
+
+```python
+os_resource_id: str | Literal[False]
+```
 
 The OpenStack resource ID for the resource that generated
 this account move (invoice) line.
 
-#### `os_resource_name: str | Literal[False]` {#account_move_line-os_resource_name}
+#### os_resource_name
+
+```python
+os_resource_name: str | Literal[False]
+```
 
 The name of the OpenStack resource tier or flavour,
 as used by services such as Distil for rating purposes.
@@ -1256,32 +1416,56 @@ as used by services such as Distil for rating purposes.
 For example, if this is the account move (invoice) line
 for a compute instance, this would be set to the instance's flavour name.
 
-#### `os_resource_type: str | Literal[False]` {#account_move_line-os_resource_type}
+#### os_resource_type
+
+```python
+os_resource_type: str | Literal[False]
+```
 
 A human-readable description of the type of resource captured
 by this account move (invoice) line.
 
 
-#### `price_subtotal: float` {#account_move_line-price_subtotal}
+#### price_subtotal
+
+```python
+price_subtotal: float
+```
 
 Amount charged for the product (untaxed) on the
 account move (invoice) line.
 
-#### `price_unit: float` {#account_move_line-price_unit}
+#### price_unit
+
+```python
+price_unit: float
+```
 
 Unit price for the product used on the account move (invoice) line.
 
-#### `product_id: int` {#account_move_line-product_id}
+#### product_id
+
+```python
+product_id: int
+```
 
 The ID for the product charged on the
 account move (invoice) line.
 
-#### `product_name: int` {#account_move_line-product_name}
+#### product_name
+
+```python
+product_name: int
+```
 
 The name of the product charged on the
 account move (invoice) line.
 
-#### `product: Product` {#account_move_line-product}
+#### product
+
+```python
+product: Product
+```
 
 The product charged on the
 account move (invoice) line.
@@ -1289,7 +1473,10 @@ account move (invoice) line.
 This fetches the full record from Odoo once,
 and caches it for subsequent accesses.
 
+#### quantity
 
-#### `quantity: float` {#account_move_line-quantity}
+```python
+quantity: float
+```
 
 Quantity of product charged on the account move (invoice) line.
