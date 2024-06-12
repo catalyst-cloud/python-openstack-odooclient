@@ -97,7 +97,7 @@ class CreditType(record.RecordBase):
 
     @property
     def product_name(self) -> str:
-        """The ID of the product to use when applying
+        """The name of the product to use when applying
         the credit to invoices.
         """
         return self._get_ref_name("product")

@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 
 class CustomerGroup(record.RecordBase):
     name: str
-    """Customer group name."""
+    """The name of the customer group."""
 
     @property
     def partner_ids(self) -> List[int]:

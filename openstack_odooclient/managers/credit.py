@@ -37,7 +37,7 @@ class Credit(record.RecordBase):
 
     @property
     def credit_type_name(self) -> str:
-        """The name of this type of credit."""
+        """The name of thie type of this credit."""
         return self._get_ref_name("credit_type")
 
     @cached_property
@@ -96,7 +96,7 @@ class Credit(record.RecordBase):
 
     @cached_property
     def voucher_code(self) -> Optional[voucher_code_module.VoucherCode]:
-        """Voucher code used when applying for the credit,
+        """The voucher code used when applying for the credit,
         if one was supplied.
 
         This fetches the full record from Odoo once,

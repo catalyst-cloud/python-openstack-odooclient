@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 
 class PartnerCategory(record.RecordBase):
     active: bool
-    """Whether or not the partner category is active."""
+    """Whether or not the partner category is active (enabled)."""
 
     @property
     def child_ids(self) -> List[int]:
@@ -51,7 +51,7 @@ class PartnerCategory(record.RecordBase):
         return self.color
 
     name: str
-    """Partner category name."""
+    """The name of the partner category."""
 
     @property
     def parent_id(self) -> Optional[int]:
@@ -103,6 +103,7 @@ class PartnerCategory(record.RecordBase):
         # Key is local alias, value is remote field name.
         "child_ids": "child_id",
         "children": "child_id",
+        "colour": "color",
         "parent": "parent_id",
         "partner_ids": "partner_id",
         "partners": "partner_id",

@@ -132,9 +132,9 @@ class ProductManager(record.RecordManagerWithUniqueFieldBase[Product, str]):
     record_class = Product
 
     @overload
-    def get_sellable_products_for_company(
+    def get_sellable_company_products(
         self,
-        company: Union[company.Company, int],
+        company: Union[int, company.Company],
         *,
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
@@ -143,9 +143,9 @@ class ProductManager(record.RecordManagerWithUniqueFieldBase[Product, str]):
     ) -> List[Product]: ...
 
     @overload
-    def get_sellable_products_for_company(
+    def get_sellable_company_products(
         self,
-        company: Union[company.Company, int],
+        company: Union[int, company.Company],
         *,
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
@@ -154,9 +154,9 @@ class ProductManager(record.RecordManagerWithUniqueFieldBase[Product, str]):
     ) -> List[int]: ...
 
     @overload
-    def get_sellable_products_for_company(
+    def get_sellable_company_products(
         self,
-        company: Union[company.Company, int],
+        company: Union[int, company.Company],
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
         *,
@@ -165,9 +165,9 @@ class ProductManager(record.RecordManagerWithUniqueFieldBase[Product, str]):
     ) -> List[int]: ...
 
     @overload
-    def get_sellable_products_for_company(
+    def get_sellable_company_products(
         self,
-        company: Union[company.Company, int],
+        company: Union[int, company.Company],
         *,
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
@@ -176,9 +176,9 @@ class ProductManager(record.RecordManagerWithUniqueFieldBase[Product, str]):
     ) -> List[Dict[str, Any]]: ...
 
     @overload
-    def get_sellable_products_for_company(
+    def get_sellable_company_products(
         self,
-        company: Union[company.Company, int],
+        company: Union[int, company.Company],
         *,
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
@@ -186,9 +186,9 @@ class ProductManager(record.RecordManagerWithUniqueFieldBase[Product, str]):
         as_dict: bool = ...,
     ) -> Union[List[Product], List[int], Union[List[Dict[str, Any]]]]: ...
 
-    def get_sellable_products_for_company(
+    def get_sellable_company_products(
         self,
-        company: Union[company.Company, int],
+        company: Union[int, company.Company],
         fields: Optional[Iterable[str]] = None,
         order: Optional[str] = None,
         as_id: bool = False,
@@ -196,8 +196,10 @@ class ProductManager(record.RecordManagerWithUniqueFieldBase[Product, str]):
     ) -> Union[List[Product], List[int], Union[List[Dict[str, Any]]]]:
         """Fetch a list of active and saleable products for the given company.
 
-        :param company: ID of the company to search for products
-        :type company: int
+        :param company: The company to search for products (ID or object)
+        :type company: int | Company
+        :param fields: Fields to select, defaults to ``None`` (select all)
+        :type fields: Iterable[int] or None, optional
         :param order: Order results by a specific field, defaults to None
         :type order: Optional[str], optional
         :param as_id: Return the record IDs only, defaults to False
@@ -222,7 +224,7 @@ class ProductManager(record.RecordManagerWithUniqueFieldBase[Product, str]):
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[company.Company, int],
+        company: Union[int, company.Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -234,7 +236,7 @@ class ProductManager(record.RecordManagerWithUniqueFieldBase[Product, str]):
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[company.Company, int],
+        company: Union[int, company.Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -246,7 +248,7 @@ class ProductManager(record.RecordManagerWithUniqueFieldBase[Product, str]):
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[company.Company, int],
+        company: Union[int, company.Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -258,7 +260,7 @@ class ProductManager(record.RecordManagerWithUniqueFieldBase[Product, str]):
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[company.Company, int],
+        company: Union[int, company.Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -270,7 +272,7 @@ class ProductManager(record.RecordManagerWithUniqueFieldBase[Product, str]):
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[company.Company, int],
+        company: Union[int, company.Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -282,7 +284,7 @@ class ProductManager(record.RecordManagerWithUniqueFieldBase[Product, str]):
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[company.Company, int],
+        company: Union[int, company.Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -294,7 +296,7 @@ class ProductManager(record.RecordManagerWithUniqueFieldBase[Product, str]):
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[company.Company, int],
+        company: Union[int, company.Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -306,7 +308,7 @@ class ProductManager(record.RecordManagerWithUniqueFieldBase[Product, str]):
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[company.Company, int],
+        company: Union[int, company.Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -318,7 +320,7 @@ class ProductManager(record.RecordManagerWithUniqueFieldBase[Product, str]):
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[company.Company, int],
+        company: Union[int, company.Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -329,7 +331,7 @@ class ProductManager(record.RecordManagerWithUniqueFieldBase[Product, str]):
 
     def get_sellable_company_product_by_name(
         self,
-        company: Union[company.Company, int],
+        company: Union[int, company.Company],
         name: str,
         fields: Optional[Iterable[str]] = None,
         as_id: bool = False,
@@ -341,14 +343,27 @@ class ProductManager(record.RecordManagerWithUniqueFieldBase[Product, str]):
         A number of parameters are available to configure the return type,
         and what happens when a result is not found.
 
-        :param company: ID of the company to search for products
-        :type company: int
+        By default all fields available on the record model
+        will be selected, but this can be filtered using the
+        ``fields`` parameter.
+
+        Use the ``as_id`` parameter to return the ID of the record,
+        instead of the record object.
+
+        Use the ``as_dict`` parameter to return the record as
+        a ``dict`` object, instead of a record object.
+
+        When ``optional`` is ``True``, ``None`` is returned if a record
+        with the given name does not exist, instead of raising an error.
+
+        :param company: The company to search for products (ID or object)
+        :type company: int | Company
         :param name: The product name
         :type name: str
-        :param as_id: Return a record ID, defaults to False
-        :type as_id: bool, optional
         :param fields: Fields to select, defaults to ``None`` (select all)
         :type fields: Iterable[int] or None, optional
+        :param as_id: Return a record ID, defaults to False
+        :type as_id: bool, optional
         :param as_dict: Return the record as a dictionary, defaults to False
         :type as_dict: bool, optional
         :param optional: Return ``None`` if not found, defaults to False

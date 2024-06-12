@@ -35,7 +35,7 @@ if TYPE_CHECKING:
 
 class Partner(record.RecordBase):
     active: bool
-    """Whether or not this Partner is active."""
+    """Whether or not this partner is active (enabled)."""
 
     email: str
     """Main e-mail address for the partner."""
@@ -272,25 +272,25 @@ class Partner(record.RecordBase):
         )
 
     stripe_customer_id: Union[str, Literal[False]]
-    """The Stripe customer ID for this Partner, if one has been assigned."""
+    """The Stripe customer ID for this partner, if one has been assigned."""
 
     @property
     def user_id(self) -> Optional[int]:
-        """The ID of the internal user in charge of this partner,
+        """The ID of the internal user associated with this partner,
         if one is assigned.
         """
         return self._get_ref_id("user_id", optional=True)
 
     @property
     def user_name(self) -> Optional[str]:
-        """The ID of the internal user in charge of this partner,
+        """The name of the internal user associated with this partner,
         if one is assigned.
         """
         return self._get_ref_name("user_id")
 
     @cached_property
     def user(self) -> Optional[user_module.User]:
-        """The internal user in charge of this partner,
+        """The internal user associated with this partner,
         if one is assigned.
 
         This fetches the full record from Odoo once,

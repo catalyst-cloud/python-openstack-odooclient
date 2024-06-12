@@ -80,18 +80,6 @@ class Pricelist(record.RecordBase):
     * ``without_discount`` - Show public price & discount to the customer
     """
 
-    display_name: str
-    """The display name of the pricelist."""
-
-    default_code: str
-    """The unit of this product.
-
-    Referred to as the "Default Code" in Odoo.
-    """
-
-    description: str
-    """A short description of this product."""
-
     name: str
     """The name of this pricelist."""
 
@@ -132,7 +120,8 @@ class PricelistManager(record.NamedRecordManagerBase[Pricelist]):
         product: Union[int, product_module.Product],
         qty: float,
     ) -> float:
-        """Get the price to charge for a given product and quantity.
+        """Get the price to charge for a given pricelist, product
+        and quantity.
 
         :param pricelist: Pricelist to reference (ID or object)
         :type pricelist: int or Pricelist

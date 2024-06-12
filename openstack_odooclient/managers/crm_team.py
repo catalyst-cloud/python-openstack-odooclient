@@ -20,7 +20,7 @@ from . import record
 
 class CrmTeam(record.RecordBase):
     name: str
-    """CRM team name."""
+    """Name of the CRM team."""
 
 
 class CrmTeamManager(record.NamedRecordManagerBase[CrmTeam]):

@@ -44,19 +44,19 @@ class GrantType(record.RecordBase):
 
     @property
     def only_for_product_ids(self) -> List[int]:
-        """A list of IDs for the products this credit applies to.
+        """A list of IDs for the products this grant applies to.
 
         Mutually exclusive with ``only_for_product_category_ids``.
-        If neither are specified, the credit applies to all products.
+        If neither are specified, the grant applies to all products.
         """
         return self._get_field("only_for_products")
 
     @cached_property
     def only_for_products(self) -> List[product_module.Product]:
-        """A list of products which this credit applies to.
+        """A list of products which this grant applies to.
 
         Mutually exclusive with ``only_for_product_categories``.
-        If neither are specified, the credit applies to all products.
+        If neither are specified, the grant applies to all products.
 
         This fetches the full records from Odoo once,
         and caches them for subsequent accesses.
@@ -65,10 +65,10 @@ class GrantType(record.RecordBase):
 
     @property
     def only_for_product_category_ids(self) -> List[int]:
-        """A list of IDs for the product categories this credit applies to.
+        """A list of IDs for the product categories this grant applies to.
 
         Mutually exclusive with ``only_for_product_ids``.
-        If neither are specified, the credit applies to all product
+        If neither are specified, the grant applies to all product
         categories.
         """
         return self._get_field("only_for_product_categories")
@@ -77,10 +77,10 @@ class GrantType(record.RecordBase):
     def only_for_product_categories(
         self,
     ) -> List[product_category.ProductCategory]:
-        """A list of product categories which this credit applies to.
+        """A list of product categories which this grant applies to.
 
         Mutually exclusive with ``only_for_products``.
-        If neither are specified, the credit applies to all product
+        If neither are specified, the grant applies to all product
         categories.
 
         This fetches the full records from Odoo once,
@@ -102,7 +102,7 @@ class GrantType(record.RecordBase):
 
     @property
     def product_name(self) -> str:
-        """The ID of the product to use when applying
+        """The name of the product to use when applying
         the grant to invoices.
         """
         return self._get_ref_name("product")

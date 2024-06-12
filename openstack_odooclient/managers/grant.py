@@ -39,7 +39,7 @@ class Grant(record.RecordBase):
 
     @property
     def grant_type_name(self) -> str:
-        """The name of this type of grant."""
+        """The name of thie type of this grant."""
         return self._get_ref_name("grant_type")
 
     @cached_property
@@ -76,7 +76,7 @@ class Grant(record.RecordBase):
 
     @cached_property
     def voucher_code(self) -> Optional[voucher_code_module.VoucherCode]:
-        """Voucher code used when applying for the grant,
+        """The voucher code used when applying for the grant,
         if one was supplied.
 
         This fetches the full record from Odoo once,
