@@ -147,7 +147,7 @@ class Project(record.RecordBase):
 
     @property
     def project_credit_ids(self) -> List[int]:
-        """A list of IDs for the contacts for this project."""
+        """A list of IDs for the credits that apply to this project."""
         return self._get_field("project_credits")
 
     @cached_property
@@ -161,7 +161,7 @@ class Project(record.RecordBase):
 
     @property
     def project_grant_ids(self) -> List[int]:
-        """A list of IDs for the contacts for this project."""
+        """A list of IDs for the grants that apply to this project."""
         return self._get_field("project_grants")
 
     @cached_property
