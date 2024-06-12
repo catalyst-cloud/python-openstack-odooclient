@@ -1,4 +1,4 @@
-# Reseller Tiers
+# OpenStack Reseller Tiers
 
 This page documents how to use the manager and record objects
 for reseller tiers.

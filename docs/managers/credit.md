@@ -1,4 +1,4 @@
-# Credits
+# OpenStack Credits
 
 This page documents how to use the manager and record objects
 for credits.

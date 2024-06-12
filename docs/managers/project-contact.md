@@ -1,4 +1,4 @@
-# Project Contacts
+# OpenStack Project Contacts
 
 This page documents how to use the manager and record objects
 for project contacts.

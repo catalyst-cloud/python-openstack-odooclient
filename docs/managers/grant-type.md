@@ -1,4 +1,4 @@
-# Grant Types
+# OpenStack Grant Types
 
 This page documents how to use the manager and record objects
 for grant types.

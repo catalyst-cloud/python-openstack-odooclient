@@ -1,4 +1,4 @@
-# Referral Codes
+# OpenStack Referral Codes
 
 This page documents how to use the manager and record objects
 for referral codes.

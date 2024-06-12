@@ -1,4 +1,4 @@
-# Credit Transactions
+# OpenStack Credit Transactions
 
 This page documents how to use the manager and record objects
 for credit transactions.

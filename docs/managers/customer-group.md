@@ -1,4 +1,4 @@
-# Customer Groups
+# OpenStack Customer Groups
 
 This page documents how to use the manager and record objects
 for customer groups.
