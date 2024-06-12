@@ -16,7 +16,7 @@
 from __future__ import annotations
 
 from functools import cached_property
-from typing import TYPE_CHECKING, List, Literal
+from typing import TYPE_CHECKING, List, Literal, Optional, Union
 
 from . import record
 
@@ -79,7 +79,7 @@ class SaleOrderLine(record.RecordBase):
         return self._client.currencies.get(self.currency_id)
 
     discount: float
-    """Discount on the sale order line, in percent."""
+    """Discount percentage on the sale order line (0-100)."""
 
     display_name: str
     """Display name for the sale order line in the sale order."""
@@ -165,38 +165,43 @@ class SaleOrderLine(record.RecordBase):
         return self._client.partners.get(self.order_partner_id)
 
     @property
-    def os_project_id(self) -> int:
-        """The ID for the he OpenStack project this sale order line was
+    def os_project_id(self) -> Optional[int]:
+        """The ID for the the OpenStack project this sale order line was
         was generated for.
         """
-        return self._get_ref_id("os_project")
+        return self._get_ref_id("os_project", optional=True)
 
     @property
-    def os_project_name(self) -> str:
-        """The name of the he OpenStack project this sale order line was
+    def os_project_name(self) -> Optional[str]:
+        """The name of the the OpenStack project this sale order line was
         was generated for.
         """
-        return self._get_ref_name("os_project")
+        return self._get_ref_name("os_project", optional=True)
 
     @cached_property
-    def os_project(self) -> project.Project:
+    def os_project(self) -> Optional[project.Project]:
         """The OpenStack project this sale order line was
         was generated for.
 
         This fetches the full record from Odoo once,
         and caches it for subsequent accesses.
         """
-        return self._client.projects.get(self.os_project_id)
+        record_id = self.os_project_id
+        return (
+            self._client.projects.get(record_id)
+            if record_id is not None
+            else None
+        )
 
-    os_region: str
+    os_region: Union[str, Literal[False]]
     """The OpenStack region the sale order line was created from."""
 
-    os_resource_id: str
+    os_resource_id: Union[str, Literal[False]]
     """The OpenStack resource ID for the resource that generated
     this sale order line.
     """
 
-    os_resource_name: str
+    os_resource_name: Union[str, Literal[False]]
     """The name of the OpenStack resource tier or flavour,
     as used by services such as Distil for rating purposes.
 
@@ -204,7 +209,7 @@ class SaleOrderLine(record.RecordBase):
     this would be set to the instance's flavour name.
     """
 
-    os_resource_type: str
+    os_resource_type: Union[str, Literal[False]]
     """A human-readable description of the type of resource captured
     by this sale order line.
     """
@@ -212,7 +217,7 @@ class SaleOrderLine(record.RecordBase):
     price_reduce: float
     """Base unit price, less discount (see the ``discount`` field)."""
 
-    price_reduce_taxecl: float
+    price_reduce_taxexcl: float
     """Actual unit price, excluding tax."""
 
     price_reduce_taxinc: float
@@ -232,7 +237,7 @@ class SaleOrderLine(record.RecordBase):
 
     @property
     def product_id(self) -> int:
-        """The ID of the dproduct charged on this sale order line."""
+        """The ID of the product charged on this sale order line."""
         return self._get_ref_id("product_id")
 
     @property

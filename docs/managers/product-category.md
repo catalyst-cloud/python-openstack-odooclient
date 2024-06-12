@@ -3,6 +3,15 @@
 This page documents how to use the manager and record objects
 for product categories.
 
+## Details
+
+| Name            | Value                |
+|-----------------|----------------------|
+| Odoo Modules    | Product, Accounting  |
+| Odoo Model Name | `product.category`   |
+| Manager         | `product_categories` |
+| Record Type     | `ProductCategory`    |
+
 ## Manager
 
 The product category manager is available as the `product_categories`

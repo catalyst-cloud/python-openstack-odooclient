@@ -3,6 +3,15 @@
 This page documents how to use the manager and record objects
 for currencies.
 
+## Details
+
+| Name            | Value            |
+|-----------------|------------------|
+| Odoo Modules    | Base, Accounting |
+| Odoo Model Name | `res.currency`   |
+| Manager         | `currencies`     |
+| Record Type     | `Currency`       |
+
 ## Manager
 
 The currency manager is available as the `currencies`

@@ -27,7 +27,6 @@ from .managers.company import Company
 from .managers.credit import Credit
 from .managers.credit_transaction import CreditTransaction
 from .managers.credit_type import CreditType
-from .managers.crm_team import CrmTeam
 from .managers.currency import Currency
 from .managers.customer_group import CustomerGroup
 from .managers.grant import Grant
@@ -67,7 +66,6 @@ __all__ = [
     "Credit",
     "CreditTransaction",
     "CreditType",
-    "CrmTeam",
     "Currency",
     "CustomerGroup",
     "Grant",

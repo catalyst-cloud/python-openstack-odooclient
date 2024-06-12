@@ -3,6 +3,15 @@
 This page documents how to use the manager and record objects
 for credit transactions.
 
+## Details
+
+| Name            | Value                          |
+|-----------------|--------------------------------|
+| Odoo Modules    | OpenStack Integration          |
+| Odoo Model Name | `openstack.credit.transaction` |
+| Manager         | `credit_transactions`          |
+| Record Type     | `CreditTransaction`            |
+
 ## Manager
 
 The credit transaction manager is available as the `credit_transactions`

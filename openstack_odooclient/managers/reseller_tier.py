@@ -52,14 +52,14 @@ class ResellerTier(record.RecordBase):
 
     @property
     def free_monthly_credit_product_id(self) -> int:
-        """The ID of the  product to use when adding the free monthly credit
+        """The ID of the product to use when adding the free monthly credit
         to demo project invoices.
         """
         return self._get_ref_id("free_monthly_credit_product")
 
     @property
     def free_monthly_credit_product_name(self) -> str:
-        """The name of the  product to use when adding the free monthly credit
+        """The name of the product to use when adding the free monthly credit
         to demo project invoices.
         """
         return self._get_ref_name("free_monthly_credit_product")
@@ -78,9 +78,6 @@ class ResellerTier(record.RecordBase):
     """The amount of free support hours the reseller is entitled to
     under this tier.
     """
-
-    hide_support: bool
-    """Whether or not the support URL should be hidden."""
 
     name: str
     """Reseller tier name."""

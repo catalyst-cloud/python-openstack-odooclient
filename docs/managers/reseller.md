@@ -3,6 +3,15 @@
 This page documents how to use the manager and record objects
 for resellers.
 
+## Details
+
+| Name            | Value                 |
+|-----------------|-----------------------|
+| Odoo Modules    | OpenStack Integration |
+| Odoo Model Name | `openstack.reseller`  |
+| Manager         | `resellers`           |
+| Record Type     | `Reseller`            |
+
 ## Manager
 
 The reseller manager is available as the `resellers`

@@ -3,6 +3,15 @@
 This page documents how to use the manager and record objects
 for grants.
 
+## Details
+
+| Name            | Value                 |
+|-----------------|-----------------------|
+| Odoo Modules    | OpenStack Integration |
+| Odoo Model Name | `openstack.grant`     |
+| Manager         | `grants`              |
+| Record Type     | `Grant`               |
+
 ## Manager
 
 The grant manager is available as the `grants`

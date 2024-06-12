@@ -383,6 +383,9 @@ class RecordManagerBase(Generic[Record]):
         """
         return self._env.create(
             {
+                # TODO(callumdickinson): Handle nested model object
+                # encoding properly using type hints,
+                # e.g. sale order lines defined in sale orders.
                 self._encode_field(field): self._encode_value(value)
                 for field, value in fields.items()
             },

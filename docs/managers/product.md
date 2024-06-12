@@ -3,6 +3,15 @@
 This page documents how to use the manager and record objects
 for products.
 
+## Details
+
+| Name            | Value                      |
+|-----------------|----------------------------|
+| Odoo Modules    | Product, Accounting, Sales |
+| Odoo Model Name | `product.product`          |
+| Manager         | `products`                 |
+| Record Type     | `Product`                  |
+
 ## Manager
 
 The product manager is available as the `products`

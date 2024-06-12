@@ -3,6 +3,15 @@
 This page documents how to use the manager and record objects
 for credit types.
 
+## Details
+
+| Name            | Value                   |
+|-----------------|-------------------------|
+| Odoo Modules    | OpenStack Integration   |
+| Odoo Model Name | `openstack.credit.type` |
+| Manager         | `credit_types`          |
+| Record Type     | `CreditType`            |
+
 ## Manager
 
 The credit type manager is available as the `credit_types`

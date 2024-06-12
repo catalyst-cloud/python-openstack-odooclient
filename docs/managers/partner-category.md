@@ -3,6 +3,15 @@
 This page documents how to use the manager and record objects
 for partner categories.
 
+## Details
+
+| Name            | Value                  |
+|-----------------|------------------------|
+| Odoo Modules    | Base                   |
+| Odoo Model Name | `res.partner.category` |
+| Manager         | `partner_categories`   |
+| Record Type     | `PartnerCategory`      |
+
 ## Manager
 
 The partner category manager is available as the `partner_categories`

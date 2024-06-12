@@ -32,9 +32,7 @@ class ProjectContact(record.RecordBase):
         "legal",
         "reseller customer",
     ]
-    """The contact type to assign the Partner as
-    on the OpenStack Project.
-    """
+    """The contact type to assign the partner as on the project."""
 
     inherit: bool
     """Whether or not this contact should be inherited by child projects."""

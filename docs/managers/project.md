@@ -3,6 +3,15 @@
 This page documents how to use the manager and record objects
 for projects.
 
+## Details
+
+| Name            | Value                 |
+|-----------------|-----------------------|
+| Odoo Modules    | OpenStack Integration |
+| Odoo Model Name | `openstack.project`   |
+| Manager         | `projects`            |
+| Record Type     | `Project`             |
+
 ## Manager
 
 The project manager is available as the `projects`

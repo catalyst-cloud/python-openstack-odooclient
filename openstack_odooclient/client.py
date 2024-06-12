@@ -31,7 +31,6 @@ from .managers import (
     credit,
     credit_transaction,
     credit_type,
-    crm_team,
     currency,
     customer_group,
     grant,
@@ -101,6 +100,9 @@ class Client:
     :param version: Server version, defaults to ``None`` (auto-detect)
     :type version: Optional[str], optional
     """
+
+    # TODO(callumdickinson): Use type hints to define managers,
+    # to allow for easy expansion of the Odoo client class.
 
     @overload
     def __init__(
@@ -205,8 +207,6 @@ class Client:
         """Credit Transaction manager."""
         self.credit_types = credit_type.CreditTypeManager(self)
         """Credit Type manager."""
-        self.crm_teams = crm_team.CrmTeamManager(self)
-        """Customer Relations Management (CRM) Team manager."""
         self.currencies = currency.CurrencyManager(self)
         """Currency manager."""
         self.customer_groups = customer_group.CustomerGroupManager(self)

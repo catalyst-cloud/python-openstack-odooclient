@@ -3,6 +3,15 @@
 This page documents how to use the manager and record objects
 for partners.
 
+## Details
+
+| Name            | Value                                       |
+|-----------------|---------------------------------------------|
+| Odoo Modules    | Base, Product, Sales, OpenStack Integration |
+| Odoo Model Name | `res.partner`                               |
+| Manager         | `partners`                                  |
+| Record Type     | `Partner`                                   |
+
 ## Manager
 
 The partner manager is available as the `partners`

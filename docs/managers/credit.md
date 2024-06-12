@@ -3,6 +3,15 @@
 This page documents how to use the manager and record objects
 for credits.
 
+## Details
+
+| Name            | Value                 |
+|-----------------|-----------------------|
+| Odoo Modules    | OpenStack Integration |
+| Odoo Model Name | `openstack.credit`    |
+| Manager         | `credits`             |
+| Record Type     | `Credit`              |
+
 ## Manager
 
 The credit manager is available as the `credits`

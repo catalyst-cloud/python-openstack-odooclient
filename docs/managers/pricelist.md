@@ -3,6 +3,15 @@
 This page documents how to use the manager and record objects
 for pricelists.
 
+## Details
+
+| Name            | Value               |
+|-----------------|---------------------|
+| Odoo Modules    | Product             |
+| Odoo Model Name | `product.pricelist` |
+| Manager         | `pricelists`        |
+| Record Type     | `Pricelist`         |
+
 ## Manager
 
 The partner manager is available as the `pricelists`

@@ -3,6 +3,15 @@
 This page documents how to use the manager and record objects
 for customer groups.
 
+## Details
+
+| Name            | Value                      |
+|-----------------|----------------------------|
+| Odoo Modules    | OpenStack Integration      |
+| Odoo Model Name | `openstack.customer_group` |
+| Manager         | `customer_groups`          |
+| Record Type     | `CustomerGroup`            |
+
 ## Manager
 
 The customer group manager is available as the `customer_groups`

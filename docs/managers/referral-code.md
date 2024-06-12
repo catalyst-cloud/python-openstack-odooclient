@@ -3,6 +3,15 @@
 This page documents how to use the manager and record objects
 for referral codes.
 
+## Details
+
+| Name            | Value                     |
+|-----------------|---------------------------|
+| Odoo Modules    | OpenStack Integration     |
+| Odoo Model Name | `openstack.referral_code` |
+| Manager         | `referral_codes`          |
+| Record Type     | `ReferralCode`            |
+
 ## Manager
 
 The project manager is available as the `referral_codes`

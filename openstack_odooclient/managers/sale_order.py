@@ -15,9 +15,9 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 from functools import cached_property
-from typing import TYPE_CHECKING, List, Literal, Union
+from typing import TYPE_CHECKING, List, Literal, Optional, Union
 
 from . import record
 
@@ -25,6 +25,7 @@ if TYPE_CHECKING:
     from . import (
         currency as currency_module,
         partner as partner_module,
+        project,
         sale_order_line,
     )
 
@@ -106,6 +107,45 @@ class SaleOrder(record.RecordBase):
         """An alias for ``order_line``."""
         return self.order_line
 
+    os_invoice_date: date
+    """The invoicing date for the invoice that is created
+    from the sale order.
+    """
+
+    os_invoice_due_date: date
+    """The due date for the invoice that is created
+    from the sale order.
+    """
+
+    @property
+    def os_project_id(self) -> Optional[int]:
+        """The ID for the the OpenStack project this sale order was
+        was generated for.
+        """
+        return self._get_ref_id("os_project", optional=True)
+
+    @property
+    def os_project_name(self) -> Optional[str]:
+        """The name of the the OpenStack project this sale order was
+        was generated for.
+        """
+        return self._get_ref_name("os_project", optional=True)
+
+    @cached_property
+    def os_project(self) -> Optional[project.Project]:
+        """The OpenStack project this sale order was
+        was generated for.
+
+        This fetches the full record from Odoo once,
+        and caches it for subsequent accesses.
+        """
+        record_id = self.os_project_id
+        return (
+            self._client.projects.get(record_id)
+            if record_id is not None
+            else None
+        )
+
     @property
     def partner_id(self) -> int:
         """The ID for the recipient partner for the sale order."""
@@ -133,7 +173,7 @@ class SaleOrder(record.RecordBase):
     * ``draft`` - Draft sale order (quotation), can still be modified
     * ``sale`` - Finalised sale order, cannot be modified
     * ``done`` - Finalised and settled sale order, cannot be modified
-    * ``cancel`` - Cancelled sale order, can be deleted
+    * ``cancel`` - Cancelled sale order, can be deleted in most cases
     """
 
     _alias_mapping = {
@@ -141,6 +181,7 @@ class SaleOrder(record.RecordBase):
         "currency": "currency_id",
         "order_line_ids": "order_line",
         "order_lines": "order_line",
+        "os_project_id": "os_project",
         "partner": "partner_id",
     }
 
@@ -160,7 +201,7 @@ class SaleOrderManager(record.NamedRecordManagerBase[SaleOrder]):
     def action_confirm(self, sale_order: Union[int, SaleOrder]) -> None:
         """Confirm the given sale order.
 
-        :param sale_order: Sale order to confirm
+        :param sale_order: The sale order to confirm
         :type sale_order: Union[int, SaleOrder]
         """
         self._env.action_confirm(
@@ -172,9 +213,9 @@ class SaleOrderManager(record.NamedRecordManagerBase[SaleOrder]):
         )
 
     def create_invoices(self, sale_order: Union[int, SaleOrder]) -> None:
-        """Create invoices from this sale order.
+        """Create invoices from the given sale order.
 
-        :param sale_order: Sale order to create invoices for
+        :param sale_order: The sale order to create invoices from
         :type sale_order: Union[int, SaleOrder]
         """
         self._env.create_invoices(

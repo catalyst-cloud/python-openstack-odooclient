@@ -3,6 +3,15 @@
 This page documents how to use the manager and record objects
 for account move (invoice) lines.
 
+## Details
+
+| Name            | Value                             |
+|-----------------|-----------------------------------|
+| Odoo Modules    | Accounting, OpenStack Integration |
+| Odoo Model Name | `account.move.line`               |
+| Manager         | `account_move_lines`              |
+| Record Type     | `AccountMoveLine`                 |
+
 ## Manager
 
 The account move (invoice) line manager is available as the `account_move_lines`

@@ -3,6 +3,15 @@
 This page documents how to use the manager and record objects
 for grant types.
 
+## Details
+
+| Name            | Value                  |
+|-----------------|------------------------|
+| Odoo Modules    | OpenStack Integration  |
+| Odoo Model Name | `openstack.grant.type` |
+| Manager         | `grant_types`          |
+| Record Type     | `GrantType`            |
+
 ## Manager
 
 The grant type manager is available as the `grant_types`

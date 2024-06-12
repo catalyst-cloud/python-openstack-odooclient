@@ -3,6 +3,15 @@
 This page documents how to use the manager and record objects
 for account moves (invoices).
 
+## Details
+
+| Name            | Value                             |
+|-----------------|-----------------------------------|
+| Odoo Modules    | Accounting, OpenStack Integration |
+| Odoo Model Name | `account.move`                    |
+| Manager         | `account_moves`                   |
+| Record Type     | `AccountMove`                     |
+
 ## Manager
 
 The account move (invoice) manager is available as the `account_moves`

@@ -108,7 +108,6 @@ For example, performing a simple search query would look something like this:
 * `credits` - OpenStack Credits (Odoo Model: `openstack.credit`)
 * `credit_transactions` - OpenStack Credit Transactions (Odoo Model: `openstack.credit.transaction`)
 * `credit_types` - OpenStack Credit Types (Odoo Model: `openstack.credit.type`)
-* `crm_teams` - CRM Teams (Odoo Model: `crm.team`)
 * `currencies` - Currencies (Odoo Model: `res.currency`)
 * `customer_groups` - OpenStack Customer Groups (Odoo Model: `openstack.customer_group`)
 * `grants` - OpenStack Grants (Odoo Model: `openstack.grant`)

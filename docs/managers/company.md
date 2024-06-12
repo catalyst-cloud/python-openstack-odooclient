@@ -3,6 +3,15 @@
 This page documents how to use the manager and record objects
 for companies.
 
+## Details
+
+| Name            | Value                |
+|-----------------|----------------------|
+| Odoo Modules    | Base, Product, Sales |
+| Odoo Model Name | `res.company`        |
+| Manager         | `companies`          |
+| Record Type     | `Company`            |
+
 ## Manager
 
 The company manager is available as the `companies`
