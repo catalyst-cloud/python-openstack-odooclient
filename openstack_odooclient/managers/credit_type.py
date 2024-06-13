@@ -15,112 +15,100 @@
 
 from __future__ import annotations
 
-from functools import cached_property
-from typing import TYPE_CHECKING, List
+from typing import List
 
-from . import record_base, record_manager_name_base
+from typing_extensions import Annotated
 
-if TYPE_CHECKING:
-    from . import credit, product as product_module, product_category
+from . import (
+    product as product_module,
+    product_category,
+    record_base,
+    record_manager_name_base,
+    util,
+)
 
 
 class CreditType(record_base.RecordBase):
-    @property
-    def credit_ids(self) -> List[int]:
-        """A list of IDs for the credits which are of this credit type."""
-        return self._get_field("credits")
+    credit_ids: Annotated[List[int], util.ModelRef("credits")]
+    """A list of IDs for the credits which are of this credit type."""
 
-    @cached_property
-    def credits(self) -> List[credit.Credit]:
-        """A list of credits which are of this credit type.
+    credits: Annotated[List[credit.Credit], util.ModelRef("credits")]
+    """A list of credits which are of this credit type.
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.credits.list(self.credit_ids)
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
     name: str
     """Name of the Credit Type."""
 
-    @property
-    def only_for_product_ids(self) -> List[int]:
-        """A list of IDs for the products this credit applies to.
+    only_for_product_ids: Annotated[
+        List[int],
+        util.ModelRef("only_for_products"),
+    ]
+    """A list of IDs for the products this credit applies to.
 
-        Mutually exclusive with ``only_for_product_category_ids``.
-        If neither are specified, the credit applies to all products.
-        """
-        return self._get_field("only_for_products")
+    Mutually exclusive with ``only_for_product_category_ids``.
+    If neither are specified, the credit applies to all products.
+    """
 
-    @cached_property
-    def only_for_products(self) -> List[product_module.Product]:
-        """A list of products which this credit applies to.
+    only_for_products: Annotated[
+        List[product_module.Product],
+        util.ModelRef("only_for_products"),
+    ]
+    """A list of products which this credit applies to.
 
-        Mutually exclusive with ``only_for_product_categories``.
-        If neither are specified, the credit applies to all products.
+    Mutually exclusive with ``only_for_product_categories``.
+    If neither are specified, the credit applies to all products.
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.products.list(self.only_for_product_ids)
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
-    @property
-    def only_for_product_category_ids(self) -> List[int]:
-        """A list of IDs for the product categories this credit applies to.
+    only_for_product_category_ids: Annotated[
+        List[int],
+        util.ModelRef("only_for_product_categories"),
+    ]
+    """A list of IDs for the product categories this credit applies to.
 
-        Mutually exclusive with ``only_for_product_ids``.
-        If neither are specified, the credit applies to all product
-        categories.
-        """
-        return self._get_field("only_for_product_categories")
+    Mutually exclusive with ``only_for_product_ids``.
+    If neither are specified, the credit applies to all product
+    categories.
+    """
 
-    @cached_property
-    def only_for_product_categories(
-        self,
-    ) -> List[product_category.ProductCategory]:
-        """A list of product categories which this credit applies to.
+    only_for_product_categories: Annotated[
+        List[product_category.ProductCategory],
+        util.ModelRef("only_for_product_categories"),
+    ]
+    """A list of product categories which this credit applies to.
 
-        Mutually exclusive with ``only_for_products``.
-        If neither are specified, the credit applies to all product
-        categories.
+    Mutually exclusive with ``only_for_products``.
+    If neither are specified, the credit applies to all product
+    categories.
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.product_categories.list(self.only_for_product_ids)
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
-    @property
-    def product_id(self) -> int:
-        """The ID of the product to use when applying
-        the credit to invoices.
-        """
-        return self._get_ref_id("product")
+    product_id: Annotated[int, util.ModelRef("product")]
+    """The ID of the product to use when applying
+    the credit to invoices.
+    """
 
-    @property
-    def product_name(self) -> str:
-        """The name of the product to use when applying
-        the credit to invoices.
-        """
-        return self._get_ref_name("product")
+    product_name: Annotated[str, util.ModelRef("product")]
+    """The name of the product to use when applying
+    the credit to invoices.
+    """
 
-    @cached_property
-    def product(self) -> product_module.Product:
-        """The product to use when applying the credit to invoices.
+    product: Annotated[product_module.Product, util.ModelRef("product")]
+    """The product to use when applying the credit to invoices.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.products.get(self.product_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     refundable: bool
     """Whether or not the credit is refundable."""
-
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "credit_ids": "credits",
-        "only_for_product_ids": "only_for_products",
-        "only_for_product_category_ids": "only_for_product_categories",
-        "product_id": "product",
-    }
 
 
 class CreditTypeManager(
@@ -128,3 +116,7 @@ class CreditTypeManager(
 ):
     env_name = "openstack.credit.type"
     record_class = CreditType
+
+
+# NOTE(callumdickinson): Import here to make sure circular imports work.
+from . import credit  # noqa: E402

@@ -333,10 +333,14 @@ class RecordBase:
         # as a list of model IDs or objects.
         if get_type_origin(attr_type) is list:
             value_type = get_type_args(attr_type)[0]
+            # List of model objects. Fetch the objects from Odoo,
+            # and return the results.
             if is_subclass(value_type, RecordBase):
                 return self._client._record_manager_mapping[value_type].list(
                     field_value,
                 )
+            # List of model IDs. The raw field value is already this format,
+            # so just return it as is.
             if value_type is int:
                 return field_value
             raise ValueError(

@@ -15,114 +15,96 @@
 
 from __future__ import annotations
 
-from functools import cached_property
-from typing import TYPE_CHECKING, List
+from typing import List
 
-from . import record_base, record_manager_name_base
+from typing_extensions import Annotated
 
-if TYPE_CHECKING:
-    from . import grant, product as product_module, product_category
+from . import record_base, record_manager_name_base, util
 
 
 class GrantType(record_base.RecordBase):
-    @property
-    def grant_ids(self) -> List[int]:
-        """A list of IDs for the grants which are of this grant type."""
-        return self._get_field("grants")
+    grant_ids: Annotated[List[int], util.ModelRef("grants")]
+    """A list of IDs for the grants which are of this grant type."""
 
-    @cached_property
-    def grants(self) -> List[grant.Grant]:
-        """A list of grants which are of this grant type.
+    grants: Annotated[List[grant.Grant], util.ModelRef("grants")]
+    """A list of grants which are of this grant type.
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.grants.list(self.grant_ids)
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
     name: str
     """Name of the Grant Type."""
 
-    @property
-    def only_for_product_ids(self) -> List[int]:
-        """A list of IDs for the products this grant applies to.
+    only_for_product_ids: Annotated[
+        List[int],
+        util.ModelRef("only_for_products"),
+    ]
+    """A list of IDs for the products this grant applies to.
 
-        Mutually exclusive with ``only_for_product_category_ids``.
-        If neither are specified, the grant applies to all products.
-        """
-        return self._get_field("only_for_products")
+    Mutually exclusive with ``only_for_product_category_ids``.
+    If neither are specified, the grant applies to all products.
+    """
 
-    @cached_property
-    def only_for_products(self) -> List[product_module.Product]:
-        """A list of products which this grant applies to.
+    only_for_products: Annotated[
+        List[product_module.Product],
+        util.ModelRef("only_for_products"),
+    ]
+    """A list of products which this grant applies to.
 
-        Mutually exclusive with ``only_for_product_categories``.
-        If neither are specified, the grant applies to all products.
+    Mutually exclusive with ``only_for_product_categories``.
+    If neither are specified, the grant applies to all products.
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.products.list(self.only_for_product_ids)
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
-    @property
-    def only_for_product_category_ids(self) -> List[int]:
-        """A list of IDs for the product categories this grant applies to.
+    only_for_product_category_ids: Annotated[
+        List[int],
+        util.ModelRef("only_for_product_categories"),
+    ]
+    """A list of IDs for the product categories this grant applies to.
 
-        Mutually exclusive with ``only_for_product_ids``.
-        If neither are specified, the grant applies to all product
-        categories.
-        """
-        return self._get_field("only_for_product_categories")
+    Mutually exclusive with ``only_for_product_ids``.
+    If neither are specified, the grant applies to all product
+    categories.
+    """
 
-    @cached_property
-    def only_for_product_categories(
-        self,
-    ) -> List[product_category.ProductCategory]:
-        """A list of product categories which this grant applies to.
+    only_for_product_categories: Annotated[
+        List[product_category.ProductCategory],
+        util.ModelRef("only_for_product_categories"),
+    ]
+    """A list of product categories which this grant applies to.
 
-        Mutually exclusive with ``only_for_products``.
-        If neither are specified, the grant applies to all product
-        categories.
+    Mutually exclusive with ``only_for_products``.
+    If neither are specified, the grant applies to all product
+    categories.
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.product_categories.list(self.only_for_product_ids)
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
     only_on_group_root: bool
     """When set to ``True``, this grant type is only allowed to be
     part of an invoice grouping if it is on the group root project.
     """
 
-    @property
-    def product_id(self) -> int:
-        """The ID of the product to use when applying
-        the grant to invoices.
-        """
-        return self._get_ref_id("product")
+    product_id: Annotated[int, util.ModelRef("product")]
+    """The ID of the product to use when applying
+    the grant to invoices.
+    """
 
-    @property
-    def product_name(self) -> str:
-        """The name of the product to use when applying
-        the grant to invoices.
-        """
-        return self._get_ref_name("product")
+    product_name: Annotated[str, util.ModelRef("product")]
+    """The name of the product to use when applying
+    the grant to invoices.
+    """
 
-    @cached_property
-    def product(self) -> product_module.Product:
-        """The product to use when applying the grant to invoices.
+    product: Annotated[product_module.Product, util.ModelRef("product")]
+    """The product to use when applying the grant to invoices.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.products.get(self.product_id)
-
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "grant_ids": "grants",
-        "only_for_product_ids": "only_for_products",
-        "only_for_product_category_ids": "only_for_product_categories",
-        "product_id": "product",
-    }
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
 
 class GrantTypeManager(
@@ -130,3 +112,11 @@ class GrantTypeManager(
 ):
     env_name = "openstack.grant.type"
     record_class = GrantType
+
+
+# NOTE(callumdickinson): Import here to make sure circular imports work.
+from . import (  # noqa: E402
+    grant,
+    product as product_module,
+    product_category,
+)

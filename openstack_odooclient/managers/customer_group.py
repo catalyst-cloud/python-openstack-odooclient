@@ -15,68 +15,48 @@
 
 from __future__ import annotations
 
-from functools import cached_property
-from typing import TYPE_CHECKING, List, Optional
+from typing import List, Optional
 
-from . import record_base, record_manager_name_base
+from typing_extensions import Annotated
 
-if TYPE_CHECKING:
-    from . import partner, pricelist as pricelist_module
+from . import record_base, record_manager_name_base, util
 
 
 class CustomerGroup(record_base.RecordBase):
     name: str
     """The name of the customer group."""
 
-    @property
-    def partner_ids(self) -> List[int]:
-        """A list of IDs for the partners that are part
-        of this customer group.
-        """
-        return self._get_field("partners")
+    partner_ids: Annotated[List[int], util.ModelRef("partners")]
+    """A list of IDs for the partners that are part
+    of this customer group.
+    """
 
-    @cached_property
-    def partners(self) -> List[partner.Partner]:
-        """The partners that are part of this customer group.
+    partners: Annotated[List[partner.Partner], util.ModelRef("partners")]
+    """The partners that are part of this customer group.
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.partners.list(self.partner_ids)
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
-    @property
-    def pricelist_id(self) -> Optional[int]:
-        """The ID for the pricelist this customer group uses,
-        if not the default one.
-        """
-        return self._get_ref_id("pricelist", optional=True)
+    pricelist_id: Annotated[Optional[int], util.ModelRef("pricelist")]
+    """The ID for the pricelist this customer group uses,
+    if not the default one.
+    """
 
-    @property
-    def pricelist_name(self) -> Optional[str]:
-        """The name of the pricelist this customer group uses,
-        if not the default one.
-        """
-        return self._get_ref_name("pricelist", optional=True)
+    pricelist_name: Annotated[Optional[str], util.ModelRef("pricelist")]
+    """The name of the pricelist this customer group uses,
+    if not the default one.
+    """
 
-    @cached_property
-    def pricelist(self) -> Optional[pricelist_module.Pricelist]:
-        """The pricelist this customer group uses, if not the default one.
+    pricelist: Annotated[
+        Optional[pricelist_module.Pricelist],
+        util.ModelRef("pricelist"),
+    ]
+    """The pricelist this customer group uses, if not the default one.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.pricelist_id
-        return (
-            self._client.pricelists.get(record_id)
-            if record_id is not None
-            else None
-        )
-
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "partner_ids": "partners",
-        "pricelist_id": "pricelist",
-    }
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
 
 class CustomerGroupManager(
@@ -84,3 +64,7 @@ class CustomerGroupManager(
 ):
     env_name = "openstack.customer_group"
     record_class = CustomerGroup
+
+
+# NOTE(callumdickinson): Import here to make sure circular imports work.
+from . import partner, pricelist as pricelist_module  # noqa: E402

@@ -16,40 +16,32 @@
 from __future__ import annotations
 
 from datetime import date
-from functools import cached_property
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 
-from . import record_base, record_manager_base
+from typing_extensions import Annotated
 
-if TYPE_CHECKING:
-    from . import (
-        grant_type as grant_type_module,
-        voucher_code as voucher_code_module,
-    )
+from . import record_base, record_manager_base, util
 
 
 class Grant(record_base.RecordBase):
     expiry_date: date
     """The date the grant expires."""
 
-    @property
-    def grant_type_id(self) -> int:
-        """The ID of the type of this grant."""
-        return self._get_ref_id("grant_type")
+    grant_type_id: Annotated[int, util.ModelRef("grant_type")]
+    """The ID of the type of this grant."""
 
-    @property
-    def grant_type_name(self) -> str:
-        """The name of thie type of this grant."""
-        return self._get_ref_name("grant_type")
+    grant_type_name: Annotated[str, util.ModelRef("grant_type")]
+    """The name of thie type of this grant."""
 
-    @cached_property
-    def grant_type(self) -> grant_type_module.GrantType:
-        """The type of this grant.
+    grant_type: Annotated[
+        grant_type_module.GrantType,
+        util.ModelRef("grant_type"),
+    ]
+    """The type of this grant.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.grant_types.get(self.grant_type_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     name: str
     """The automatically generated name of the grant."""
@@ -60,42 +52,35 @@ class Grant(record_base.RecordBase):
     value: float
     """The value of the grant."""
 
-    @property
-    def voucher_code_id(self) -> Optional[int]:
-        """The ID of the voucher code used when applying for the grant,
-        if one was supplied.
-        """
-        return self._get_ref_id("voucher_code", optional=True)
+    voucher_code_id: Annotated[Optional[int], util.ModelRef("voucher_code")]
+    """The ID of the voucher code used when applying for the grant,
+    if one was supplied.
+    """
 
-    @property
-    def voucher_code_name(self) -> Optional[str]:
-        """The name of the voucher code used when applying for the grant,
-        if one was supplied.
-        """
-        return self._get_ref_name("voucher_code", optional=True)
+    voucher_code_name: Annotated[Optional[str], util.ModelRef("voucher_code")]
+    """The name of the voucher code used when applying for the grant,
+    if one was supplied.
+    """
 
-    @cached_property
-    def voucher_code(self) -> Optional[voucher_code_module.VoucherCode]:
-        """The voucher code used when applying for the grant,
-        if one was supplied.
+    voucher_code: Annotated[
+        Optional[voucher_code_module.VoucherCode],
+        util.ModelRef("voucher_code"),
+    ]
+    """The voucher code used when applying for the grant,
+    if one was supplied.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.voucher_code_id
-        return (
-            self._client.voucher_codes.get(record_id)
-            if record_id is not None
-            else None
-        )
-
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "grant_type_id": "grant_type",
-        "voucher_code_id": "voucher_code",
-    }
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
 
 class GrantManager(record_manager_base.RecordManagerBase[Grant]):
     env_name = "openstack.grant"
     record_class = Grant
+
+
+# NOTE(callumdickinson): Import here to make sure circular imports work.
+from . import (  # noqa: E402
+    grant_type as grant_type_module,
+    voucher_code as voucher_code_module,
+)

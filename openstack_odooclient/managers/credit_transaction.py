@@ -15,34 +15,24 @@
 
 from __future__ import annotations
 
-from functools import cached_property
-from typing import TYPE_CHECKING
+from typing_extensions import Annotated
 
-from . import record_base, record_manager_base
-
-if TYPE_CHECKING:
-    from . import credit as credit_module
+from . import record_base, record_manager_base, util
 
 
 class CreditTransaction(record_base.RecordBase):
-    @property
-    def credit_id(self) -> int:
-        """The ID of the credit this transaction was made against."""
-        return self._get_ref_id("credit")
+    credit_id: Annotated[int, util.ModelRef("credit")]
+    """The ID of the credit this transaction was made against."""
 
-    @property
-    def credit_name(self) -> str:
-        """The name of the credit this transaction was made against."""
-        return self._get_ref_name("credit")
+    credit_name: Annotated[str, util.ModelRef("credit")]
+    """The name of the credit this transaction was made against."""
 
-    @cached_property
-    def credit(self) -> credit_module.Credit:
-        """The credit this transaction was made against.
+    credit: Annotated[credit_module.Credit, util.ModelRef("credit")]
+    """The credit this transaction was made against.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.credits.get(self.credit_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     description: str
     """A description of this credit transaction."""
@@ -50,14 +40,13 @@ class CreditTransaction(record_base.RecordBase):
     value: float
     """The value of the credit transaction."""
 
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "credit_id": "credit",
-    }
-
 
 class CreditTransactionManager(
     record_manager_base.RecordManagerBase[CreditTransaction],
 ):
     env_name = "openstack.credit.transaction"
     record_class = CreditTransaction
+
+
+# NOTE(callumdickinson): Import here to make sure circular imports work.
+from . import credit as credit_module  # noqa: E402

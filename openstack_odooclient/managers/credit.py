@@ -16,38 +16,29 @@
 from __future__ import annotations
 
 from datetime import date
-from functools import cached_property
-from typing import TYPE_CHECKING, List, Optional
+from typing import List, Optional
 
-from . import record_base, record_manager_base
+from typing_extensions import Annotated
 
-if TYPE_CHECKING:
-    from . import (
-        credit_transaction,
-        credit_type as credit_type_module,
-        voucher_code as voucher_code_module,
-    )
+from . import record_base, record_manager_base, util
 
 
 class Credit(record_base.RecordBase):
-    @property
-    def credit_type_id(self) -> int:
-        """The ID of the type of this credit."""
-        return self._get_ref_id("credit_type")
+    credit_type_id: Annotated[int, util.ModelRef("credit_type")]
+    """The ID of the type of this credit."""
 
-    @property
-    def credit_type_name(self) -> str:
-        """The name of thie type of this credit."""
-        return self._get_ref_name("credit_type")
+    credit_type_name: Annotated[str, util.ModelRef("credit_type")]
+    """The name of thie type of this credit."""
 
-    @cached_property
-    def credit_type(self) -> credit_type_module.CreditType:
-        """The type of this credit.
+    credit_type: Annotated[
+        credit_type_module.CreditType,
+        util.ModelRef("credit_type"),
+    ]
+    """The type of this credit.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.credit_types.get(self.credit_type_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     current_balance: float
     """The current remaining balance on the credit."""
@@ -64,59 +55,51 @@ class Credit(record_base.RecordBase):
     start_date: date
     """The start date of the credit."""
 
-    @property
-    def transaction_ids(self) -> List[int]:
-        """A list of IDs for the transactions that have been made
-        using this credit.
-        """
-        return self._get_field("transactions")
+    transaction_ids: Annotated[List[int], util.ModelRef("transactions")]
+    """A list of IDs for the transactions that have been made
+    using this credit.
+    """
 
-    @cached_property
-    def transactions(self) -> List[credit_transaction.CreditTransaction]:
-        """The transactions that have been made using this credit.
+    transactions: Annotated[
+        List[credit_transaction.CreditTransaction],
+        util.ModelRef("transactions"),
+    ]
+    """The transactions that have been made using this credit.
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.credit_transactions.list(self.transaction_ids)
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
-    @property
-    def voucher_code_id(self) -> Optional[int]:
-        """The ID of the voucher code used when applying for the credit,
-        if one was supplied.
-        """
-        return self._get_ref_id("voucher_code", optional=True)
+    voucher_code_id: Annotated[Optional[int], util.ModelRef("voucher_code")]
+    """The ID of the voucher code used when applying for the credit,
+    if one was supplied.
+    """
 
-    @property
-    def voucher_code_name(self) -> Optional[str]:
-        """The name of the voucher code used when applying for the credit,
-        if one was supplied.
-        """
-        return self._get_ref_name("voucher_code", optional=True)
+    voucher_code_name: Annotated[Optional[str], util.ModelRef("voucher_code")]
+    """The name of the voucher code used when applying for the credit,
+    if one was supplied.
+    """
 
-    @cached_property
-    def voucher_code(self) -> Optional[voucher_code_module.VoucherCode]:
-        """The voucher code used when applying for the credit,
-        if one was supplied.
+    voucher_code: Annotated[
+        Optional[voucher_code_module.VoucherCode],
+        util.ModelRef("voucher_code"),
+    ]
+    """The voucher code used when applying for the credit,
+    if one was supplied.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.voucher_code_id
-        return (
-            self._client.voucher_codes.get(record_id)
-            if record_id is not None
-            else None
-        )
-
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "credit_type_id": "credit_type",
-        "transaction_ids": "transactions",
-        "voucher_code_id": "voucher_code",
-    }
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
 
 class CreditManager(record_manager_base.RecordManagerBase[Credit]):
     env_name = "openstack.credit"
     record_class = Credit
+
+
+# NOTE(callumdickinson): Import here to make sure circular imports work.
+from . import (  # noqa: E402
+    credit_transaction,
+    credit_type as credit_type_module,
+    voucher_code as voucher_code_module,
+)
