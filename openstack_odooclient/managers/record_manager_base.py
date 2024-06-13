@@ -18,8 +18,8 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import TYPE_CHECKING, Generic, TypeVar, overload
 
-from ...exceptions import RecordNotFoundError
-from .base import RecordBase
+from ..exceptions import RecordNotFoundError
+from .record_base import RecordBase
 from .util import get_mapped_field
 
 if TYPE_CHECKING:
@@ -40,7 +40,7 @@ if TYPE_CHECKING:
     from odoorpc import ODOO  # type: ignore[import]
     from odoorpc.env import Environment  # type: ignore[import]
 
-    from ... import client
+    from .. import client
 
 Record = TypeVar("Record", bound=RecordBase)
 
@@ -70,6 +70,7 @@ class RecordManagerBase(Generic[Record]):
                 self.record_class._field_mapping.items()
             )
         }
+        self._client._record_manager_mapping[self.record_class] = self
 
     @property
     def _odoo(self) -> ODOO:

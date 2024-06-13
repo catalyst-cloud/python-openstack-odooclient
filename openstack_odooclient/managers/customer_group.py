@@ -18,13 +18,13 @@ from __future__ import annotations
 from functools import cached_property
 from typing import TYPE_CHECKING, List, Optional
 
-from . import record
+from . import record_base, record_manager_name_base
 
 if TYPE_CHECKING:
     from . import partner, pricelist as pricelist_module
 
 
-class CustomerGroup(record.RecordBase):
+class CustomerGroup(record_base.RecordBase):
     name: str
     """The name of the customer group."""
 
@@ -79,6 +79,8 @@ class CustomerGroup(record.RecordBase):
     }
 
 
-class CustomerGroupManager(record.NamedRecordManagerBase[CustomerGroup]):
+class CustomerGroupManager(
+    record_manager_name_base.NamedRecordManagerBase[CustomerGroup],
+):
     env_name = "openstack.customer_group"
     record_class = CustomerGroup

@@ -19,7 +19,7 @@ from datetime import date
 from functools import cached_property
 from typing import TYPE_CHECKING, List, Optional
 
-from . import record
+from . import record_base, record_manager_base
 
 if TYPE_CHECKING:
     from . import (
@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     )
 
 
-class Credit(record.RecordBase):
+class Credit(record_base.RecordBase):
     @property
     def credit_type_id(self) -> int:
         """The ID of the type of this credit."""
@@ -117,6 +117,6 @@ class Credit(record.RecordBase):
     }
 
 
-class CreditManager(record.RecordManagerBase[Credit]):
+class CreditManager(record_manager_base.RecordManagerBase[Credit]):
     env_name = "openstack.credit"
     record_class = Credit

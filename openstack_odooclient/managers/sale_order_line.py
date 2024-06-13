@@ -18,7 +18,7 @@ from __future__ import annotations
 from functools import cached_property
 from typing import TYPE_CHECKING, List, Literal, Optional, Union
 
-from . import record
+from . import record_base, record_manager_base
 
 if TYPE_CHECKING:
     from . import (
@@ -34,7 +34,7 @@ if TYPE_CHECKING:
     )
 
 
-class SaleOrderLine(record.RecordBase):
+class SaleOrderLine(record_base.RecordBase):
     @property
     def company_id(self) -> int:
         """The ID for the company this sale order line
@@ -374,6 +374,8 @@ class SaleOrderLine(record.RecordBase):
     }
 
 
-class SaleOrderLineManager(record.RecordManagerBase[SaleOrderLine]):
+class SaleOrderLineManager(
+    record_manager_base.RecordManagerBase[SaleOrderLine],
+):
     env_name = "sale.order.line"
     record_class = SaleOrderLine

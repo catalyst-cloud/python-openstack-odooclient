@@ -80,6 +80,33 @@ line_tax_amount: float
 
 Amount charged in tax on the account move (invoice) line.
 
+### `move_id`
+
+```python
+move_id: int
+```
+
+The ID for the [account move (invoice)](account-move.md) this line is part of.
+
+### `move_name`
+
+```python
+move_name: str
+```
+
+The name of the [account move (invoice)](account-move.md) this line is part of.
+
+### `move`
+
+```python
+move: AccountMove
+```
+
+The [account move (invoice)](account-move.md) this line is part of.
+
+This fetches the full record from Odoo once,
+and caches it for subsequent accesses.
+
 ### `name`
 
 ```python

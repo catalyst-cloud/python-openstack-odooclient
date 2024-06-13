@@ -61,11 +61,13 @@ from .managers import (
 )
 
 if TYPE_CHECKING:
-    from typing import Literal, Optional, Union
+    from typing import Dict, Literal, Optional, Type, Union
 
     from odoorpc.db import DB  # type: ignore[import]
     from odoorpc.env import Environment  # type: ignore[import]
     from odoorpc.report import Report  # type: ignore[import]
+
+    from .managers import record_base, record_manager_base
 
 
 class Client:
@@ -190,6 +192,14 @@ class Client:
                 opener=opener,
             )
             self._odoo.login(database, username, password)
+        # Create aninternal mapping between record classes and their managers.
+        # This is populated by the manager classes themselves when created,
+        # and used when converting model references on record objects into
+        # # new record objects.
+        self._record_manager_mapping: Dict[
+            Type[record_base.RecordBase],
+            record_manager_base.RecordManagerBase,
+        ] = {}
         # Create record managers.
         self.account_moves = account_move.AccountMoveManager(self)
         """Account Move (Invoice) manager."""

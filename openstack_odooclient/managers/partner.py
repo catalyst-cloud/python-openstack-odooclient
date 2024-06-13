@@ -15,27 +15,35 @@
 
 from __future__ import annotations
 
-from functools import cached_property
-from typing import TYPE_CHECKING, List, Literal, Optional, Union
+from typing import List, Literal, Optional, Union
 
-from . import record
+from typing_extensions import Annotated
 
-if TYPE_CHECKING:
-    from . import (
-        customer_group,
-        pricelist,
-        project,
-        project_contact,
-        referral_code,
-        reseller,
-        trial,
-        user as user_module,
-    )
+from . import (
+    pricelist,
+    project,
+    record_base,
+    record_manager_base,
+    util,
+)
 
 
-class Partner(record.RecordBase):
+class Partner(record_base.RecordBase):
     active: bool
     """Whether or not this partner is active (enabled)."""
+
+    company_id: Annotated[int, util.ModelRef("company_id")]
+    """The ID for the company this partner is owned by."""
+
+    company_name: Annotated[str, util.ModelRef("company_id")]
+    """The name of the company this partner is owned by."""
+
+    company: Annotated[company_module.Company, util.ModelRef("company_id")]
+    """The company this partner is owned by.
+
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     email: str
     """Main e-mail address for the partner."""
@@ -43,281 +51,229 @@ class Partner(record.RecordBase):
     name: str
     """Full name of the partner."""
 
-    @property
-    def os_customer_group_id(self) -> Optional[int]:
-        """The ID for the customer group this partner is part of,
-        if it is part of one.
-        """
-        return self._get_ref_id("os_customer_group", optional=True)
+    os_customer_group_id: Annotated[
+        Optional[int],
+        util.ModelRef("os_customer_group"),
+    ]
+    """The ID for the customer group this partner is part of,
+    if it is part of one.
+    """
 
-    @property
-    def os_customer_group_name(self) -> Optional[str]:
-        """The name of the customer group this partner is part of,
-        if it is part of one.
-        """
-        return self._get_ref_name("os_customer_group", optional=True)
+    os_customer_group_name: Annotated[
+        Optional[str],
+        util.ModelRef("os_customer_group"),
+    ]
+    """The name of the customer group this partner is part of,
+    if it is part of one.
+    """
 
-    @cached_property
-    def os_customer_group(self) -> Optional[customer_group.CustomerGroup]:
-        """The customer group this partner is part of,
-        if it is part of one.
+    os_customer_group: Annotated[
+        Optional[customer_group.CustomerGroup],
+        util.ModelRef("os_customer_group"),
+    ]
+    """The customer group this partner is part of,
+    if it is part of one.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.os_customer_group_id
-        return (
-            self._client.customer_groups.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
-    @property
-    def os_project_ids(self) -> List[int]:
-        """A list of IDs for the OpenStack projects that
-        belong to this partner.
-        """
-        return self._get_field("os_projects")
+    os_project_ids: Annotated[List[int], util.ModelRef("os_projects")]
+    """A list of IDs for the OpenStack projects that
+    belong to this partner.
+    """
 
-    @cached_property
-    def os_projects(self) -> List[project.Project]:
-        """The OpenStack projects that belong to this partner.
+    os_projects: Annotated[
+        List[project.Project],
+        util.ModelRef("os_projects"),
+    ]
+    """The OpenStack projects that belong to this partner.
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.projects.list(self.os_project_ids)
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
-    @property
-    def os_project_contact_ids(self) -> List[int]:
-        """A list of IDs for the project contacts that are associated
-        with this partner.
-        """
-        return self._get_field("os_project_contacts")
+    os_project_contact_ids: Annotated[
+        List[int],
+        util.ModelRef("os_project_contacts"),
+    ]
+    """A list of IDs for the project contacts that are associated
+    with this partner.
+    """
 
-    @cached_property
-    def os_project_contacts(self) -> List[project_contact.ProjectContact]:
-        """The project contacts that are associated with this partner.
+    os_project_contacts: Annotated[
+        List[project_contact.ProjectContact],
+        util.ModelRef("os_project_contacts"),
+    ]
+    """The project contacts that are associated with this partner.
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.project_contacts.list(self.os_project_contact_ids)
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
-    @property
-    def os_referral_id(self) -> Optional[int]:
-        """The ID for the referral code the partner used on sign-up,
-        if one was used.
-        """
-        return self._get_ref_id("os_referral", optional=True)
+    os_referral_id: Annotated[Optional[int], util.ModelRef("os_referral")]
+    """The ID for the referral code the partner used on sign-up,
+    if one was used.
+    """
 
-    @property
-    def os_referral_name(self) -> Optional[str]:
-        """The name of the referral code the partner used on sign-up,
-        if one was used.
-        """
-        return self._get_ref_name("os_referral", optional=True)
+    os_referral_name: Annotated[Optional[str], util.ModelRef("os_referral")]
+    """The name of the referral code the partner used on sign-up,
+    if one was used.
+    """
 
-    @cached_property
-    def os_referral(self) -> Optional[referral_code.ReferralCode]:
-        """The referral code the partner used on sign-up, if one was used.
+    os_referral: Annotated[
+        Optional[referral_code.ReferralCode],
+        util.ModelRef("os_referral"),
+    ]
+    """The referral code the partner used on sign-up, if one was used.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.os_referral_id
-        return (
-            self._client.referral_codes.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
-    @property
-    def os_referral_code_ids(self) -> List[int]:
-        """A list of IDs for the referral codes the partner has used."""
-        return self._get_field("os_referral_codes")
+    os_referral_code_ids: Annotated[
+        List[int],
+        util.ModelRef("os_referral_codes"),
+    ]
+    """A list of IDs for the referral codes the partner has used."""
 
-    @cached_property
-    def os_referral_codes(self) -> List[referral_code.ReferralCode]:
-        """The referral codes the partner has used.
+    os_referral_codes: Annotated[
+        List[referral_code.ReferralCode],
+        util.ModelRef("os_referral_codes"),
+    ]
+    """The referral codes the partner has used.
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.referral_codes.list(self.os_referral_code_ids)
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
-    @property
-    def os_reseller_id(self) -> Optional[int]:
-        """The ID for the reseller for this partner, if this partner
-        is billed through a reseller.
-        """
-        return self._get_ref_id("os_reseller", optional=True)
+    os_reseller_id: Annotated[Optional[int], util.ModelRef("os_reseller")]
+    """The ID for the reseller for this partner, if this partner
+    is billed through a reseller.
+    """
 
-    @property
-    def os_reseller_name(self) -> Optional[str]:
-        """The name of the reseller for this partner, if this partner
-        is billed through a reseller.
-        """
-        return self._get_ref_name("os_reseller", optional=True)
+    os_reseller_name: Annotated[Optional[str], util.ModelRef("os_reseller")]
+    """The name of the reseller for this partner, if this partner
+    is billed through a reseller.
+    """
 
-    @cached_property
-    def os_reseller(self) -> Optional[reseller.Reseller]:
-        """The reseller for this partner, if this partner
-        is billed through a reseller.
+    os_reseller: Annotated[
+        Optional[reseller.Reseller],
+        util.ModelRef("os_reseller"),
+    ]
+    """The reseller for this partner, if this partner
+    is billed through a reseller.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.os_reseller_id
-        return (
-            self._client.resellers.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
-    @property
-    def os_trial_id(self) -> Optional[int]:
-        """The ID for the sign-up trial for this partner,
-        if signed up under a trial.
-        """
-        return self._get_ref_id("os_trial", optional=True)
+    os_trial_id: Annotated[Optional[int], util.ModelRef("os_trial")]
+    """The ID for the sign-up trial for this partner,
+    if signed up under a trial.
+    """
 
-    @property
-    def os_trial_name(self) -> Optional[str]:
-        """The name of the sign-up trial for this partner,
-        if signed up under a trial.
-        """
-        return self._get_ref_name("os_trial", optional=True)
+    os_trial_name: Annotated[Optional[str], util.ModelRef("os_trial")]
+    """The name of the sign-up trial for this partner,
+    if signed up under a trial.
+    """
 
-    @cached_property
-    def os_trial(self) -> Optional[trial.Trial]:
-        """The sign-up trial for this partner,
-        if signed up under a trial.
+    os_trial: Annotated[Optional[trial.Trial], util.ModelRef("os_trial")]
+    """The sign-up trial for this partner,
+    if signed up under a trial.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.os_trial_id
-        return (
-            self._client.trials.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
-    @property
-    def parent_id(self) -> Optional[int]:
-        """The ID for the parent partner of this partner,
-        if it has a parent.
-        """
-        return self._get_ref_id("parent_id", optional=True)
+    parent_id: Annotated[Optional[int], util.ModelRef("parent_id")]
+    """The ID for the parent partner of this partner,
+    if it has a parent.
+    """
 
-    @property
-    def parent_name(self) -> Optional[str]:
-        """The name of the parent partner of this partner,
-        if it has a parent.
-        """
-        return self._get_ref_name("parent_id", optional=True)
+    parent_name: Annotated[Optional[str], util.ModelRef("parent_id")]
+    """The name of the parent partner of this partner,
+    if it has a parent.
+    """
 
-    @cached_property
-    def parent(self) -> Optional[Partner]:
-        """The parent partner of this partner,
-        if it has a parent.
+    parent: Annotated[Optional[Partner], util.ModelRef("parent_id")]
+    """The parent partner of this partner,
+    if it has a parent.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.parent_id
-        return (
-            self._client.partners.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
-    @property
-    def property_product_pricelist_id(self) -> Optional[int]:
-        """The ID for the pricelist this partner uses, if explicitly set.
+    property_product_pricelist_id: Annotated[
+        Optional[int],
+        util.ModelRef("property_product_pricelist"),
+    ]
+    """The ID for the pricelist this partner uses, if explicitly set.
 
-        If not set, the pricelist set for the customer group
-        is used (and if that is not set, the global default
-        pricelist is used).
-        """
-        return self._get_ref_id("property_product_pricelist", optional=True)
+    If not set, the pricelist set for the customer group
+    is used (and if that is not set, the global default
+    pricelist is used).
+    """
 
-    @property
-    def property_product_pricelist_name(self) -> Optional[str]:
-        """The name of the pricelist this partner uses, if explicitly set.
+    property_product_pricelist_name: Annotated[
+        Optional[str],
+        util.ModelRef("property_product_pricelist"),
+    ]
+    """The name of the pricelist this partner uses, if explicitly set.
 
-        If not set, the pricelist set for the customer group
-        is used (and if that is not set, the global default
-        pricelist is used).
-        """
-        return self._get_ref_name("property_product_pricelist", optional=True)
+    If not set, the pricelist set for the customer group
+    is used (and if that is not set, the global default
+    pricelist is used).
+    """
 
-    @cached_property
-    def property_product_pricelist(self) -> Optional[pricelist.Pricelist]:
-        """The pricelist this partner uses, if explicitly set.
+    property_product_pricelist: Annotated[
+        Optional[pricelist.Pricelist],
+        util.ModelRef("property_product_pricelist"),
+    ]
+    """The pricelist this partner uses, if explicitly set.
 
-        If not set, the pricelist set for the customer group
-        is used (and if that is not set, the global default
-        pricelist is used).
+    If not set, the pricelist set for the customer group
+    is used (and if that is not set, the global default
+    pricelist is used).
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.property_product_pricelist_id
-        return (
-            self._client.pricelists.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     stripe_customer_id: Union[str, Literal[False]]
     """The Stripe customer ID for this partner, if one has been assigned."""
 
-    @property
-    def user_id(self) -> Optional[int]:
-        """The ID of the internal user associated with this partner,
-        if one is assigned.
-        """
-        return self._get_ref_id("user_id", optional=True)
+    user_id: Annotated[Optional[int], util.ModelRef("user_id")]
+    """The ID of the internal user associated with this partner,
+    if one is assigned.
+    """
 
-    @property
-    def user_name(self) -> Optional[str]:
-        """The name of the internal user associated with this partner,
-        if one is assigned.
-        """
-        return self._get_ref_name("user_id")
+    user_name: Annotated[Optional[str], util.ModelRef("user_id")]
+    """The name of the internal user associated with this partner,
+    if one is assigned.
+    """
 
-    @cached_property
-    def user(self) -> Optional[user_module.User]:
-        """The internal user associated with this partner,
-        if one is assigned.
+    user: Annotated[Optional[user_module.User], util.ModelRef("user_id")]
+    """The internal user associated with this partner,
+    if one is assigned.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.user_id
-        return (
-            self._client.users.get(record_id)
-            if record_id is not None
-            else None
-        )
-
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "os_customer_group_id": "os_customer_group",
-        "os_project_ids": "os_projects",
-        "os_project_contact_ids": "os_project_contacts",
-        "os_referral_id": "os_referral",
-        "os_referral_code_ids": "os_referral_codes",
-        "os_reseller_id": "os_reseller",
-        "os_trial_id": "os_trial",
-        "parent": "parent_id",
-        "property_product_pricelist_id": "property_product_pricelist",
-        "user": "user_id",
-    }
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
 
-class PartnerManager(record.RecordManagerBase[Partner]):
+class PartnerManager(record_manager_base.RecordManagerBase[Partner]):
     env_name = "res.partner"
     record_class = Partner
+
+
+# NOTE(callumdickinson): Import here to make sure circular imports work.
+from . import (  # noqa: E402
+    company as company_module,
+    customer_group,
+    project_contact,
+    referral_code,
+    reseller,
+    trial,
+    user as user_module,
+)

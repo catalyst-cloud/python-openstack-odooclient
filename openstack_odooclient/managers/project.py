@@ -28,7 +28,7 @@ from typing import (
     overload,
 )
 
-from . import record
+from . import record_base, record_manager_unique_field_base
 
 if TYPE_CHECKING:
     from . import (
@@ -41,7 +41,7 @@ if TYPE_CHECKING:
     )
 
 
-class Project(record.RecordBase):
+class Project(record_base.RecordBase):
     billing_type: Literal["customer", "internal"]
     """Billing type for this project.
 
@@ -238,7 +238,12 @@ class Project(record.RecordBase):
     }
 
 
-class ProjectManager(record.RecordManagerWithUniqueFieldBase[Project, str]):
+class ProjectManager(
+    record_manager_unique_field_base.RecordManagerWithUniqueFieldBase[
+        Project,
+        str,
+    ],
+):
     env_name = "openstack.project"
     record_class = Project
 

@@ -17,7 +17,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, overload
 
-from .manager_unique_field_base import Record, RecordManagerWithUniqueFieldBase
+from .record_manager_unique_field_base import (
+    Record,
+    RecordManagerWithUniqueFieldBase,
+)
 
 if TYPE_CHECKING:
     from typing import (
@@ -30,16 +33,16 @@ if TYPE_CHECKING:
     )
 
 
-class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
-    name_field: str = "name"
-    """The field name to use when querying by name in
-    the ``get_by_name`` method.
+class CodedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
+    code_field: str = "code"
+    """The field code to use when querying by code in
+    the ``get_by_code`` method.
     """
 
     @overload
-    def get_by_name(
+    def get_by_code(
         self,
-        name: str,
+        code: str,
         *,
         fields: Optional[Iterable[str]] = ...,
         as_id: Literal[True],
@@ -48,9 +51,9 @@ class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
     ) -> Optional[int]: ...
 
     @overload
-    def get_by_name(
+    def get_by_code(
         self,
-        name: str,
+        code: str,
         *,
         fields: Optional[Iterable[str]] = ...,
         as_id: Literal[True],
@@ -59,9 +62,9 @@ class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
     ) -> Optional[int]: ...
 
     @overload
-    def get_by_name(
+    def get_by_code(
         self,
-        name: str,
+        code: str,
         *,
         fields: Optional[Iterable[str]] = ...,
         as_id: Literal[True],
@@ -70,9 +73,9 @@ class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
     ) -> int: ...
 
     @overload
-    def get_by_name(
+    def get_by_code(
         self,
-        name: str,
+        code: str,
         *,
         fields: Optional[Iterable[str]] = ...,
         as_id: Literal[True],
@@ -81,9 +84,9 @@ class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
     ) -> int: ...
 
     @overload
-    def get_by_name(
+    def get_by_code(
         self,
-        name: str,
+        code: str,
         *,
         fields: Optional[Iterable[str]] = ...,
         as_id: Literal[False] = ...,
@@ -92,9 +95,9 @@ class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
     ) -> Optional[Dict[str, Any]]: ...
 
     @overload
-    def get_by_name(
+    def get_by_code(
         self,
-        name: str,
+        code: str,
         *,
         fields: Optional[Iterable[str]] = ...,
         as_id: Literal[False] = ...,
@@ -103,9 +106,9 @@ class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
     ) -> Dict[str, Any]: ...
 
     @overload
-    def get_by_name(
+    def get_by_code(
         self,
-        name: str,
+        code: str,
         *,
         fields: Optional[Iterable[str]] = ...,
         as_id: Literal[False] = ...,
@@ -114,9 +117,9 @@ class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
     ) -> Optional[Record]: ...
 
     @overload
-    def get_by_name(
+    def get_by_code(
         self,
-        name: str,
+        code: str,
         *,
         fields: Optional[Iterable[str]] = ...,
         as_id: Literal[False] = ...,
@@ -125,9 +128,9 @@ class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
     ) -> Record: ...
 
     @overload
-    def get_by_name(
+    def get_by_code(
         self,
-        name: str,
+        code: str,
         *,
         fields: Optional[Iterable[str]] = ...,
         as_id: bool = ...,
@@ -135,15 +138,15 @@ class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
         optional: bool = ...,
     ) -> Optional[Union[Record, int, Dict[str, Any]]]: ...
 
-    def get_by_name(
+    def get_by_code(
         self,
-        name: str,
+        code: str,
         fields: Optional[Iterable[str]] = None,
         as_id: bool = False,
         as_dict: bool = False,
         optional: bool = False,
     ) -> Optional[Union[Record, int, Dict[str, Any]]]:
-        """Query a unique record by name.
+        """Query a unique record by code.
 
         A number of parameters are available to configure the return type,
         and what happens when a result is not found.
@@ -159,10 +162,10 @@ class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
         a ``dict`` object, instead of a record object.
 
         When ``optional`` is ``True``, ``None`` is returned if a record
-        with the given name does not exist, instead of raising an error.
+        with the given code does not exist, instead of raising an error.
 
-        :param name: The record name
-        :type name: str
+        :param code: The record code
+        :type code: str
         :param as_id: Return a record ID, defaults to False
         :type as_id: bool, optional
         :param fields: Fields to select, defaults to ``None`` (select all)
@@ -171,14 +174,14 @@ class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
         :type as_dict: bool, optional
         :param optional: Return ``None`` if not found, defaults to False
         :type optional: bool, optional
-        :raises MultipleRecordsFoundError: Multiple records with the same name
-        :raises RecordNotFoundError: Record with the given name not found
+        :raises MultipleRecordsFoundError: Multiple records with the same code
+        :raises RecordNotFoundError: Record with the given code not found
         :return: Query result (or ``None`` if record not found and optional)
         :rtype: Optional[Union[Record, int, Dict[str, Any]]]
         """
         return self._get_by_unique_field(
-            field=self.name_field,
-            value=name,
+            field=self.code_field,
+            value=code,
             fields=fields,
             as_id=as_id,
             as_dict=as_dict,

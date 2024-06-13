@@ -15,78 +15,81 @@
 
 from __future__ import annotations
 
-from functools import cached_property
-from typing import TYPE_CHECKING, Literal, Optional, Union
+from typing import Literal, Optional, Union
 
-from . import record
+from typing_extensions import Annotated
 
-if TYPE_CHECKING:
-    from . import (
-        currency as currency_module,
-        product as product_module,
-        project,
-    )
+from . import (
+    currency as currency_module,
+    product as product_module,
+    project,
+    record_base,
+    record_manager_base,
+    util,
+)
 
 
-class AccountMoveLine(record.RecordBase):
-    @property
-    def currency_id(self) -> int:
-        """The ID for the currency used in this
-        account move (invoice) line.
-        """
-        return self._get_ref_id("currency_id")
+class AccountMoveLine(record_base.RecordBase):
+    currency_id: Annotated[int, util.ModelRef("currency_id")]
+    """The ID for the currency used in this
+    account move (invoice) line.
+    """
 
-    @property
-    def currency_name(self) -> str:
-        """The name of the currency used in this
-        account move (invoice) line.
-        """
-        return self._get_ref_name("currency_id")
+    currency_name: Annotated[str, util.ModelRef("currency_id")]
+    """The name of the currency used in this
+    account move (invoice) line.
+    """
 
-    @cached_property
-    def currency(self) -> currency_module.Currency:
-        """The currency used in this
-        account move (invoice) line.
+    currency: Annotated[
+        currency_module.Currency,
+        util.ModelRef("currency_id"),
+    ]
+    """The currency used in this
+    account move (invoice) line.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.currencies.get(self.currency_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     line_tax_amount: float
     """Amount charged in tax on the account move (invoice) line."""
 
+    move_id: Annotated[int, util.ModelRef("move_id")]
+    """The ID for the account move (invoice) this line is part of."""
+
+    move_name: Annotated[str, util.ModelRef("move_id")]
+    """The name of the account move (invoice) this line is part of."""
+
+    move: Annotated[account_move.AccountMove, util.ModelRef("move_id")]
+    """The account move (invoice) this line is part of.
+
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
+
     name: str
     """Name of the product charged on the account move (invoice) line."""
 
-    @property
-    def os_project_id(self) -> Optional[int]:
-        """The ID for the OpenStack project this account move (invoice) line
-        was generated for.
-        """
-        return self._get_ref_id("os_project", optional=True)
+    os_project_id: Annotated[Optional[int], util.ModelRef("os_project")]
+    """The ID for the OpenStack project this account move (invoice) line
+    was generated for.
+    """
 
-    @property
-    def os_project_name(self) -> Optional[str]:
-        """The name of the OpenStack project this account move (invoice) line
-        was generated for.
-        """
-        return self._get_ref_name("os_project", optional=True)
+    os_project_name: Annotated[Optional[str], util.ModelRef("os_project")]
+    """The name of the OpenStack project this account move (invoice) line
+    was generated for.
+    """
 
-    @cached_property
-    def os_project(self) -> Optional[project.Project]:
-        """The OpenStack project this account move (invoice) line
-        was generated for.
+    os_project: Annotated[
+        Optional[project.Project],
+        util.ModelRef("os_project"),
+    ]
+    """The OpenStack project this account move (invoice) line
+    was generated for.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.os_project_id
-        return (
-            self._client.projects.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     os_region: Union[str, Literal[False]]
     """The OpenStack region the account move (invoice) line
@@ -119,41 +122,34 @@ class AccountMoveLine(record.RecordBase):
     price_unit: float
     """Unit price for the product used on the account move (invoice) line."""
 
-    @property
-    def product_id(self) -> int:
-        """The ID for the product charged on the
-        account move (invoice) line.
-        """
-        return self._get_ref_id("product_id")
+    product_id: Annotated[int, util.ModelRef("product_id")]
+    """The ID for the product charged on the
+    account move (invoice) line.
+    """
 
-    @property
-    def product_name(self) -> str:
-        """The name of the product charged on the
-        account move (invoice) line.
-        """
-        return self._get_ref_name("product_id")
+    product_name: Annotated[str, util.ModelRef("product_id")]
+    """The name of the product charged on the
+    account move (invoice) line.
+    """
 
-    @cached_property
-    def product(self) -> product_module.Product:
-        """The product charged on the
-        account move (invoice) line.
+    product: Annotated[product_module.Product, util.ModelRef("product_id")]
+    """The product charged on the
+    account move (invoice) line.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.products.get(self.product_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     quantity: float
     """Quantity of product charged on the account move (invoice) line."""
 
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "currency": "currency_id",
-        "os_project_id": "os_project",
-        "product": "product_id",
-    }
 
-
-class AccountMoveLineManager(record.RecordManagerBase[AccountMoveLine]):
+class AccountMoveLineManager(
+    record_manager_base.RecordManagerBase[AccountMoveLine],
+):
     env_name = "account.move.line"
     record_class = AccountMoveLine
+
+
+# NOTE(callumdickinson): Import here to make sure circular imports work.
+from . import account_move  # noqa: E402

@@ -15,70 +15,57 @@
 
 from __future__ import annotations
 
-from functools import cached_property
-from typing import TYPE_CHECKING
+from typing_extensions import Annotated
 
-from . import record
+from . import (
+    company as company_module,
+    record_base,
+    record_manager_base,
+    util,
+)
 
-if TYPE_CHECKING:
-    from . import company as company_module, partner as partner_module
 
-
-class User(record.RecordBase):
+class User(record_base.RecordBase):
     active: bool
     """Whether or not this user is active."""
 
     active_partner: bool
     """Whether or not the partner this user is associated with is active."""
 
-    @property
-    def company_id(self) -> int:
-        """The ID for the default company this user is logged in as."""
-        return self._get_ref_id("company_id")
+    company_id: Annotated[int, util.ModelRef("company_id")]
+    """The ID for the default company this user is logged in as."""
 
-    @property
-    def company_name(self) -> str:
-        """The name of the default company this user is logged in as."""
-        return self._get_ref_name("company_id")
+    company_name: Annotated[str, util.ModelRef("company_id")]
+    """The name of the default company this user is logged in as."""
 
-    @cached_property
-    def company(self) -> company_module.Company:
-        """The default company this user is logged in as.
+    company: Annotated[company_module.Company, util.ModelRef("company_id")]
+    """The default company this user is logged in as.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.companies.get(self.company_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     name: str
     """User name."""
 
-    @property
-    def partner_id(self) -> int:
-        """The ID for the partner that this user is associated with."""
-        return self._get_ref_id("partner_id")
+    partner_id: Annotated[int, util.ModelRef("partner_id")]
+    """The ID for the partner that this user is associated with."""
 
-    @property
-    def partner_name(self) -> str:
-        """The name of the partner that this user is associated with."""
-        return self._get_ref_name("partner_id")
+    partner_name: Annotated[str, util.ModelRef("partner_id")]
+    """The name of the partner that this user is associated with."""
 
-    @cached_property
-    def partner(self) -> partner_module.Partner:
-        """The partner that this user is associated with.
+    partner: Annotated[partner_module.Partner, util.ModelRef("partner_id")]
+    """The partner that this user is associated with.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.partners.get(self.partner_id)
-
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "company": "company_id",
-        "partner": "partner_id",
-    }
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
 
-class UserManager(record.RecordManagerBase[User]):
+class UserManager(record_manager_base.RecordManagerBase[User]):
     env_name = "res.users"
     record_class = User
+
+
+# NOTE(callumdickinson): Import here to make sure circular imports work.
+from . import partner as partner_module  # noqa: E402

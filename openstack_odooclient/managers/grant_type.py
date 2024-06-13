@@ -18,13 +18,13 @@ from __future__ import annotations
 from functools import cached_property
 from typing import TYPE_CHECKING, List
 
-from . import record
+from . import record_base, record_manager_name_base
 
 if TYPE_CHECKING:
     from . import grant, product as product_module, product_category
 
 
-class GrantType(record.RecordBase):
+class GrantType(record_base.RecordBase):
     @property
     def grant_ids(self) -> List[int]:
         """A list of IDs for the grants which are of this grant type."""
@@ -125,6 +125,8 @@ class GrantType(record.RecordBase):
     }
 
 
-class GrantTypeManager(record.NamedRecordManagerBase[GrantType]):
+class GrantTypeManager(
+    record_manager_name_base.NamedRecordManagerBase[GrantType],
+):
     env_name = "openstack.grant.type"
     record_class = GrantType

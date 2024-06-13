@@ -18,10 +18,10 @@ from __future__ import annotations
 from functools import cached_property
 from typing import List, Literal, Optional, Union
 
-from . import record
+from . import record_base, record_manager_name_base
 
 
-class ProductCategory(record.RecordBase):
+class ProductCategory(record_base.RecordBase):
     @property
     def child_ids(self) -> List[int]:
         """A list of IDs for the child categories."""
@@ -85,6 +85,8 @@ class ProductCategory(record.RecordBase):
     }
 
 
-class ProductCategoryManager(record.NamedRecordManagerBase[ProductCategory]):
+class ProductCategoryManager(
+    record_manager_name_base.NamedRecordManagerBase[ProductCategory],
+):
     env_name = "product.category"
     record_class = ProductCategory

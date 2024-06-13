@@ -16,62 +16,63 @@
 from __future__ import annotations
 
 from datetime import date
-from functools import cached_property
-from typing import TYPE_CHECKING, Any, List, Literal, Mapping, Optional, Union
+from typing import Any, List, Literal, Mapping, Optional, Union
 
-from . import record
+from typing_extensions import Annotated
 
-if TYPE_CHECKING:
-    from . import (
-        account_move_line,
-        currency as currency_module,
-        project,
-    )
+from . import (
+    currency as currency_module,
+    project,
+    record_base,
+    record_manager_name_base,
+    util,
+)
 
 
-class AccountMove(record.RecordBase):
+class AccountMove(record_base.RecordBase):
     amount_total: float
     """Total (taxed) amount charged on the account move (invoice)."""
 
     amount_untaxed: float
     """Total (untaxed) amount charged on the account move (invoice)."""
 
-    @property
-    def currency_id(self) -> int:
-        """The ID for the currency used in this account move (invoice)."""
-        return self._get_ref_id("currency_id")
+    currency_id: Annotated[int, util.ModelRef("currency_id")]
+    """The ID for the currency used in this account move (invoice)."""
 
-    @property
-    def currency_name(self) -> str:
-        """The name of the currency used in this account move (invoice)."""
-        return self._get_ref_name("currency_id")
+    currency_name: Annotated[str, util.ModelRef("currency_id")]
+    """The name of the currency used in this account move (invoice)."""
 
-    @cached_property
-    def currency(self) -> currency_module.Currency:
-        """The currency used in this account move (invoice).
+    currency: Annotated[
+        currency_module.Currency,
+        util.ModelRef("currency_id"),
+    ]
+    """The currency used in this account move (invoice).
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.currencies.get(self.currency_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     invoice_date: date
     """Date associated with the account move (invoice)."""
 
-    invoice_line_ids: List[int]
+    invoice_line_ids: Annotated[
+        List[int],
+        record_base.ModelRef("invoice_line_ids"),
+    ]
     """The list of the IDs for the account move (invoice) lines
     that comprise this account move (invoice).
     """
 
-    @cached_property
-    def invoice_lines(self) -> List[account_move_line.AccountMoveLine]:
-        """A list of account move (invoice) lines
-        that comprise this account move (invoice).
+    invoice_lines: Annotated[
+        List[account_move_line.AccountMoveLine],
+        record_base.ModelRef("invoice_line_ids"),
+    ]
+    """A list of account move (invoice) lines
+    that comprise this account move (invoice).
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.account_move_lines.list(self.invoice_line_ids)
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
     is_move_sent: bool
     """Whether or not the account move (invoice) has been sent."""
@@ -101,34 +102,26 @@ class AccountMove(record.RecordBase):
     name: Union[str, Literal[False]]
     """Name assigned to the account move (invoice), if posted."""
 
-    @property
-    def os_project_id(self) -> Optional[int]:
-        """The ID of the OpenStack project this account move (invoice)
-        was generated for, if this is an invoice for OpenStack project usage.
-        """
-        return self._get_ref_id("os_project", optional=True)
+    os_project_id: Annotated[Optional[int], util.ModelRef("os_project")]
+    """The ID of the OpenStack project this account move (invoice)
+    was generated for, if this is an invoice for OpenStack project usage.
+    """
 
-    @property
-    def os_project_name(self) -> Optional[str]:
-        """The name of the OpenStack project this account move (invoice)
-        was generated for, if this is an invoice for OpenStack project usage.
-        """
-        return self._get_ref_name("os_project", optional=True)
+    os_project_name: Annotated[Optional[str], util.ModelRef("os_project")]
+    """The name of the OpenStack project this account move (invoice)
+    was generated for, if this is an invoice for OpenStack project usage.
+    """
 
-    @cached_property
-    def os_project(self) -> Optional[project.Project]:
-        """The OpenStack project this account move (invoice)
-        was generated for, if this is an invoice for OpenStack project usage.
+    os_project: Annotated[
+        Optional[project.Project],
+        util.ModelRef("os_project"),
+    ]
+    """The OpenStack project this account move (invoice)
+    was generated for, if this is an invoice for OpenStack project usage.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.os_project_id
-        return (
-            self._client.projects.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     payment_state: Literal[
         "not_paid",
@@ -171,14 +164,6 @@ class AccountMove(record.RecordBase):
         },
     }
 
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "attention": "attention_id",
-        "currency": "currency_id",
-        "invoice_lines": "invoice_line_ids",
-        "os_project_id": "os_project",
-    }
-
     def action_post(self) -> None:
         """Change a draft account move (invoice) into "posted" state."""
         self._env.action_post(self.id)
@@ -198,6 +183,12 @@ class AccountMove(record.RecordBase):
         )
 
 
-class AccountMoveManager(record.NamedRecordManagerBase[AccountMove]):
+class AccountMoveManager(
+    record_manager_name_base.NamedRecordManagerBase[AccountMove],
+):
     env_name = "account.move"
     record_class = AccountMove
+
+
+# NOTE(callumdickinson): Import here to make sure circular imports work.
+from . import account_move_line  # noqa: E402

@@ -19,7 +19,7 @@ from datetime import date
 from functools import cached_property
 from typing import TYPE_CHECKING, List, Literal, Optional, Union
 
-from . import record
+from . import record_base, record_manager_name_base
 
 if TYPE_CHECKING:
     from . import (
@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     )
 
 
-class VoucherCode(record.RecordBase):
+class VoucherCode(record_base.RecordBase):
     claimed: bool
     """Whether or not this voucher code has been claimed."""
 
@@ -224,6 +224,8 @@ class VoucherCode(record.RecordBase):
     }
 
 
-class VoucherCodeManager(record.NamedRecordManagerBase[VoucherCode]):
+class VoucherCodeManager(
+    record_manager_name_base.NamedRecordManagerBase[VoucherCode],
+):
     env_name = "openstack.voucher_code"
     record_class = VoucherCode

@@ -28,13 +28,13 @@ from typing import (
     overload,
 )
 
-from . import record
+from . import record_base, record_manager_unique_field_base
 
 if TYPE_CHECKING:
     from . import company, product_category, uom as uom_module
 
 
-class Product(record.RecordBase):
+class Product(record_base.RecordBase):
     @property
     def categ_id(self) -> int:
         """The ID for the category this product is under."""
@@ -127,7 +127,12 @@ class Product(record.RecordBase):
     }
 
 
-class ProductManager(record.RecordManagerWithUniqueFieldBase[Product, str]):
+class ProductManager(
+    record_manager_unique_field_base.RecordManagerWithUniqueFieldBase[
+        Product,
+        str,
+    ],
+):
     env_name = "product.product"
     record_class = Product
 

@@ -19,7 +19,7 @@ from datetime import date, datetime
 from functools import cached_property
 from typing import TYPE_CHECKING, List, Literal, Optional, Union
 
-from . import record
+from . import record_base, record_manager_name_base
 
 if TYPE_CHECKING:
     from . import (
@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     )
 
 
-class SaleOrder(record.RecordBase):
+class SaleOrder(record_base.RecordBase):
     amount_untaxed: float
     """The untaxed total cost of the sale order."""
 
@@ -194,7 +194,9 @@ class SaleOrder(record.RecordBase):
         self._client.sale_orders.create_invoices(self)
 
 
-class SaleOrderManager(record.NamedRecordManagerBase[SaleOrder]):
+class SaleOrderManager(
+    record_manager_name_base.NamedRecordManagerBase[SaleOrder],
+):
     env_name = "sale.order"
     record_class = SaleOrder
 

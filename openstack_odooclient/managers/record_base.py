@@ -18,7 +18,6 @@ from __future__ import annotations
 import copy
 
 from datetime import datetime
-from functools import cached_property
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -26,20 +25,23 @@ from typing import (
     Literal,
     Optional,
     Sequence,
-    get_type_hints,
+    Type,
+    Union,
+    get_args as get_type_args,
+    get_origin as get_type_origin,
     overload,
 )
 
-from odoorpc import ODOO  # type: ignore[import]
-from odoorpc.env import Environment  # type: ignore[import]
-from typing_extensions import Self
+from typing_extensions import Annotated, Self, get_type_hints
 
-from .util import decode_value
+from .util import FieldAlias, ModelRef, decode_value, is_subclass
 
 if TYPE_CHECKING:
-    from ... import client
-    from .. import partner
-    from . import manager_base
+    from odoorpc import ODOO  # type: ignore[import]
+    from odoorpc.env import Environment  # type: ignore[import]
+
+    from .. import client
+    from . import record_manager_base
 
 
 class RecordBase:
@@ -49,46 +51,34 @@ class RecordBase:
     create_date: datetime
     """The time the record was created."""
 
-    @property
-    def create_uid(self) -> int:
-        """The ID of the partner that created this record."""
-        return self._get_ref_id("create_uid")
+    create_uid: Annotated[int, ModelRef("create_uid")]
+    """The ID of the user that created this record."""
 
-    @property
-    def create_name(self) -> str:
-        """The name of the partner that created this record."""
-        return self._get_ref_name("create_uid")
+    create_name: Annotated[str, ModelRef("create_uid")]
+    """The name of the user that created this record."""
 
-    @cached_property
-    def create_user(self) -> partner.Partner:
-        """The partner that created this record.
+    create_user: Annotated[user.User, ModelRef("create_uid")]
+    """The user that created this record.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.partners.get(self.create_uid)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     write_date: datetime
     """The time the record was last modified."""
 
-    @property
-    def write_uid(self) -> int:
-        """The ID of the partner that last modified this record."""
-        return self._get_ref_id("write_uid")
+    write_uid: Annotated[int, ModelRef("write_uid")]
+    """The ID for the user that last modified this record."""
 
-    @property
-    def write_name(self) -> str:
-        """The name of the partner that modified this record."""
-        return self._get_ref_name("write_uid")
+    write_name: Annotated[str, ModelRef("write_uid")]
+    """The name of the user that last modified this record."""
 
-    @cached_property
-    def write_user(self) -> partner.Partner:
-        """The partner that last modified this record.
+    write_user: Annotated[user.User, ModelRef("create_uid")]
+    """The user that last modified this record.
 
-        This fetches a full Partner object from Odoo once,
-        and caches it for subsequence access.
-        """
-        return self._client.partners.get(self.write_uid)
+    This fetches the full record from Odoo once,
+    and caches it for subsequence access.
+    """
 
     _field_mapping: Dict[Optional[str], Dict[str, str]] = {}
     """A dictionary structure mapping field names in the local class
@@ -103,25 +93,10 @@ class RecordBase:
     to their Odoo equivalent.
     """
 
-    _alias_mapping: Dict[str, str] = {}
-    """A dictionary structure mapping aliases
-    (normally defined in the record class) to the corresponding field name
-    in Odoo.
-
-    This is primarily used to define aliases for search filtering purposes,
-    to allow either e.g. ``write_uid`` or ``write_user`` to be specified,
-    instead of just ``write_uid``, when using the ``search`` method.
-    """
-
-    _base_alias_mapping = {
-        "create_user": "create_uid",
-        "write_user": "write_uid",
-    }
-
     def __init__(
         self,
         client: client.Client,
-        manager: manager_base.RecordManagerBase,
+        manager: record_manager_base.RecordManagerBase,
         record: Dict[str, Any],
         fields: Optional[Sequence[str]],
     ) -> None:
@@ -227,10 +202,11 @@ class RecordBase:
 
     @classmethod
     def _resolve_alias(cls, alias: str) -> str:
-        return cls._alias_mapping.get(
-            alias,
-            cls._base_alias_mapping.get(alias, alias),
-        )
+        return alias
+        # return cls._alias_mapping.get(
+        #     alias,
+        #     cls._base_alias_mapping.get(alias, alias),
+        # )
 
     @overload
     def _get_ref_id(
@@ -301,19 +277,115 @@ class RecordBase:
         # return the cached value.
         if name in self._values:
             return self._values[name]
-        value = self._get_field(name)
-        # NOTE(callumdickinson): Use the type annotation to coerce
+        # NOTE(callumdickinson): Use the type hint to coerce
         # the field value returned in the record dict into the expected type.
-        # If no annotation was found for the field, cache the value
-        # unmodified.
-        annotations = get_type_hints(type(self))
-        self._values[name] = (
-            decode_value(annotations[name], value)
-            if name in annotations
-            else value
-        )
-        # Return the now-cached value.
+        type_hints = get_type_hints(type(self), include_extras=True)
+        # First, check if the field has a type hint defined at all.
+        # If not, just cache the value as is and return it.
+        if name not in type_hints:
+            self._values[name] = self._get_field(name)
+            return self._values[name]
+        # We know we have a type hint to decode for the field.
+        type_hint = type_hints[name]
+        # Check if the field is annotated.
+        # There are special code paths for handling fields
+        # with specific annotations added to them.
+        if get_type_origin(type_hint) is Annotated:
+            type_args = get_type_args(type_hint)
+            attr_type: Type[Any] = type_args[0]
+            annotations = type_args[1:]
+            if len(annotations) == 1:
+                annotation = annotations[0]
+                # If this field is a field alias,
+                # recursively fetch the value for the target field.
+                if isinstance(annotation, FieldAlias):
+                    return getattr(self, annotation.field)
+                # If this field is a model ref, resolve the model ref
+                # and return the intended value.
+                if isinstance(annotation, ModelRef):
+                    self._values[name] = self._getattr_model_ref(
+                        attr_type=attr_type,
+                        model_ref=annotation,
+                    )
+                    return self._values[name]
+                raise ValueError(
+                    (
+                        f"Unsupported annotation for field '{name}': "
+                        f"{annotation}"
+                    ),
+                )
+        # Base case: Decode the value according to the field's type hint,
+        # cache the value, and return it.
+        self._values[name] = decode_value(type_hint, self._get_field(name))
         return self._values[name]
+
+    def _getattr_model_ref(
+        self,
+        attr_type: Type[Any],
+        model_ref: ModelRef,
+    ) -> Any:
+        field_value = self._record[self._get_remote_field(model_ref.field)]
+        # If the expected attribute type is a list, then process the model ref
+        # as a list of model IDs or objects.
+        if get_type_origin(attr_type) is list:
+            value_type = get_type_args(attr_type)[0]
+            if is_subclass(value_type, RecordBase):
+                return self._client._record_manager_mapping[value_type].list(
+                    field_value,
+                )
+            if value_type is int:
+                return field_value
+            raise ValueError(
+                (
+                    "Unsupported field value typefor model ref list: "
+                    f"{value_type}"
+                ),
+            )
+        # The following is for decoding a singular model ref value.
+        # Check if the model ref is optional, and if it is,
+        # return the desired value for when the value is empty.
+        if get_type_origin(attr_type) is Union:
+            unsupported_union = (
+                "Only unions of the format Optional[T], "
+                "Union[T, type(None)] or Union[T, Literal[False]] "
+                "are supported for singular model refs, "
+                f"found type hint: {attr_type}"
+            )
+            union_types = set(get_type_args(attr_type))
+            if len(union_types) > 2:  # noqa: PLR2004
+                raise ValueError(unsupported_union)
+            if type(None) in union_types:
+                union_types.remove(type(None))
+                if not field_value:
+                    return None
+            elif Literal[False] in union_types:
+                union_types.remove(Literal[False])
+                if not field_value:
+                    return False
+            if len(union_types) != 1:
+                raise ValueError(unsupported_union)
+            value_type = union_types.pop()
+        else:
+            value_type = attr_type
+        # The model ref is either required, or is optional but a value
+        # was found. Determine the appropriate value return type,
+        # and generate the value.
+        record_id: int = field_value[0]
+        record_name: str = field_value[1]
+        if value_type is int:
+            return record_id
+        if value_type is str:
+            return record_name
+        if is_subclass(value_type, RecordBase):
+            return self._client._record_manager_mapping[value_type].get(
+                record_id,
+            )
+        raise ValueError(
+            (
+                "Unsupported field value type for singular model ref: "
+                f"{value_type}"
+            ),
+        )
 
     def __str__(self) -> str:
         return (
@@ -325,3 +397,7 @@ class RecordBase:
 
     def __repr__(self) -> str:
         return str(self)
+
+
+# NOTE(callumdickinson): Import here to avoid circular imports.
+from . import user  # noqa: E402

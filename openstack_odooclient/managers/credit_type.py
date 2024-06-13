@@ -18,13 +18,13 @@ from __future__ import annotations
 from functools import cached_property
 from typing import TYPE_CHECKING, List
 
-from . import record
+from . import record_base, record_manager_name_base
 
 if TYPE_CHECKING:
     from . import credit, product as product_module, product_category
 
 
-class CreditType(record.RecordBase):
+class CreditType(record_base.RecordBase):
     @property
     def credit_ids(self) -> List[int]:
         """A list of IDs for the credits which are of this credit type."""
@@ -123,6 +123,8 @@ class CreditType(record.RecordBase):
     }
 
 
-class CreditTypeManager(record.NamedRecordManagerBase[CreditType]):
+class CreditTypeManager(
+    record_manager_name_base.NamedRecordManagerBase[CreditType],
+):
     env_name = "openstack.credit.type"
     record_class = CreditType

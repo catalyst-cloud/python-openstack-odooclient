@@ -18,10 +18,14 @@ from __future__ import annotations
 from functools import cached_property
 from typing import List, Optional, Union
 
-from . import customer_group as customer_group_module, record
+from . import (
+    customer_group as customer_group_module,
+    record_base,
+    record_manager_base,
+)
 
 
-class VolumeDiscountRange(record.RecordBase):
+class VolumeDiscountRange(record_base.RecordBase):
     @property
     def customer_group_id(self) -> Optional[int]:
         """The ID for the customer group this volume discount range
@@ -78,7 +82,7 @@ class VolumeDiscountRange(record.RecordBase):
 
 
 class VolumeDiscountRangeManager(
-    record.RecordManagerBase[VolumeDiscountRange],
+    record_manager_base.RecordManagerBase[VolumeDiscountRange],
 ):
     env_name = "openstack.volume_discount_range"
     record_class = VolumeDiscountRange

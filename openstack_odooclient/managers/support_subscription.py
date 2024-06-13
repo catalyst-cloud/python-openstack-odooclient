@@ -19,7 +19,7 @@ from datetime import date
 from functools import cached_property
 from typing import TYPE_CHECKING, Literal, Optional
 
-from . import record
+from . import record_base, record_manager_base
 
 if TYPE_CHECKING:
     from . import (
@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     )
 
 
-class SupportSubscription(record.RecordBase):
+class SupportSubscription(record_base.RecordBase):
     billing_type: Literal["paid", "complimentary"]
     """The method of billing for the support subscription.
 
@@ -144,7 +144,7 @@ class SupportSubscription(record.RecordBase):
 
 
 class SupportSubscriptionManager(
-    record.RecordManagerBase[SupportSubscription],
+    record_manager_base.RecordManagerBase[SupportSubscription],
 ):
     env_name = "openstack.support_subscription"
     record_class = SupportSubscription

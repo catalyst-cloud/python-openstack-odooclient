@@ -18,13 +18,13 @@ from __future__ import annotations
 from functools import cached_property
 from typing import TYPE_CHECKING, Literal
 
-from . import record
+from . import record_base, record_manager_name_base
 
 if TYPE_CHECKING:
     from . import company as company_module, tax_group as tax_group_module
 
 
-class Tax(record.RecordBase):
+class Tax(record_base.RecordBase):
     active: bool
     """Whether or not this tax is active (enabled)."""
 
@@ -117,6 +117,6 @@ class Tax(record.RecordBase):
     }
 
 
-class TaxManager(record.NamedRecordManagerBase[Tax]):
+class TaxManager(record_manager_name_base.NamedRecordManagerBase[Tax]):
     env_name = "account.tax"
     record_class = Tax

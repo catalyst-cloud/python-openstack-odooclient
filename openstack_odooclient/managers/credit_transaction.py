@@ -18,13 +18,13 @@ from __future__ import annotations
 from functools import cached_property
 from typing import TYPE_CHECKING
 
-from . import record
+from . import record_base, record_manager_base
 
 if TYPE_CHECKING:
     from . import credit as credit_module
 
 
-class CreditTransaction(record.RecordBase):
+class CreditTransaction(record_base.RecordBase):
     @property
     def credit_id(self) -> int:
         """The ID of the credit this transaction was made against."""
@@ -56,6 +56,8 @@ class CreditTransaction(record.RecordBase):
     }
 
 
-class CreditTransactionManager(record.RecordManagerBase[CreditTransaction]):
+class CreditTransactionManager(
+    record_manager_base.RecordManagerBase[CreditTransaction],
+):
     env_name = "openstack.credit.transaction"
     record_class = CreditTransaction

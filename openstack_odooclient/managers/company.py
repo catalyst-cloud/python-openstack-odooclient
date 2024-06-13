@@ -15,94 +15,71 @@
 
 from __future__ import annotations
 
-from functools import cached_property
-from typing import TYPE_CHECKING, List, Literal, Optional, Union
+from typing import List, Literal, Optional, Union
 
-from . import record
+from typing_extensions import Annotated
 
-if TYPE_CHECKING:
-    from . import partner as partner_module
+from . import record_base, record_manager_name_base, util
 
 
-class Company(record.RecordBase):
+class Company(record_base.RecordBase):
     active: bool
     """Whether or not this company is active (enabled)."""
 
-    child_ids: List[int]
+    child_ids: Annotated[List[int], util.ModelRef("child_ids")]
     """A list of IDs for the child companies."""
 
-    @cached_property
-    def children(self) -> List[Company]:
-        """The list of child companies.
+    children: Annotated[List[Company], util.ModelRef("child_ids")]
+    """The list of child companies.
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.companies.list(self.child_ids)
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
     name: str
     """Company name, set from the partner name."""
 
-    @property
-    def parent_id(self) -> Optional[int]:
-        """The ID for the parent company, if this company
-        is the child of another company.
-        """
-        return self._get_ref_id("parent_id", optional=True)
+    parent_id: Annotated[Optional[int], util.ModelRef("parent_id")]
+    """The ID for the parent company, if this company
+    is the child of another company.
+    """
 
-    @property
-    def parent_name(self) -> Optional[str]:
-        """The name of the parent company, if this company
-        is the child of another company.
-        """
-        return self._get_ref_name("parent_id", optional=True)
+    parent_name: Annotated[Optional[str], util.ModelRef("parent_id")]
+    """The name of the parent company, if this company
+    is the child of another company.
+    """
 
-    @cached_property
-    def parent(self) -> Optional[Company]:
-        """The parent company, if this company
-        is the child of another company.
+    parent: Annotated[Optional[Company], util.ModelRef("parent_id")]
+    """The parent company, if this company
+    is the child of another company.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.parent_id
-        return (
-            self._client.companies.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     parent_path: Union[str, Literal[False]]
     """The path of the parent company, if there is a parent."""
 
-    @property
-    def partner_id(self) -> int:
-        """The ID for the partner for the company."""
-        return self._get_ref_id("partner_id")
+    partner_id: Annotated[int, util.ModelRef("partner_id")]
+    """The ID for the partner for the company."""
 
-    @property
-    def partner_name(self) -> str:
-        """The name of the partner for the company."""
-        return self._get_ref_name("partner_id")
+    partner_name: Annotated[str, util.ModelRef("partner_id")]
+    """The name of the partner for the company."""
 
-    @cached_property
-    def partner(self) -> partner_module.Partner:
-        """The partner for the company.
+    partner: Annotated[partner_module.Partner, util.ModelRef("partner_id")]
+    """The partner for the company.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.partners.get(self.partner_id)
-
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "children": "child_ids",
-        "company": "company_id",
-        "parent": "parent_id",
-        "partner": "partner_id",
-    }
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
 
-class CompanyManager(record.NamedRecordManagerBase[Company]):
+class CompanyManager(
+    record_manager_name_base.NamedRecordManagerBase[Company],
+):
     env_name = "res.company"
     record_class = Company
+
+
+# NOTE(callumdickinson): Import here to make sure circular imports work.
+from . import partner as partner_module  # noqa: E402

@@ -53,6 +53,33 @@ active: bool
 
 Whether or not this partner is active (enabled).
 
+### `company_id`
+
+```python
+company_id: int
+```
+
+The ID for the [company](company.md) this partner is owned by.
+
+### `company_name`
+
+```python
+company_name: str
+```
+
+The name of the [company](company.md) this partner is owned by.
+
+### `company`
+
+```python
+company: Company
+```
+
+The [company](company.md) this partner is owned by.
+
+This fetches the full record from Odoo once,
+and caches it for subsequent accesses.
+
 ### `email`
 
 ```python

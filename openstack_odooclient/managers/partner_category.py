@@ -18,13 +18,13 @@ from __future__ import annotations
 from functools import cached_property
 from typing import TYPE_CHECKING, List, Literal, Optional, Union
 
-from . import record
+from . import record_base, record_manager_name_base
 
 if TYPE_CHECKING:
     from . import partner
 
 
-class PartnerCategory(record.RecordBase):
+class PartnerCategory(record_base.RecordBase):
     active: bool
     """Whether or not the partner category is active (enabled)."""
 
@@ -110,6 +110,8 @@ class PartnerCategory(record.RecordBase):
     }
 
 
-class PartnerCategoryManager(record.NamedRecordManagerBase[PartnerCategory]):
+class PartnerCategoryManager(
+    record_manager_name_base.NamedRecordManagerBase[PartnerCategory],
+):
     env_name = "res.partner.category"
     record_class = PartnerCategory

@@ -19,7 +19,7 @@ from datetime import date
 from functools import cached_property
 from typing import TYPE_CHECKING, Optional
 
-from . import record
+from . import record_base, record_manager_base
 
 if TYPE_CHECKING:
     from . import (
@@ -28,7 +28,7 @@ if TYPE_CHECKING:
     )
 
 
-class Grant(record.RecordBase):
+class Grant(record_base.RecordBase):
     expiry_date: date
     """The date the grant expires."""
 
@@ -96,6 +96,6 @@ class Grant(record.RecordBase):
     }
 
 
-class GrantManager(record.RecordManagerBase[Grant]):
+class GrantManager(record_manager_base.RecordManagerBase[Grant]):
     env_name = "openstack.grant"
     record_class = Grant

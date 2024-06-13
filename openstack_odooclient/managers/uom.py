@@ -18,13 +18,13 @@ from __future__ import annotations
 from functools import cached_property
 from typing import TYPE_CHECKING, Literal
 
-from . import record
+from . import record_base, record_manager_base
 
 if TYPE_CHECKING:
     from . import uom_category
 
 
-class Uom(record.RecordBase):
+class Uom(record_base.RecordBase):
     active: bool
     """Whether or not this Unit of Measure is active (enabled)."""
 
@@ -97,6 +97,6 @@ class Uom(record.RecordBase):
     }
 
 
-class UomManager(record.RecordManagerBase[Uom]):
+class UomManager(record_manager_base.RecordManagerBase[Uom]):
     env_name = "uom.uom"
     record_class = Uom

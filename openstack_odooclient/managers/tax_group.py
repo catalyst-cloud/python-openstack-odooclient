@@ -15,14 +15,16 @@
 
 from __future__ import annotations
 
-from . import record
+from . import record_base, record_manager_name_base
 
 
-class TaxGroup(record.RecordBase):
+class TaxGroup(record_base.RecordBase):
     name: str
     """Tax group name."""
 
 
-class TaxGroupManager(record.NamedRecordManagerBase[TaxGroup]):
+class TaxGroupManager(
+    record_manager_name_base.NamedRecordManagerBase[TaxGroup],
+):
     env_name = "account.tax.group"
     record_class = TaxGroup

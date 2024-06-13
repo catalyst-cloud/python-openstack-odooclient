@@ -18,7 +18,7 @@ from __future__ import annotations
 from functools import cached_property
 from typing import TYPE_CHECKING, List, Literal
 
-from . import record
+from . import record_base, record_manager_name_base
 
 if TYPE_CHECKING:
     from . import (
@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     )
 
 
-class SupportSubscriptionType(record.RecordBase):
+class SupportSubscriptionType(record_base.RecordBase):
     billing_type: Literal["paid", "complimentary"]
     """The type of support subscription."""
 
@@ -95,7 +95,7 @@ class SupportSubscriptionType(record.RecordBase):
 
 
 class SupportSubscriptionTypeManager(
-    record.NamedRecordManagerBase[SupportSubscriptionType],
+    record_manager_name_base.NamedRecordManagerBase[SupportSubscriptionType],
 ):
     env_name = "openstack.support_subscription.type"
     record_class = SupportSubscriptionType

@@ -19,13 +19,13 @@ from datetime import date
 from functools import cached_property
 from typing import TYPE_CHECKING, Literal, Union
 
-from . import record
+from . import record_base, record_manager_base
 
 if TYPE_CHECKING:
     from . import partner as partner_module
 
 
-class Trial(record.RecordBase):
+class Trial(record_base.RecordBase):
     account_suspended_date: Union[date, Literal[False]]
     """The date the account was suspended, following the end of the trial."""
 
@@ -68,6 +68,6 @@ class Trial(record.RecordBase):
     }
 
 
-class TrialManager(record.RecordManagerBase[Trial]):
+class TrialManager(record_manager_base.RecordManagerBase[Trial]):
     env_name = "openstack.trial"
     record_class = Trial

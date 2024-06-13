@@ -18,13 +18,13 @@ from __future__ import annotations
 from functools import cached_property
 from typing import TYPE_CHECKING, Literal, Optional
 
-from . import record
+from . import record_base, record_manager_base
 
 if TYPE_CHECKING:
     from . import partner as partner_module, project as project_module
 
 
-class ProjectContact(record.RecordBase):
+class ProjectContact(record_base.RecordBase):
     contact_type: Literal[
         "primary",
         "billing",
@@ -87,6 +87,8 @@ class ProjectContact(record.RecordBase):
     }
 
 
-class ProjectContactManager(record.RecordManagerBase[ProjectContact]):
+class ProjectContactManager(
+    record_manager_base.RecordManagerBase[ProjectContact],
+):
     env_name = "openstack.project_contact"
     record_class = ProjectContact

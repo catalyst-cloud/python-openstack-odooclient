@@ -18,13 +18,13 @@ from __future__ import annotations
 from functools import cached_property
 from typing import TYPE_CHECKING, Literal, Optional, Union
 
-from . import product as product_module, record
+from . import product as product_module, record_base, record_manager_name_base
 
 if TYPE_CHECKING:
     from . import company as company_module, currency as currency_module
 
 
-class Pricelist(record.RecordBase):
+class Pricelist(record_base.RecordBase):
     active: bool
     """Whether or not the pricelist is active."""
 
@@ -110,7 +110,9 @@ class Pricelist(record.RecordBase):
         )
 
 
-class PricelistManager(record.NamedRecordManagerBase[Pricelist]):
+class PricelistManager(
+    record_manager_name_base.NamedRecordManagerBase[Pricelist],
+):
     env_name = "product.pricelist"
     record_class = Pricelist
 

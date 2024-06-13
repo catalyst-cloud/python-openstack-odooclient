@@ -18,13 +18,13 @@ from __future__ import annotations
 from functools import cached_property
 from typing import TYPE_CHECKING
 
-from . import record
+from . import record_base, record_manager_name_base
 
 if TYPE_CHECKING:
     from . import product
 
 
-class ResellerTier(record.RecordBase):
+class ResellerTier(record_base.RecordBase):
     discount_percent: float
     """The maximum discount percentage for this reseller tier (0-100)."""
 
@@ -92,6 +92,8 @@ class ResellerTier(record.RecordBase):
     }
 
 
-class ResellerTierManager(record.NamedRecordManagerBase[ResellerTier]):
+class ResellerTierManager(
+    record_manager_name_base.NamedRecordManagerBase[ResellerTier],
+):
     env_name = "openstack.reseller.tier"
     record_class = ResellerTier

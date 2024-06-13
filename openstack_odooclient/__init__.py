@@ -38,6 +38,13 @@ from .managers.product import Product
 from .managers.product_category import ProductCategory
 from .managers.project import Project
 from .managers.project_contact import ProjectContact
+from .managers.record_base import RecordBase
+from .managers.record_manager_base import RecordManagerBase
+from .managers.record_manager_code_base import CodedRecordManagerBase
+from .managers.record_manager_name_base import NamedRecordManagerBase
+from .managers.record_manager_unique_field_base import (
+    RecordManagerWithUniqueFieldBase,
+)
 from .managers.referral_code import ReferralCode
 from .managers.reseller import Reseller
 from .managers.reseller_tier import ResellerTier
@@ -52,6 +59,7 @@ from .managers.trial import Trial
 from .managers.uom import Uom
 from .managers.uom_category import UomCategory
 from .managers.user import User
+from .managers.util import FieldAlias, ModelRef
 from .managers.volume_discount_range import VolumeDiscountRange
 from .managers.voucher_code import VoucherCode
 
@@ -77,6 +85,11 @@ __all__ = [
     "ProductCategory",
     "Project",
     "ProjectContact",
+    "RecordBase",
+    "RecordManagerBase",
+    "CodedRecordManagerBase",
+    "NamedRecordManagerBase",
+    "RecordManagerWithUniqueFieldBase",
     "ReferralCode",
     "Reseller",
     "ResellerTier",
@@ -91,6 +104,8 @@ __all__ = [
     "Uom",
     "UomCategory",
     "User",
+    "FieldAlias",
+    "ModelRef",
     "VolumeDiscountRange",
     "VoucherCode",
 ]

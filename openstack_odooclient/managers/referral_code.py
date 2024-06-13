@@ -18,13 +18,13 @@ from __future__ import annotations
 from functools import cached_property
 from typing import TYPE_CHECKING, List
 
-from . import record
+from . import record_base, record_manager_code_base
 
 if TYPE_CHECKING:
     from . import credit_type, partner
 
 
-class ReferralCode(record.RecordBase):
+class ReferralCode(record_base.RecordBase):
     allowed_uses: int
     """The number of allowed uses of this referral code.
 
@@ -116,6 +116,8 @@ class ReferralCode(record.RecordBase):
     }
 
 
-class ReferralCodeManager(record.CodedRecordManagerBase[ReferralCode]):
+class ReferralCodeManager(
+    record_manager_code_base.CodedRecordManagerBase[ReferralCode],
+):
     env_name = "openstack.referral_code"
     record_class = ReferralCode

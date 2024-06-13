@@ -18,13 +18,13 @@ from __future__ import annotations
 from functools import cached_property
 from typing import TYPE_CHECKING, Optional
 
-from . import record
+from . import record_base, record_manager_base
 
 if TYPE_CHECKING:
     from . import partner as partner_module, project, reseller_tier
 
 
-class Reseller(record.RecordBase):
+class Reseller(record_base.RecordBase):
     alternative_billing_url: Optional[str]
     """The URL to the cloud billing page for the reseller, if available."""
 
@@ -113,6 +113,6 @@ class Reseller(record.RecordBase):
     }
 
 
-class ResellerManager(record.RecordManagerBase[Reseller]):
+class ResellerManager(record_manager_base.RecordManagerBase[Reseller]):
     env_name = "openstack.reseller"
     record_class = Reseller

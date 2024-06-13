@@ -19,13 +19,13 @@ from datetime import date
 from functools import cached_property
 from typing import TYPE_CHECKING, Optional
 
-from . import record
+from . import record_base, record_manager_base
 
 if TYPE_CHECKING:
     from . import partner as partner_module, project as project_module
 
 
-class TermDiscount(record.RecordBase):
+class TermDiscount(record_base.RecordBase):
     discount_percent: float
     """The maximum discount percentage for this term discount (0-100)."""
 
@@ -135,6 +135,8 @@ class TermDiscount(record.RecordBase):
     }
 
 
-class TermDiscountManager(record.RecordManagerBase[TermDiscount]):
+class TermDiscountManager(
+    record_manager_base.RecordManagerBase[TermDiscount],
+):
     env_name = "openstack.term_discount"
     record_class = TermDiscount
