@@ -27,12 +27,16 @@ from typing import (
     Sequence,
     Type,
     Union,
-    get_args as get_type_args,
-    get_origin as get_type_origin,
     overload,
 )
 
-from typing_extensions import Annotated, Self, get_type_hints
+from typing_extensions import (
+    Annotated,
+    Self,
+    get_args as get_type_args,
+    get_origin as get_type_origin,
+    get_type_hints,
+)
 
 from .util import FieldAlias, ModelRef, decode_value, is_subclass
 

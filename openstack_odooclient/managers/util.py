@@ -24,6 +24,9 @@ from typing import (
     Type,
     TypeVar,
     Union,
+)
+
+from typing_extensions import (
     get_args as get_type_args,
     get_origin as get_type_origin,
 )
