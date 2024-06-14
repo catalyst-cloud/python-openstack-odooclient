@@ -514,11 +514,7 @@ class RecordManagerBase(Generic[Record]):
                                     value_type
                                 ]
                                 remote_values.append(
-                                    (
-                                        0,
-                                        0,
-                                        manager._encode_create_fields(value),
-                                    ),
+                                    (0, 0, manager._encode_create_fields(v)),
                                 )
                             else:
                                 raise ValueError(
