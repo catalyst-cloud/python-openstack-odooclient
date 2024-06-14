@@ -15,9 +15,7 @@
 
 from __future__ import annotations
 
-from functools import cached_property
 from typing import (
-    TYPE_CHECKING,
     Any,
     Dict,
     Iterable,
@@ -28,17 +26,9 @@ from typing import (
     overload,
 )
 
-from . import record_base, record_manager_unique_field_base
+from typing_extensions import Annotated
 
-if TYPE_CHECKING:
-    from . import (
-        credit,
-        grant,
-        partner as partner_module,
-        project_contact,
-        support_subscription as support_subscription_module,
-        term_discount,
-    )
+from . import record_base, record_manager_unique_field_base, util
 
 
 class Project(record_base.RecordBase):
@@ -71,53 +61,36 @@ class Project(record_base.RecordBase):
     set on this Project.
     """
 
-    @property
-    def owner_id(self) -> int:
-        """The ID for the partner that owns this project."""
-        return self._get_ref_id("owner")
+    owner_id: Annotated[int, util.ModelRef("owner")]
+    """The ID for the partner that owns this project."""
 
-    @property
-    def owner_name(self) -> str:
-        """The name of the partner that owns this project."""
-        return self._get_ref_name("owner")
+    owner_name: Annotated[str, util.ModelRef("owner")]
+    """The name of the partner that owns this project."""
 
-    @cached_property
-    def owner(self) -> partner_module.Partner:
-        """The partner that owns this project.
+    owner: Annotated[partner_module.Partner, util.ModelRef("owner")]
+    """The partner that owns this project.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.partners.get(self.owner_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
-    @property
-    def parent_id(self) -> Optional[int]:
-        """The ID for the parent project, if this project
-        is the child of another project.
-        """
-        return self._get_ref_id("parent", optional=True)
+    parent_id: Annotated[Optional[int], util.ModelRef("parent")]
+    """The ID for the parent project, if this project
+    is the child of another project.
+    """
 
-    @property
-    def parent_name(self) -> Optional[str]:
-        """The name of the parent project, if this project
-        is the child of another project.
-        """
-        return self._get_ref_name("parent", optional=True)
+    parent_name: Annotated[Optional[str], util.ModelRef("parent")]
+    """The name of the parent project, if this project
+    is the child of another project.
+    """
 
-    @cached_property
-    def parent(self) -> Optional[Project]:
-        """The parent project, if this project
-        is the child of another project.
+    parent: Annotated[Optional[Project], util.ModelRef("parent")]
+    """The parent project, if this project
+    is the child of another project.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.parent_id
-        return (
-            self._client.projects.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     payment_method: Literal["invoice", "credit_card"]
     """Payment method configured on the project.
@@ -131,47 +104,47 @@ class Project(record_base.RecordBase):
     po_number: Union[str, Literal[False]]
     """The PO number set for this specific Project (if set)."""
 
-    @property
-    def project_contact_ids(self) -> List[int]:
-        """A list of IDs for the contacts for this project."""
-        return self._get_field("project_contacts")
+    project_contact_ids: Annotated[
+        List[int],
+        util.ModelRef("project_contacts"),
+    ]
+    """A list of IDs for the contacts for this project."""
 
-    @cached_property
-    def project_contacts(self) -> List[project_contact.ProjectContact]:
-        """The contacts for this project.
+    project_contacts: Annotated[
+        List[project_contact.ProjectContact],
+        util.ModelRef("project_contacts"),
+    ]
+    """The contacts for this project.
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.project_contacts.list(self.project_contact_ids)
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
-    @property
-    def project_credit_ids(self) -> List[int]:
-        """A list of IDs for the credits that apply to this project."""
-        return self._get_field("project_credits")
+    project_credit_ids: Annotated[List[int], util.ModelRef("project_credits")]
+    """A list of IDs for the credits that apply to this project."""
 
-    @cached_property
-    def project_credits(self) -> List[credit.Credit]:
-        """The credits that apply to this project.
+    project_credits: Annotated[
+        List[credit.Credit],
+        util.ModelRef("project_credits"),
+    ]
+    """The credits that apply to this project.
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.credits.list(self.project_credit_ids)
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
-    @property
-    def project_grant_ids(self) -> List[int]:
-        """A list of IDs for the grants that apply to this project."""
-        return self._get_field("project_grants")
+    project_grant_ids: Annotated[List[int], util.ModelRef("project_grants")]
+    """A list of IDs for the grants that apply to this project."""
 
-    @cached_property
-    def project_grants(self) -> List[grant.Grant]:
-        """The grants that apply to this project.
+    project_grants: Annotated[
+        List[grant.Grant],
+        util.ModelRef("project_grants"),
+    ]
+    """The grants that apply to this project.
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.grants.list(self.project_grant_ids)
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
     stripe_card_id: Union[str, Literal[False]]
     """The card ID used for credit card payments on this project
@@ -181,61 +154,45 @@ class Project(record_base.RecordBase):
     this field will be set to ``False``.
     """
 
-    @property
-    def support_subscription_id(self) -> Optional[int]:
-        """The ID for the support subscription for this project,
-        if the project has one.
-        """
-        return self._get_ref_id("support_subscription", optional=True)
+    support_subscription_id: Annotated[
+        Optional[int],
+        util.ModelRef("support_subscription"),
+    ]
+    """The ID for the support subscription for this project,
+    if the project has one.
+    """
 
-    @property
-    def support_subscription_name(self) -> Optional[str]:
-        """The name of the support subscription for this project,
-        if the project has one.
-        """
-        return self._get_ref_name("support_subscription", optional=True)
+    support_subscription_name: Annotated[
+        Optional[str],
+        util.ModelRef("support_subscription"),
+    ]
+    """The name of the support subscription for this project,
+    if the project has one.
+    """
 
-    @cached_property
-    def support_subscription(
-        self,
-    ) -> Optional[support_subscription_module.SupportSubscription]:
-        """The support subscription for this project,
-        if the project has one.
+    support_subscription: Annotated[
+        Optional[support_subscription_module.SupportSubscription],
+        util.ModelRef("support_subscription"),
+    ]
+    """The support subscription for this project,
+    if the project has one.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.support_subscription_id
-        return (
-            self._client.support_subscriptions.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
-    @property
-    def term_discount_ids(self) -> List[int]:
-        """A list of IDs for the term discounts that apply to this project."""
-        return self._get_field("term_discounts")
+    term_discount_ids: Annotated[List[int], util.ModelRef("term_discounts")]
+    """A list of IDs for the term discounts that apply to this project."""
 
-    @cached_property
-    def term_discounts(self) -> List[term_discount.TermDiscount]:
-        """The term discounts that apply to this project.
+    term_discounts: Annotated[
+        List[term_discount.TermDiscount],
+        util.ModelRef("term_discounts"),
+    ]
+    """The term discounts that apply to this project.
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.term_discounts.list(self.term_discount_ids)
-
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "owner_id": "owner",
-        "parent_id": "parent",
-        "project_contact_ids": "project_contacts",
-        "project_credit_ids": "project_credits",
-        "project_grant_ids": "project_grants",
-        "support_subcription_id": "support_subscription",
-        "term_discount_ids": "term_discounts",
-    }
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
 
 class ProjectManager(
@@ -382,3 +339,14 @@ class ProjectManager(
             as_dict=as_dict,
             optional=optional,
         )
+
+
+# NOTE(callumdickinson): Import here to make sure circular imports work.
+from . import (  # noqa: E402
+    credit,
+    grant,
+    partner as partner_module,
+    project_contact,
+    support_subscription as support_subscription_module,
+    term_discount,
+)

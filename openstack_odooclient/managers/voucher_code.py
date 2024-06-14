@@ -16,19 +16,11 @@
 from __future__ import annotations
 
 from datetime import date
-from functools import cached_property
-from typing import TYPE_CHECKING, List, Literal, Optional, Union
+from typing import List, Literal, Optional, Union
 
-from . import record_base, record_manager_name_base
+from typing_extensions import Annotated
 
-if TYPE_CHECKING:
-    from . import (
-        credit_type as credit_type_module,
-        customer_group as customer_group_module,
-        grant_type as grant_type_module,
-        partner,
-        partner_category,
-    )
+from . import record_base, record_manager_name_base, util
 
 
 class VoucherCode(record_base.RecordBase):
@@ -43,71 +35,61 @@ class VoucherCode(record_base.RecordBase):
     created by the voucher code.
     """
 
-    @property
-    def credit_type_id(self) -> Optional[int]:
-        """The ID of the credit type to use, if a credit is to be
-        created by this voucher code.
-        """
-        return self._get_ref_id("credit_type", optional=True)
+    credit_type_id: Annotated[Optional[int], util.ModelRef("credit_type")]
+    """The ID of the credit type to use, if a credit is to be
+    created by this voucher code.
+    """
 
-    @property
-    def credit_type_name(self) -> Optional[str]:
-        """The name of the credit type to use, if a credit is to be
-        created by this voucher code.
-        """
-        return self._get_ref_name("credit_type", optional=True)
+    credit_type_name: Annotated[Optional[str], util.ModelRef("credit_type")]
+    """The name of the credit type to use, if a credit is to be
+    created by this voucher code.
+    """
 
-    @cached_property
-    def credit_type(self) -> Optional[credit_type_module.CreditType]:
-        """The credit type to use, if a credit is to be
-        created by this voucher code.
+    credit_type: Annotated[
+        Optional[credit_type_module.CreditType],
+        util.ModelRef("credit_type"),
+    ]
+    """The credit type to use, if a credit is to be
+    created by this voucher code.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.credit_type_id
-        return (
-            self._client.credit_types.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     credit_duration: int
     """The duration of the credit, in days, if a credit is to be
     created by the voucher code.
     """
 
-    @property
-    def customer_group_id(self) -> Optional[int]:
-        """The ID of the customer group this voucher code is available to.
+    customer_group_id: Annotated[
+        Optional[int],
+        util.ModelRef("customer_group"),
+    ]
+    """The ID of the customer group this voucher code is available to.
 
-        If not set, the voucher code is available to all customers.
-        """
-        return self._get_ref_id("customer_group", optional=True)
+    If not set, the voucher code is available to all customers.
+    """
 
-    @property
-    def customer_group_name(self) -> Optional[str]:
-        """The name of the customer group this voucher code is available to.
+    customer_group_name: Annotated[
+        Optional[str],
+        util.ModelRef("customer_group"),
+    ]
+    """The name of the customer group this voucher code is available to.
 
-        If not set, the voucher code is available to all customers.
-        """
-        return self._get_ref_name("customer_group", optional=True)
+    If not set, the voucher code is available to all customers.
+    """
 
-    @cached_property
-    def customer_group(self) -> Optional[customer_group_module.CustomerGroup]:
-        """The customer group this voucher code is available to.
+    customer_group: Annotated[
+        Optional[customer_group_module.CustomerGroup],
+        util.ModelRef("customer_group"),
+    ]
+    """The customer group this voucher code is available to.
 
-        If not set, the voucher code is available to all customers.
+    If not set, the voucher code is available to all customers.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.customer_group_id
-        return (
-            self._client.customer_groups.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     expiry_date: date
     """The date the voucher code expires."""
@@ -117,34 +99,26 @@ class VoucherCode(record_base.RecordBase):
     created by the voucher code.
     """
 
-    @property
-    def grant_type_id(self) -> Optional[int]:
-        """The ID of the grant type to use, if a grant is to be
-        created by this voucher code.
-        """
-        return self._get_ref_id("grant_type", optional=True)
+    grant_type_id: Annotated[Optional[int], util.ModelRef("grant_type")]
+    """The ID of the grant type to use, if a grant is to be
+    created by this voucher code.
+    """
 
-    @property
-    def grant_type_name(self) -> Optional[str]:
-        """The name of the grant type to use, if a grant is to be
-        created by this voucher code.
-        """
-        return self._get_ref_name("grant_type", optional=True)
+    grant_type_name: Annotated[Optional[str], util.ModelRef("grant_type")]
+    """The name of the grant type to use, if a grant is to be
+    created by this voucher code.
+    """
 
-    @cached_property
-    def grant_type(self) -> Optional[grant_type_module.GrantType]:
-        """The grant type to use, if a grant is to be
-        created by this voucher code.
+    grant_type: Annotated[
+        Optional[grant_type_module.GrantType],
+        util.ModelRef("grant_type"),
+    ]
+    """The grant type to use, if a grant is to be
+    created by this voucher code.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.grant_type_id
-        return (
-            self._client.grant_types.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     grant_duration: int
     """The duration of the grant, in days, if a grant is to be
@@ -171,57 +145,42 @@ class VoucherCode(record_base.RecordBase):
     If unset, use the default quota size.
     """
 
-    @property
-    def sales_person_id(self) -> Optional[int]:
-        """The ID for the salesperson responsible for this
-        voucher code, if assigned.
-        """
-        return self._get_ref_id("sales_person", optional=True)
+    sales_person_id: Annotated[Optional[int], util.ModelRef("sales_person")]
+    """The ID for the salesperson responsible for this
+    voucher code, if assigned.
+    """
 
-    @property
-    def sales_person_name(self) -> Optional[str]:
-        """The name of the salesperson responsible for this
-        voucher code, if assigned.
-        """
-        return self._get_ref_name("sales_person", optional=True)
+    sales_person_name: Annotated[Optional[str], util.ModelRef("sales_person")]
+    """The name of the salesperson responsible for this
+    voucher code, if assigned.
+    """
 
-    @cached_property
-    def sales_person(self) -> Optional[partner.Partner]:
-        """The salesperson responsible for this
-        voucher code, if assigned.
+    sales_person: Annotated[
+        Optional[partner.Partner],
+        util.ModelRef("sales_person"),
+    ]
+    """The salesperson responsible for this
+    voucher code, if assigned.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.sales_person_id
-        return (
-            self._client.partners.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
-    @property
-    def tag_ids(self) -> List[int]:
-        """A list of IDs for the tags (partner categories) to assign
-        to partners for new accounts that signed up using this voucher code.
-        """
-        return self._get_field("tags")
+    tag_ids: Annotated[List[int], util.ModelRef("tags")]
+    """A list of IDs for the tags (partner categories) to assign
+    to partners for new accounts that signed up using this voucher code.
+    """
 
-    @cached_property
-    def tags(self) -> List[partner_category.PartnerCategory]:
-        """The list of tags (partner categories) to assign
-        to partners for new accounts that signed up using this voucher code.
+    tags: Annotated[
+        List[partner_category.PartnerCategory],
+        util.ModelRef("tags"),
+    ]
+    """The list of tags (partner categories) to assign
+    to partners for new accounts that signed up using this voucher code.
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.partner_categories.list(self.tag_ids)
-
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "sales_person_id": "sales_person",
-        "tag_ids": "tags",
-    }
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
 
 class VoucherCodeManager(
@@ -229,3 +188,13 @@ class VoucherCodeManager(
 ):
     env_name = "openstack.voucher_code"
     record_class = VoucherCode
+
+
+# NOTE(callumdickinson): Import here to avoid circular imports.
+from . import (  # noqa: E402
+    credit_type as credit_type_module,
+    customer_group as customer_group_module,
+    grant_type as grant_type_module,
+    partner,
+    partner_category,
+)

@@ -16,13 +16,11 @@
 from __future__ import annotations
 
 from datetime import date
-from functools import cached_property
-from typing import TYPE_CHECKING, Literal, Union
+from typing import Literal, Union
 
-from . import record_base, record_manager_base
+from typing_extensions import Annotated
 
-if TYPE_CHECKING:
-    from . import partner as partner_module
+from . import record_base, record_manager_base, util
 
 
 class Trial(record_base.RecordBase):
@@ -40,34 +38,27 @@ class Trial(record_base.RecordBase):
     end_date: date
     """The end date of this trial."""
 
-    @property
-    def partner_id(self) -> int:
-        """The ID for the target partner for this trial."""
-        return self._get_ref_id("partner")
+    partner_id: Annotated[int, util.ModelRef("partner")]
+    """The ID for the target partner for this trial."""
 
-    @property
-    def partner_name(self) -> str:
-        """The name of the target partner for this trial."""
-        return self._get_ref_name("partner")
+    partner_name: Annotated[str, util.ModelRef("partner")]
+    """The name of the target partner for this trial."""
 
-    @cached_property
-    def partner(self) -> partner_module.Partner:
-        """The target partner for this trial.
+    partner: Annotated[partner_module.Partner, util.ModelRef("partner")]
+    """The target partner for this trial.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.partners.get(self.partner_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     start_date: date
     """The start date of this trial."""
-
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "partner_id": "partner",
-    }
 
 
 class TrialManager(record_manager_base.RecordManagerBase[Trial]):
     env_name = "openstack.trial"
     record_class = Trial
+
+
+# NOTE(callumdickinson): Import here to avoid circular imports.
+from . import partner as partner_module  # noqa: E402

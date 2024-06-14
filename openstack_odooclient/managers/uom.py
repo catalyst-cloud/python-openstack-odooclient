@@ -15,37 +15,32 @@
 
 from __future__ import annotations
 
-from functools import cached_property
-from typing import TYPE_CHECKING, Literal
+from typing import Literal
 
-from . import record_base, record_manager_base
+from typing_extensions import Annotated
 
-if TYPE_CHECKING:
-    from . import uom_category
+from . import record_base, record_manager_base, util
 
 
 class Uom(record_base.RecordBase):
     active: bool
     """Whether or not this Unit of Measure is active (enabled)."""
 
-    @property
-    def category_id(self) -> int:
-        """The ID for the category this Unit of Measure is classified as."""
-        return self._get_ref_id("category_id")
+    category_id: Annotated[int, util.ModelRef("category_id")]
+    """The ID for the category this Unit of Measure is classified as."""
 
-    @property
-    def category_name(self) -> str:
-        """The name of the category this Unit of Measure is classified as."""
-        return self._get_ref_name("category_id")
+    category_name: Annotated[str, util.ModelRef("category_id")]
+    """The name of the category this Unit of Measure is classified as."""
 
-    @cached_property
-    def category(self) -> uom_category.UomCategory:
-        """The category this Unit of Measure is classified as.
+    category: Annotated[
+        uom_category.UomCategory,
+        util.ModelRef("category_id"),
+    ]
+    """The category this Unit of Measure is classified as.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.uom_categories.get(self.category_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     factor: float
     """How much bigger or smaller this unit is compared to the reference
@@ -82,6 +77,7 @@ class Uom(record_base.RecordBase):
 
     uom_type: Literal["bigger", "reference", "smaller"]
     """The type of the Unit of Measure (UoM).
+
     This determines its relationship with other UoMs in the same category.
 
     Values:
@@ -91,12 +87,11 @@ class Uom(record_base.RecordBase):
     * ``smaller`` - Smaller than the reference Unit of Measure
     """
 
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "category": "category_id",
-    }
-
 
 class UomManager(record_manager_base.RecordManagerBase[Uom]):
     env_name = "uom.uom"
     record_class = Uom
+
+
+# NOTE(callumdickinson): Import here to avoid circular imports.
+from . import uom_category  # noqa: E402

@@ -15,45 +15,40 @@
 
 from __future__ import annotations
 
-from functools import cached_property
 from typing import List, Optional, Union
 
-from . import (
-    customer_group as customer_group_module,
-    record_base,
-    record_manager_base,
-)
+from typing_extensions import Annotated
+
+from . import record_base, record_manager_base, util
 
 
 class VolumeDiscountRange(record_base.RecordBase):
-    @property
-    def customer_group_id(self) -> Optional[int]:
-        """The ID for the customer group this volume discount range
-        applies to, if a specific customer group is set.
-        """
-        return self._get_ref_id("customer_group", optional=True)
+    customer_group_id: Annotated[
+        Optional[int],
+        util.ModelRef("customer_group"),
+    ]
+    """The ID for the customer group this volume discount range
+    applies to, if a specific customer group is set.
+    """
 
-    @property
-    def customer_group_name(self) -> Optional[str]:
-        """The name of the customer group this volume discount range
-        applies to, if a specific customer group is set.
-        """
-        return self._get_ref_name("customer_group", optional=True)
+    customer_group_name: Annotated[
+        Optional[str],
+        util.ModelRef("customer_group"),
+    ]
+    """The name of the customer group this volume discount range
+    applies to, if a specific customer group is set.
+    """
 
-    @cached_property
-    def customer_group(self) -> Optional[customer_group_module.CustomerGroup]:
-        """The customer group this volume discount range
-        applies to, if a specific customer group is set.
+    customer_group: Annotated[
+        Optional[customer_group_module.CustomerGroup],
+        util.ModelRef("customer_group"),
+    ]
+    """The customer group this volume discount range
+    applies to, if a specific customer group is set.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.customer_group_id
-        return (
-            self._client.customer_groups.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     discount_percent: float
     """Discount percentage of this volume discount range (0-100)."""
@@ -74,11 +69,6 @@ class VolumeDiscountRange(record_base.RecordBase):
 
     use_max: bool
     """Use the ``max`` field, if defined."""
-
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "customer_group_id": "customer_group",
-    }
 
 
 class VolumeDiscountRangeManager(
@@ -138,3 +128,7 @@ class VolumeDiscountRangeManager(
         if not found_ranges:
             return None
         return sorted(found_ranges, key=lambda r: r.discount_percent)[-1]
+
+
+# NOTE(callumdickinson): Import here to avoid circular imports.
+from . import customer_group as customer_group_module  # noqa: E402

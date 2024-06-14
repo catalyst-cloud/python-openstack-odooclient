@@ -15,13 +15,11 @@
 
 from __future__ import annotations
 
-from functools import cached_property
-from typing import TYPE_CHECKING, Literal
+from typing import Literal
 
-from . import record_base, record_manager_name_base
+from typing_extensions import Annotated
 
-if TYPE_CHECKING:
-    from . import company as company_module, tax_group as tax_group_module
+from . import record_base, record_manager_name_base, util
 
 
 class Tax(record_base.RecordBase):
@@ -46,24 +44,18 @@ class Tax(record_base.RecordBase):
     to the same analytic account as the invoice line (if any).
     """
 
-    @property
-    def company_id(self) -> int:
-        """The ID for the company this tax is owned by."""
-        return self._get_ref_id("company_id")
+    company_id: Annotated[int, util.ModelRef("company_id")]
+    """The ID for the company this tax is owned by."""
 
-    @property
-    def company_name(self) -> str:
-        """The name of the company this tax is owned by."""
-        return self._get_ref_name("company_id")
+    company_name: Annotated[str, util.ModelRef("company_id")]
+    """The name of the company this tax is owned by."""
 
-    @cached_property
-    def company(self) -> company_module.Company:
-        """The company this tax is owned by.
+    company: Annotated[company_module.Company, util.ModelRef("company_id")]
+    """The company this tax is owned by.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.companies.get(self.company_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     country_code: str
     """The country code for this tax."""
@@ -91,32 +83,30 @@ class Tax(record_base.RecordBase):
     * ``on_payment`` - Due as soon as payment of the invoice is received
     """
 
-    @property
-    def tax_group_id(self) -> int:
-        """The ID for the company partner this tax is owned by."""
-        return self._get_ref_id("tax_group_id")
+    tax_group_id: Annotated[int, util.ModelRef("tax_group_id")]
+    """The ID for the tax group this tax is categorised under."""
 
-    @property
-    def tax_group_name(self) -> str:
-        """The name of the tax_group partner this tax is owned by."""
-        return self._get_ref_name("tax_group_id")
+    tax_group_name: Annotated[str, util.ModelRef("tax_group_id")]
+    """The name of the tax group this tax is categorised under."""
 
-    @cached_property
-    def tax_group(self) -> tax_group_module.TaxGroup:
-        """The tax_group partner this tax is owned by.
+    tax_group: Annotated[
+        tax_group_module.TaxGroup,
+        util.ModelRef("tax_group_id"),
+    ]
+    """The tax group this tax is categorised under.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.tax_groups.get(self.tax_group_id)
-
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "company": "company_id",
-        "tax_group": "tax_group_id",
-    }
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
 
 class TaxManager(record_manager_name_base.NamedRecordManagerBase[Tax]):
     env_name = "account.tax"
     record_class = Tax
+
+
+# NOTE(callumdickinson): Import here to avoid circular imports.
+from . import (  # noqa: E402
+    company as company_module,
+    tax_group as tax_group_module,
+)

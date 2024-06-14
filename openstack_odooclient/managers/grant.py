@@ -31,7 +31,7 @@ class Grant(record_base.RecordBase):
     """The ID of the type of this grant."""
 
     grant_type_name: Annotated[str, util.ModelRef("grant_type")]
-    """The name of thie type of this grant."""
+    """The name of the type of this grant."""
 
     grant_type: Annotated[
         grant_type_module.GrantType,

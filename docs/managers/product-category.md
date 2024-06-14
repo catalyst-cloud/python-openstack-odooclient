@@ -45,14 +45,21 @@ from openstack_odooclient import ProductCategory
 
 The record class currently implements the following fields and methods.
 
+### `child_id`
+
+```python
+child_id: list[int]
+```
+
+A list of IDs for the child categories.
+
 ### `child_ids`
 
 ```python
 child_ids: list[int]
 ```
 
-A list of IDs for the child categories.
-return self._get_field("child_id")
+An alias for [`child_id`](#child_id).
 
 ### `children`
 

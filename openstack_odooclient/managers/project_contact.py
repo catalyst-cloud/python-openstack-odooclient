@@ -15,13 +15,11 @@
 
 from __future__ import annotations
 
-from functools import cached_property
-from typing import TYPE_CHECKING, Literal, Optional
+from typing import Literal, Optional
 
-from . import record_base, record_manager_base
+from typing_extensions import Annotated
 
-if TYPE_CHECKING:
-    from . import partner as partner_module, project as project_module
+from . import record_base, record_manager_base, util
 
 
 class ProjectContact(record_base.RecordBase):
@@ -37,54 +35,34 @@ class ProjectContact(record_base.RecordBase):
     inherit: bool
     """Whether or not this contact should be inherited by child projects."""
 
-    @property
-    def partner_id(self) -> int:
-        """The ID for the partner linked to this project contact."""
-        return self._get_ref_id("partner")
+    partner_id: Annotated[int, util.ModelRef("partner")]
+    """The ID for the partner linked to this project contact."""
 
-    @property
-    def partner_name(self) -> str:
-        """The name of the partner linked to this project contact."""
-        return self._get_ref_name("partner")
+    partner_name: Annotated[str, util.ModelRef("partner")]
+    """The name of the partner linked to this project contact."""
 
-    @cached_property
-    def partner(self) -> partner_module.Partner:
-        """The partner linked to this project contact.
+    partner: Annotated[partner_module.Partner, util.ModelRef("partner")]
+    """The partner linked to this project contact.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.partners.get(self.partner_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
-    @property
-    def project_id(self) -> Optional[int]:
-        """The ID for the project this contact is linked to, if set."""
-        return self._get_ref_id("project", optional=True)
+    project_id: Annotated[Optional[int], util.ModelRef("project")]
+    """The ID for the project this contact is linked to, if set."""
 
-    @property
-    def project_name(self) -> Optional[str]:
-        """The name of the project this contact is linked to, if set."""
-        return self._get_ref_name("project", optional=True)
+    project_name: Annotated[Optional[str], util.ModelRef("project")]
+    """The name of the project this contact is linked to, if set."""
 
-    @cached_property
-    def project(self) -> Optional[project_module.Project]:
-        """The project this contact is linked to, if set.
+    project: Annotated[
+        Optional[project_module.Project],
+        util.ModelRef("project"),
+    ]
+    """The project this contact is linked to, if set.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.project_id
-        return (
-            self._client.projects.get(record_id)
-            if record_id is not None
-            else None
-        )
-
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "partner_id": "partner",
-        "project_id": "project",
-    }
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
 
 class ProjectContactManager(
@@ -92,3 +70,10 @@ class ProjectContactManager(
 ):
     env_name = "openstack.project_contact"
     record_class = ProjectContact
+
+
+# NOTE(callumdickinson): Import here to make sure circular imports work.
+from . import (  # noqa: E402
+    partner as partner_module,
+    project as project_module,
+)

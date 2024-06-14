@@ -18,9 +18,16 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import TYPE_CHECKING, Generic, TypeVar, overload
 
+from typing_extensions import (
+    Annotated,
+    get_args as get_type_args,
+    get_origin as get_type_origin,
+    get_type_hints,
+)
+
 from ..exceptions import RecordNotFoundError
 from .record_base import RecordBase
-from .util import get_mapped_field
+from .util import FieldAlias, ModelRef, get_mapped_field
 
 if TYPE_CHECKING:
     from typing import (
@@ -33,6 +40,7 @@ if TYPE_CHECKING:
         Optional,
         Sequence,
         Set,
+        Tuple,
         Type,
         Union,
     )
@@ -382,15 +390,7 @@ class RecordManagerBase(Generic[Record]):
         :return: The ID of the newly created record
         :rtype: int
         """
-        return self._env.create(
-            {
-                # TODO(callumdickinson): Handle nested model object
-                # encoding properly using type hints,
-                # e.g. sale order lines defined in sale orders.
-                self._encode_field(field): self._encode_value(value)
-                for field, value in fields.items()
-            },
-        )
+        return self._env.create(self._encode_create_fields(fields))
 
     def create_multi(self, *records: Mapping[str, Any]) -> List[int]:
         """Create one or more new records in a single request,
@@ -404,17 +404,155 @@ class RecordManagerBase(Generic[Record]):
         :rtype: List[int]
         """
         res: Union[int, List[int]] = self._env.create(
-            [
-                {
-                    self._encode_field(field): self._encode_value(value)
-                    for field, value in record.items()
-                }
-                for record in records
-            ],
+            [self._encode_create_fields(record) for record in records],
         )
         if isinstance(res, int):
             return [res]
         return res
+
+    def _encode_create_fields(
+        self,
+        fields: Mapping[str, Any],
+    ) -> Dict[str, Any]:
+        create_fields: Dict[str, Any] = {}
+        field_remote_mapping: Dict[str, str] = {}
+        type_hints = get_type_hints(self.record_class, include_extras=True)
+        for field, value in fields.items():
+            remote_field, remote_value = self._encode_create_field(
+                type_hints=type_hints,
+                field=field,
+                value=value,
+            )
+            if remote_field in field_remote_mapping:
+                raise ValueError(
+                    (
+                        "Conflicting field keys found that resolve to the "
+                        "same remote field when creating record from "
+                        f"mapping: {fields} (conflicting keys: "
+                        f"{field_remote_mapping[remote_field]}, {field})"
+                    ),
+                )
+            field_remote_mapping[remote_field] = field
+            create_fields[remote_field] = remote_value
+        return create_fields
+
+    def _encode_create_field(
+        self,
+        type_hints: Mapping[str, Type[Any]],
+        field: str,
+        value: Any,
+    ) -> Tuple[str, Any]:
+        # Fetch the local and remote representations of the given field.
+        local_field = self._get_local_field(field)
+        remote_field = self._get_remote_field(field)
+        # If there is no type hint for the given field, map the value
+        # to the field unchanged.
+        if local_field not in type_hints:
+            return (remote_field, value)
+        # Fetch the type hint for parsing.
+        type_hint = type_hints[local_field]
+        # Perform special handling of annotated fields.
+        if get_type_origin(type_hint) is Annotated:
+            type_args = get_type_args(type_hint)
+            attr_type: Type[Any] = type_args[0]
+            annotations = type_args[1:]
+            if len(annotations) == 1:
+                annotation = annotations[0]
+                # If this field is a field alias,
+                # recursively encode the field as the target field.
+                if isinstance(annotation, FieldAlias):
+                    return self._encode_create_field(
+                        type_hints=type_hints,
+                        field=annotation.field,
+                        value=value,
+                    )
+                # If this field is a model ref, encode the model ref
+                # according to the given value's type, and map the result
+                # to the Odoo model's ref field name.
+                if isinstance(annotation, ModelRef):
+                    model_ref_field = self._get_remote_field(annotation.field)
+                    # If the field is a list of multiple model refs,
+                    # iterate over the given value and decode the elements
+                    # appropriately.
+                    if get_type_origin(attr_type) is list:
+                        if not value:
+                            return (model_ref_field, [])
+                        remote_values: List[Union[int, Dict[str, Any]]] = []
+                        for v in value:
+                            if isinstance(v, int):
+                                remote_values.append(v)
+                            elif isinstance(v, RecordBase):
+                                remote_values.append(v.id)
+                            elif isinstance(v, dict):
+                                manager = self._client._record_manager_mapping[
+                                    attr_type
+                                ]
+                                remote_values.append(
+                                    manager._encode_create_fields(value),
+                                )
+                            else:
+                                raise ValueError(
+                                    (
+                                        "Unsupported element value for model "
+                                        f"ref list field '{field}' "
+                                        f"when creating record: {v}"
+                                    ),
+                                )
+                        return (model_ref_field, remote_values)
+                    # If the value type is an integer,
+                    # treat it as a record ID and assign i to the field.
+                    if isinstance(value, int):
+                        return (model_ref_field, value)
+                    # If the value type is a record object,
+                    # then treat it as if it already exists on Odoo,
+                    # and return the record ID to assign to the field.
+                    if isinstance(value, RecordBase):
+                        return (model_ref_field, value.id)
+                    # If the value type is a dictionary,
+                    # then treat it as a nested record to be created
+                    # alongside the parent record.
+                    # Encode the contents of the dict recursively
+                    # using the record class's manager object,
+                    # and assign it to the parent record so they can
+                    # both be created.
+                    if isinstance(value, dict):
+                        return (
+                            model_ref_field,
+                            (
+                                self._client._record_manager_mapping[
+                                    attr_type
+                                ]._encode_create_fields(value)
+                            ),
+                        )
+                    raise ValueError(
+                        (
+                            f"Unsupported value for model ref field '{field}' "
+                            f"when creating record: {value}"
+                        ),
+                    )
+                raise ValueError(
+                    (
+                        f"Unsupported annotation for field '{field}': "
+                        f"{annotation}"
+                    ),
+                )
+        # For non-annotated fields, encode the value based on its type hint.
+        return (
+            remote_field,
+            self._encode_create_value(type_hint=type_hint, value=value),
+        )
+
+    def _encode_create_value(self, type_hint: Type[Any], value: Any) -> Any:
+        value_type = get_type_origin(type_hint)
+        if value_type in (date, datetime) and isinstance(
+            value,
+            (date, datetime),
+        ):
+            return value.isoformat()
+        if value_type is list and isinstance(value, (list, set, tuple)):
+            v_type = get_type_args(type_hint)[0]
+            return [self._encode_create_value(v_type, v) for v in value]
+        return value
 
     def unlink(
         self,
@@ -488,6 +626,8 @@ class RecordManagerBase(Generic[Record]):
         return value
 
     def _encode_filters(self, filters: Sequence[Any]) -> List[Any]:
+        # TODO(callumdickinson): Parse nested field references
+        # (e.g. "product.categ_id") in filters.
         _filters: List[Any] = []
         for f in filters:
             if isinstance(f, tuple):

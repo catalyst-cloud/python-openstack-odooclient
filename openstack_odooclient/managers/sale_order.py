@@ -16,18 +16,11 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from functools import cached_property
-from typing import TYPE_CHECKING, List, Literal, Optional, Union
+from typing import List, Literal, Optional, Union
 
-from . import record_base, record_manager_name_base
+from typing_extensions import Annotated
 
-if TYPE_CHECKING:
-    from . import (
-        currency as currency_module,
-        partner as partner_module,
-        project,
-        sale_order_line,
-    )
+from . import record_base, record_manager_name_base, util
 
 
 class SaleOrder(record_base.RecordBase):
@@ -43,24 +36,18 @@ class SaleOrder(record_base.RecordBase):
     client_order_ref: Union[str, Literal[False]]
     """The customer reference for this sale order, if defined."""
 
-    @property
-    def currency_id(self) -> int:
-        """The ID for the currency used in this sale order."""
-        return self._get_ref_id("currency_id")
+    currency_id: Annotated[int, util.ModelRef("currency_id")]
+    """The ID for the currency used in this sale order."""
 
-    @property
-    def currency_name(self) -> str:
-        """The name of the currency used in this sale order."""
-        return self._get_ref_name("currency_id")
+    currency_name: Annotated[str, util.ModelRef("currency_id")]
+    """The name of the currency used in this sale order."""
 
-    @cached_property
-    def currency(self) -> currency_module.Currency:
-        """The currency used in this sale order.
+    currency: Annotated[currency_module.Currency, util.ModelRef("currency_id")]
+    """The currency used in this sale order.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.currencies.get(self.currency_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     date_order: datetime
     """The time the sale order was created."""
@@ -88,24 +75,24 @@ class SaleOrder(record_base.RecordBase):
     Generally used for terms and conditions.
     """
 
-    @property
-    def order_line_ids(self) -> List[int]:
-        """A list of IDs for the lines added to the sale order."""
-        return self._get_field("order_line")
+    order_line_ids: Annotated[List[int], util.ModelRef("order_line")]
+    """A list of IDs for the lines added to the sale order."""
 
-    @cached_property
-    def order_line(self) -> List[sale_order_line.SaleOrderLine]:
-        """The lines added to the sale order.
+    order_line: Annotated[
+        List[sale_order_line.SaleOrderLine],
+        util.ModelRef("order_line"),
+    ]
+    """The lines added to the sale order.
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.sale_order_lines.list(self.order_line_ids)
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
-    @property
-    def order_lines(self) -> List[sale_order_line.SaleOrderLine]:
-        """An alias for ``order_line``."""
-        return self.order_line
+    order_lines: Annotated[
+        List[sale_order_line.SaleOrderLine],
+        util.FieldAlias("order_line"),
+    ]
+    """An alias for ``order_line``."""
 
     os_invoice_date: date
     """The invoicing date for the invoice that is created
@@ -117,53 +104,39 @@ class SaleOrder(record_base.RecordBase):
     from the sale order.
     """
 
-    @property
-    def os_project_id(self) -> Optional[int]:
-        """The ID for the the OpenStack project this sale order was
-        was generated for.
-        """
-        return self._get_ref_id("os_project", optional=True)
+    os_project_id: Annotated[Optional[int], util.ModelRef("os_project")]
+    """The ID for the the OpenStack project this sale order was
+    was generated for.
+    """
 
-    @property
-    def os_project_name(self) -> Optional[str]:
-        """The name of the the OpenStack project this sale order was
-        was generated for.
-        """
-        return self._get_ref_name("os_project", optional=True)
+    os_project_name: Annotated[Optional[str], util.ModelRef("os_project")]
+    """The name of the the OpenStack project this sale order was
+    was generated for.
+    """
 
-    @cached_property
-    def os_project(self) -> Optional[project.Project]:
-        """The OpenStack project this sale order was
-        was generated for.
+    os_project: Annotated[
+        Optional[project.Project],
+        util.ModelRef("os_project"),
+    ]
+    """The OpenStack project this sale order was
+    was generated for.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.os_project_id
-        return (
-            self._client.projects.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
-    @property
-    def partner_id(self) -> int:
-        """The ID for the recipient partner for the sale order."""
-        return self._get_ref_id("partner_id")
+    partner_id: Annotated[int, util.ModelRef("partner_id")]
+    """The ID for the recipient partner for the sale order."""
 
-    @property
-    def partner_name(self) -> str:
-        """The name of the recipient partner for the sale order."""
-        return self._get_ref_name("partner_id")
+    partner_name: Annotated[str, util.ModelRef("partner_id")]
+    """The name of the recipient partner for the sale order."""
 
-    @cached_property
-    def partner(self) -> partner_module.Partner:
-        """The recipient partner for the sale order.
+    partner: Annotated[partner_module.Partner, util.ModelRef("partner_id")]
+    """The recipient partner for the sale order.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.partners.get(self.partner_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     state: Literal["draft", "sale", "done", "cancel"]
     """State of the sale order.
@@ -175,15 +148,6 @@ class SaleOrder(record_base.RecordBase):
     * ``done`` - Finalised and settled sale order, cannot be modified
     * ``cancel`` - Cancelled sale order, can be deleted in most cases
     """
-
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "currency": "currency_id",
-        "order_line_ids": "order_line",
-        "order_lines": "order_line",
-        "os_project_id": "os_project",
-        "partner": "partner_id",
-    }
 
     def action_confirm(self) -> None:
         """Confirm the sale order."""
@@ -227,3 +191,12 @@ class SaleOrderManager(
                 else sale_order
             ),
         )
+
+
+# NOTE(callumdickinson): Import here to avoid circular imports.
+from . import (  # noqa: E402
+    currency as currency_module,
+    partner as partner_module,
+    project,
+    sale_order_line,
+)

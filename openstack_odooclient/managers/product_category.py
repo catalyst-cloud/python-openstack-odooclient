@@ -15,26 +15,29 @@
 
 from __future__ import annotations
 
-from functools import cached_property
 from typing import List, Literal, Optional, Union
 
-from . import record_base, record_manager_name_base
+from typing_extensions import Annotated
+
+from . import record_base, record_manager_name_base, util
 
 
 class ProductCategory(record_base.RecordBase):
-    @property
-    def child_ids(self) -> List[int]:
-        """A list of IDs for the child categories."""
-        return self._get_field("child_id")
+    child_id: Annotated[List[int], util.ModelRef("child_id")]
+    """A list of IDs for the child categories."""
 
-    @cached_property
-    def children(self) -> List[ProductCategory]:
-        """The list of child categories.
+    child_ids: Annotated[List[int], util.FieldAlias("child_id")]
+    """An alias for ``child_id``."""
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.product_categories.list(self.child_ids)
+    children: Annotated[
+        List[ProductCategory],
+        util.ModelRef("child_id"),
+    ]
+    """The list of child categories.
+
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
     complete_name: str
     """The complete product category tree."""
@@ -42,47 +45,29 @@ class ProductCategory(record_base.RecordBase):
     name: str
     """Name of the product category."""
 
-    @property
-    def parent_id(self) -> Optional[int]:
-        """The ID for the parent product category, if this category
-        is the child of another category.
-        """
-        return self._get_ref_id("parent_id", optional=True)
+    parent_id: Annotated[Optional[int], util.ModelRef("parent_id")]
+    """The ID for the parent product category, if this category
+    is the child of another category.
+    """
 
-    @property
-    def parent_name(self) -> Optional[str]:
-        """The name of the parent product category, if this category
-        is the child of another category.
-        """
-        return self._get_ref_name("parent_id", optional=True)
+    parent_name: Annotated[Optional[str], util.ModelRef("parent_id")]
+    """The name of the parent product category, if this category
+    is the child of another category.
+    """
 
-    @cached_property
-    def parent(self) -> Optional[ProductCategory]:
-        """The parent product category, if this category
-        is the child of another category.
+    parent: Annotated[Optional[ProductCategory], util.ModelRef("parent_id")]
+    """The parent product category, if this category
+    is the child of another category.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.parent_id
-        return (
-            self._client.product_categories.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     parent_path: Union[str, Literal[False]]
     """The path of the parent product category, if there is a parent."""
 
     product_count: int
     """The number of products under this category."""
-
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "child_ids": "child_id",
-        "children": "child_id",
-        "parent": "parent_id",
-    }
 
 
 class ProductCategoryManager(

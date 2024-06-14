@@ -15,61 +15,53 @@
 
 from __future__ import annotations
 
-from functools import cached_property
-from typing import TYPE_CHECKING, Literal, Optional, Union
+from typing import Literal, Optional, Union
 
-from . import product as product_module, record_base, record_manager_name_base
+from typing_extensions import Annotated
 
-if TYPE_CHECKING:
-    from . import company as company_module, currency as currency_module
+from . import (
+    product as product_module,
+    record_base,
+    record_manager_name_base,
+    util,
+)
 
 
 class Pricelist(record_base.RecordBase):
     active: bool
     """Whether or not the pricelist is active."""
 
-    @property
-    def company_id(self) -> Optional[int]:
-        """The ID for the company for this pricelist, if set."""
-        return self._get_ref_id("company_id", optional=True)
+    company_id: Annotated[Optional[int], util.ModelRef("company_id")]
+    """The ID for the company for this pricelist, if set."""
 
-    @property
-    def company_name(self) -> Optional[str]:
-        """The name of the company for this pricelist, if set."""
-        return self._get_ref_name("company_id", optional=True)
+    company_name: Annotated[Optional[str], util.ModelRef("company_id")]
+    """The name of the company for this pricelist, if set."""
 
-    @cached_property
-    def company(self) -> Optional[company_module.Company]:
-        """The company for this pricelist, if set.
+    company: Annotated[
+        Optional[company_module.Company],
+        util.ModelRef("company_id"),
+    ]
+    """The company for this pricelist, if set.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.company_id
-        return (
-            self._client.companies.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
-    @property
-    def currency_id(self) -> int:
-        """The ID for the currency used in this pricelist."""
-        return self._get_ref_id("currency_id")
+    currency_id: Annotated[int, util.ModelRef("currency_id")]
+    """The ID for the currency used in this pricelist."""
 
-    @property
-    def currency_name(self) -> str:
-        """The name of the currency used in this pricelist."""
-        return self._get_ref_name("currency_id")
+    currency_name: Annotated[str, util.ModelRef("currency_id")]
+    """The name of the currency used in this pricelist."""
 
-    @cached_property
-    def currency(self) -> currency_module.Currency:
-        """The currency used in this pricelist.
+    currency: Annotated[
+        currency_module.Currency,
+        util.ModelRef("currency_id"),
+    ]
+    """The currency used in this pricelist.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.currencies.get(self.currency_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     discount_policy: Literal["with_discount", "without_discount"]
     """Discount policy for the pricelist.
@@ -82,12 +74,6 @@ class Pricelist(record_base.RecordBase):
 
     name: str
     """The name of this pricelist."""
-
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "company": "company_id",
-        "currency": "currency_id",
-    }
 
     def get_price(
         self,
@@ -147,3 +133,10 @@ class PricelistManager(
             max(qty, 0),
         )[str(pricelist_id)]
         return price if qty >= 0 else -price
+
+
+# NOTE(callumdickinson): Import here to make sure circular imports work.
+from . import (  # noqa: E402
+    company as company_module,
+    currency as currency_module,
+)

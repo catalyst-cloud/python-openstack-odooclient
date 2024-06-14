@@ -15,68 +15,47 @@
 
 from __future__ import annotations
 
-from functools import cached_property
-from typing import TYPE_CHECKING, List, Literal, Optional, Union
+from typing import List, Literal, Optional, Union
 
-from . import record_base, record_manager_base
+from typing_extensions import Annotated
 
-if TYPE_CHECKING:
-    from . import (
-        account_move_line,
-        company as company_module,
-        currency as currency_module,
-        partner,
-        product as product_module,
-        project,
-        sale_order,
-        tax as tax_module,
-        uom,
-    )
+from . import record_base, record_manager_base, util
 
 
 class SaleOrderLine(record_base.RecordBase):
-    @property
-    def company_id(self) -> int:
-        """The ID for the company this sale order line
-        was generated for.
-        """
-        return self._get_ref_id("company_id")
+    company_id: Annotated[int, util.ModelRef("company_id")]
+    """The ID for the company this sale order line
+    was generated for.
+    """
 
-    @property
-    def company_name(self) -> str:
-        """The name of the company this sale order line
-        was generated for.
-        """
-        return self._get_ref_name("company_id")
+    company_name: Annotated[str, util.ModelRef("company_id")]
+    """The name of the company this sale order line
+    was generated for.
+    """
 
-    @cached_property
-    def company(self) -> company_module.Company:
-        """The company this sale order line
-        was generated for.
+    company: Annotated[company_module.Company, util.ModelRef("company_id")]
+    """The company this sale order line
+    was generated for.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.companies.get(self.company_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
-    @property
-    def currency_id(self) -> int:
-        """The ID for the currency used in this sale order line."""
-        return self._get_ref_id("currency_id")
+    currency_id: Annotated[int, util.ModelRef("currency_id")]
+    """The ID for the currency used in this sale order line."""
 
-    @property
-    def currency_name(self) -> str:
-        """The name of the currency used in this sale order line."""
-        return self._get_ref_name("currency_id")
+    currency_name: Annotated[str, util.ModelRef("currency_id")]
+    """The name of the currency used in this sale order line."""
 
-    @cached_property
-    def currency(self) -> currency_module.Currency:
-        """The currency used in this sale order line.
+    currency: Annotated[
+        currency_module.Currency,
+        util.ModelRef("currency_id"),
+    ]
+    """The currency used in this sale order line.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.currencies.get(self.currency_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     discount: float
     """Discount percentage on the sale order line (0-100)."""
@@ -84,22 +63,21 @@ class SaleOrderLine(record_base.RecordBase):
     display_name: str
     """Display name for the sale order line in the sale order."""
 
-    @property
-    def invoice_line_ids(self) -> List[int]:
-        """A list of IDs for the invoice (account move) lines created
-        from this sale order line.
-        """
-        return self._get_field("invoice_lines")
+    invoice_line_ids: Annotated[List[int], util.ModelRef("invoice_lines")]
+    """A list of IDs for the account move (invoice) lines created
+    from this sale order line.
+    """
 
-    @cached_property
-    def invoice_lines(self) -> List[account_move_line.AccountMoveLine]:
-        """The invoice (account move) lines created
-        from this sale order line.
+    invoice_lines: Annotated[
+        List[account_move_line.AccountMoveLine],
+        util.ModelRef("invoice_lines"),
+    ]
+    """The account move (invoice) lines created
+    from this sale order line.
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.account_move_lines.list(self.invoice_line_ids)
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
     invoice_status: Literal["no", "to invoice", "invoiced", "upselling"]
     """The current invoicing status of this sale order line.
@@ -126,72 +104,55 @@ class SaleOrderLine(record_base.RecordBase):
     the resource's name.
     """
 
-    @property
-    def order_id(self) -> int:
-        """The ID for the sale order this line is linked to."""
-        return self._get_ref_id("order_id")
+    order_id: Annotated[int, util.ModelRef("order_id")]
+    """The ID for the sale order this line is linked to."""
 
-    @property
-    def order_name(self) -> str:
-        """The name of the sale order this line is linked to."""
-        return self._get_ref_name("order_id")
+    order_name: Annotated[str, util.ModelRef("order_id")]
+    """The name of the sale order this line is linked to."""
 
-    @cached_property
-    def order(self) -> sale_order.SaleOrder:
-        """The sale order this line is linked to.
+    order: Annotated[sale_order.SaleOrder, util.ModelRef("order_id")]
+    """The sale order this line is linked to.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.sale_orders.get(self.order_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
-    @property
-    def order_partner_id(self) -> int:
-        """The ID for the recipient partner for the sale order."""
-        return self._get_ref_id("order_partner_id")
+    order_partner_id: Annotated[int, util.ModelRef("order_partner_id")]
+    """The ID for the recipient partner for the sale order."""
 
-    @property
-    def order_partner_name(self) -> str:
-        """The name of the recipient partner for the sale order."""
-        return self._get_ref_name("order_partner_id")
+    order_partner_name: Annotated[str, util.ModelRef("order_partner_id")]
+    """The name of the recipient partner for the sale order."""
 
-    @cached_property
-    def order_partner(self) -> partner.Partner:
-        """The recipient partner for the sale order.
+    order_partner: Annotated[
+        partner.Partner,
+        util.ModelRef("order_partner_id"),
+    ]
+    """The recipient partner for the sale order.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.partners.get(self.order_partner_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
-    @property
-    def os_project_id(self) -> Optional[int]:
-        """The ID for the the OpenStack project this sale order line was
-        was generated for.
-        """
-        return self._get_ref_id("os_project", optional=True)
+    os_project_id: Annotated[Optional[int], util.ModelRef("os_project")]
+    """The ID for the the OpenStack project this sale order line was
+    was generated for.
+    """
 
-    @property
-    def os_project_name(self) -> Optional[str]:
-        """The name of the the OpenStack project this sale order line was
-        was generated for.
-        """
-        return self._get_ref_name("os_project", optional=True)
+    os_project_name: Annotated[Optional[str], util.ModelRef("os_project")]
+    """The name of the the OpenStack project this sale order line was
+    was generated for.
+    """
 
-    @cached_property
-    def os_project(self) -> Optional[project.Project]:
-        """The OpenStack project this sale order line was
-        was generated for.
+    os_project: Annotated[
+        Optional[project.Project],
+        util.ModelRef("os_project"),
+    ]
+    """The OpenStack project this sale order line was
+    was generated for.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.os_project_id
-        return (
-            self._client.projects.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     os_region: Union[str, Literal[False]]
     """The OpenStack region the sale order line was created from."""
@@ -235,48 +196,36 @@ class SaleOrderLine(record_base.RecordBase):
     price_unit: float
     """Base unit price, excluding tax, before any discounts."""
 
-    @property
-    def product_id(self) -> int:
-        """The ID of the product charged on this sale order line."""
-        return self._get_ref_id("product_id")
+    product_id: Annotated[int, util.ModelRef("product_id")]
+    """The ID of the product charged on this sale order line."""
 
-    @property
-    def product_name(self) -> str:
-        """The name of the product charged on this sale order line."""
-        return self._get_ref_name("product_id")
+    product_name: Annotated[str, util.ModelRef("product_id")]
+    """The name of the product charged on this sale order line."""
 
-    @cached_property
-    def product(self) -> product_module.Product:
-        """The product charged on this sale order line.
+    product: Annotated[product_module.Product, util.ModelRef("product_id")]
+    """The product charged on this sale order line.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.products.get(self.product_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
-    @property
-    def product_uom_id(self) -> int:
-        """The ID for the Unit of Measure for the product being charged in
-        this sale order line.
-        """
-        return self._get_ref_id("product_uom")
+    product_uom_id: Annotated[int, util.ModelRef("product_uom")]
+    """The ID for the Unit of Measure for the product being charged in
+    this sale order line.
+    """
 
-    @property
-    def product_uom_name(self) -> str:
-        """The name of the Unit of Measure for the product being charged in
-        this sale order line.
-        """
-        return self._get_ref_name("product_uom")
+    product_uom_name: Annotated[str, util.ModelRef("product_uom")]
+    """The name of the Unit of Measure for the product being charged in
+    this sale order line.
+    """
 
-    @cached_property
-    def product_uom(self) -> uom.Uom:
-        """The Unit of Measure for the product being charged in
-        this sale order line.
+    product_uom: Annotated[uom.Uom, util.ModelRef("product_uom")]
+    """The Unit of Measure for the product being charged in
+    this sale order line.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.uoms.get(self.product_uom_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     product_uom_qty: float
     """The product quantity on the sale order line."""
@@ -295,29 +244,23 @@ class SaleOrderLine(record_base.RecordBase):
     qty_to_invoice: float
     """The product quantity that still needs to be invoiced."""
 
-    @property
-    def salesman_id(self) -> int:
-        """The ID for the salesperson partner assigned
-        to this sale order line.
-        """
-        return self._get_ref_id("salesman_id")
+    salesman_id: Annotated[int, util.ModelRef("salesman_id")]
+    """The ID for the salesperson partner assigned
+    to this sale order line.
+    """
 
-    @property
-    def salesman_name(self) -> str:
-        """The name of the salesperson partner assigned
-        to this sale order line.
-        """
-        return self._get_ref_name("salesman_id")
+    salesman_name: Annotated[str, util.ModelRef("salesman_id")]
+    """The name of the salesperson partner assigned
+    to this sale order line.
+    """
 
-    @cached_property
-    def salesman(self) -> partner.Partner:
-        """The salesperson partner assigned
-        to this sale order line.
+    salesman: Annotated[partner.Partner, util.ModelRef("salesman_id")]
+    """The salesperson partner assigned
+    to this sale order line.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.partners.get(self.salesman_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     state: Literal["draft", "sale", "done", "cancel"]
     """State of the sale order.
@@ -330,24 +273,18 @@ class SaleOrderLine(record_base.RecordBase):
     * ``cancel`` - Cancelled sale order, can be deleted
     """
 
-    @property
-    def tax_id(self) -> int:
-        """The ID for the tax used on this sale order line."""
-        return self._get_ref_id("tax_id")
+    tax_id: Annotated[int, util.ModelRef("tax_id")]
+    """The ID for the tax used on this sale order line."""
 
-    @property
-    def tax_name(self) -> str:
-        """The name of the tax used on this sale order line."""
-        return self._get_ref_name("tax_id")
+    tax_name: Annotated[str, util.ModelRef("tax_id")]
+    """The name of the tax used on this sale order line."""
 
-    @cached_property
-    def tax(self) -> tax_module.Tax:
-        """The tax used on this sale order line.
+    tax: Annotated[tax_module.Tax, util.ModelRef("tax_id")]
+    """The tax used on this sale order line.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.taxes.get(self.tax_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     untaxed_amount_invoiced: float
     """The balance, excluding tax, on the sale order line that
@@ -359,23 +296,23 @@ class SaleOrderLine(record_base.RecordBase):
     still needs to be invoiced.
     """
 
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "company": "company_id",
-        "currency": "currency_id",
-        "os_project_id": "os_project",
-        "invoice_line_ids": "invoice_lines",
-        "order": "order_id",
-        "order_partner": "order_partner_id",
-        "product": "product_id",
-        "product_uom_id": "product_uom",
-        "salesman": "salesman_id",
-        "tax": "tax_id",
-    }
-
 
 class SaleOrderLineManager(
     record_manager_base.RecordManagerBase[SaleOrderLine],
 ):
     env_name = "sale.order.line"
     record_class = SaleOrderLine
+
+
+# NOTE(callumdickinson): Import here to avoid circular imports.
+from . import (  # noqa: E402
+    account_move_line,
+    company as company_module,
+    currency as currency_module,
+    partner,
+    product as product_module,
+    project,
+    sale_order,
+    tax as tax_module,
+    uom,
+)

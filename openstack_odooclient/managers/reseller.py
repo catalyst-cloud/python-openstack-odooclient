@@ -15,13 +15,11 @@
 
 from __future__ import annotations
 
-from functools import cached_property
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 
-from . import record_base, record_manager_base
+from typing_extensions import Annotated
 
-if TYPE_CHECKING:
-    from . import partner as partner_module, project, reseller_tier
+from . import record_base, record_manager_base, util
 
 
 class Reseller(record_base.RecordBase):
@@ -31,29 +29,21 @@ class Reseller(record_base.RecordBase):
     alternative_support_url: Optional[str]
     """The URL to the cloud support centre for the reseller, if available."""
 
-    @property
-    def demo_project_id(self) -> Optional[int]:
-        """The ID for the optional demo project belonging to the reseller."""
-        return self._get_ref_id("project_demo", optional=True)
+    demo_project_id: Annotated[Optional[int], util.ModelRef("demo_project")]
+    """The ID for the optional demo project belonging to the reseller."""
 
-    @property
-    def demo_project_name(self) -> Optional[str]:
-        """The name of the optional demo project belonging to the reseller."""
-        return self._get_ref_name("project_demo", optional=True)
+    demo_project_name: Annotated[Optional[str], util.ModelRef("demo_project")]
+    """The name of the optional demo project belonging to the reseller."""
 
-    @cached_property
-    def demo_project(self) -> Optional[project.Project]:
-        """An optional demo project belonging to the reseller.
+    demo_project: Annotated[
+        Optional[project.Project],
+        util.ModelRef("demo_project"),
+    ]
+    """An optional demo project belonging to the reseller.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.project_id
-        return (
-            self._client.projects.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     hide_billing: bool
     """Whether or not the billing URL should be hidden."""
@@ -67,52 +57,37 @@ class Reseller(record_base.RecordBase):
     This is set to the reseller partner's name.
     """
 
-    @property
-    def partner_id(self) -> int:
-        """The ID for the reseller partner."""
-        return self._get_ref_id("partner")
+    partner_id: Annotated[int, util.ModelRef("partner")]
+    """The ID for the reseller partner."""
 
-    @property
-    def partner_name(self) -> str:
-        """The name of the reseller partner."""
-        return self._get_ref_name("partner")
+    partner_name: Annotated[str, util.ModelRef("partner")]
+    """The name of the reseller partner."""
 
-    @cached_property
-    def partner(self) -> partner_module.Partner:
-        """The reseller partner.
+    partner: Annotated[partner_module.Partner, util.ModelRef("partner")]
+    """The reseller partner.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.partners.get(self.partner_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
-    @property
-    def tier_id(self) -> int:
-        """The ID for the tier this reseller is under."""
-        return self._get_ref_id("tier")
+    tier_id: Annotated[int, util.ModelRef("tier")]
+    """The ID for the tier this reseller is under."""
 
-    @property
-    def tier_name(self) -> str:
-        """The name of the tier this reseller is under."""
-        return self._get_ref_name("tier")
+    tier_name: Annotated[str, util.ModelRef("tier")]
+    """The name of the tier this reseller is under."""
 
-    @cached_property
-    def tier(self) -> reseller_tier.ResellerTier:
-        """The tier this reseller is under.
+    tier: Annotated[reseller_tier.ResellerTier, util.ModelRef("tier")]
+    """The tier this reseller is under.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.reseller_tiers.get(self.tier_id)
-
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "demo_project_id": "demo_project",
-        "partner_id": "partner",
-        "tier_id": "tier",
-    }
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
 
 class ResellerManager(record_manager_base.RecordManagerBase[Reseller]):
     env_name = "openstack.reseller"
     record_class = Reseller
+
+
+# NOTE(callumdickinson): Import here to avoid circular imports.
+from . import partner as partner_module, project, reseller_tier  # noqa: E402

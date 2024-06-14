@@ -15,9 +15,7 @@
 
 from __future__ import annotations
 
-from functools import cached_property
 from typing import (
-    TYPE_CHECKING,
     Any,
     Dict,
     Iterable,
@@ -28,55 +26,43 @@ from typing import (
     overload,
 )
 
-from . import record_base, record_manager_unique_field_base
+from typing_extensions import Annotated
 
-if TYPE_CHECKING:
-    from . import company, product_category, uom as uom_module
+from . import record_base, record_manager_unique_field_base, util
 
 
 class Product(record_base.RecordBase):
-    @property
-    def categ_id(self) -> int:
-        """The ID for the category this product is under."""
-        return self._get_ref_id("categ_id")
+    categ_id: Annotated[int, util.ModelRef("categ_id")]
+    """The ID for the category this product is under."""
 
-    @property
-    def categ_name(self) -> str:
-        """The name of the category this product is under."""
-        return self._get_ref_name("categ_id")
+    categ_name: Annotated[str, util.ModelRef("categ_id")]
+    """The name of the category this product is under."""
 
-    @cached_property
-    def categ(self) -> product_category.ProductCategory:
-        """The category this product is under.
+    categ: Annotated[
+        product_category.ProductCategory,
+        util.ModelRef("categ_id"),
+    ]
+    """The category this product is under.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.product_categories.get(self.categ_id)
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
-    @property
-    def company_id(self) -> Optional[int]:
-        """The ID for the company that owns this product, if set."""
-        return self._get_ref_id("company_id", optional=True)
+    company_id: Annotated[Optional[int], util.ModelRef("company_id")]
+    """The ID for the company that owns this product, if set."""
 
-    @property
-    def company_name(self) -> Optional[str]:
-        """The name of the company that owns this product, if set."""
-        return self._get_ref_name("company_id", optional=True)
+    company_name: Annotated[Optional[str], util.ModelRef("company_id")]
+    """The name of the company that owns this product, if set."""
 
-    @cached_property
-    def company(self) -> Optional[company.Company]:
-        """The company that owns this product, if set.
+    company: Annotated[
+        Optional[company_module.Company],
+        util.ModelRef("company_id"),
+    ]
+    """The company that owns this product, if set.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.company_id
-        return (
-            self._client.companies.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     default_code: str
     """The Default Code for this product.
@@ -100,31 +86,18 @@ class Product(record_base.RecordBase):
     name: str
     """The name of the product."""
 
-    @property
-    def uom_id(self) -> int:
-        """The ID for the Unit of Measure for this product."""
-        return self._get_ref_id("uom_id")
+    uom_id: Annotated[int, util.ModelRef("uom_id")]
+    """The ID for the Unit of Measure for this product."""
 
-    @property
-    def uom_name(self) -> str:
-        """The name of the Unit of Measure for this product."""
-        return self._get_ref_name("uom_id")
+    uom_name: Annotated[str, util.ModelRef("uom_id")]
+    """The name of the Unit of Measure for this product."""
 
-    @cached_property
-    def uom(self) -> uom_module.Uom:
-        """The Unit of Measure for this product.
+    uom: Annotated[uom_module.Uom, util.ModelRef("uom_id")]
+    """The Unit of Measure for this product.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.uoms.get(self.uom_id)
-
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "categ": "categ_id",
-        "company": "company_id",
-        "uom": "uom_id",
-    }
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
 
 class ProductManager(
@@ -139,7 +112,7 @@ class ProductManager(
     @overload
     def get_sellable_company_products(
         self,
-        company: Union[int, company.Company],
+        company: Union[int, company_module.Company],
         *,
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
@@ -150,7 +123,7 @@ class ProductManager(
     @overload
     def get_sellable_company_products(
         self,
-        company: Union[int, company.Company],
+        company: Union[int, company_module.Company],
         *,
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
@@ -161,7 +134,7 @@ class ProductManager(
     @overload
     def get_sellable_company_products(
         self,
-        company: Union[int, company.Company],
+        company: Union[int, company_module.Company],
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
         *,
@@ -172,7 +145,7 @@ class ProductManager(
     @overload
     def get_sellable_company_products(
         self,
-        company: Union[int, company.Company],
+        company: Union[int, company_module.Company],
         *,
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
@@ -183,7 +156,7 @@ class ProductManager(
     @overload
     def get_sellable_company_products(
         self,
-        company: Union[int, company.Company],
+        company: Union[int, company_module.Company],
         *,
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
@@ -193,7 +166,7 @@ class ProductManager(
 
     def get_sellable_company_products(
         self,
-        company: Union[int, company.Company],
+        company: Union[int, company_module.Company],
         fields: Optional[Iterable[str]] = None,
         order: Optional[str] = None,
         as_id: bool = False,
@@ -229,7 +202,7 @@ class ProductManager(
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, company.Company],
+        company: Union[int, company_module.Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -241,7 +214,7 @@ class ProductManager(
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, company.Company],
+        company: Union[int, company_module.Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -253,7 +226,7 @@ class ProductManager(
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, company.Company],
+        company: Union[int, company_module.Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -265,7 +238,7 @@ class ProductManager(
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, company.Company],
+        company: Union[int, company_module.Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -277,7 +250,7 @@ class ProductManager(
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, company.Company],
+        company: Union[int, company_module.Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -289,7 +262,7 @@ class ProductManager(
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, company.Company],
+        company: Union[int, company_module.Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -301,7 +274,7 @@ class ProductManager(
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, company.Company],
+        company: Union[int, company_module.Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -313,7 +286,7 @@ class ProductManager(
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, company.Company],
+        company: Union[int, company_module.Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -325,7 +298,7 @@ class ProductManager(
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, company.Company],
+        company: Union[int, company_module.Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -336,7 +309,7 @@ class ProductManager(
 
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, company.Company],
+        company: Union[int, company_module.Company],
         name: str,
         fields: Optional[Iterable[str]] = None,
         as_id: bool = False,
@@ -391,3 +364,11 @@ class ProductManager(
             as_dict=as_dict,
             optional=optional,
         )
+
+
+# NOTE(callumdickinson): Import here to make sure circular imports work.
+from . import (  # noqa: E402
+    company as company_module,
+    product_category,
+    uom as uom_module,
+)

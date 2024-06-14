@@ -16,17 +16,11 @@
 from __future__ import annotations
 
 from datetime import date
-from functools import cached_property
-from typing import TYPE_CHECKING, Literal, Optional
+from typing import Literal, Optional
 
-from . import record_base, record_manager_base
+from typing_extensions import Annotated
 
-if TYPE_CHECKING:
-    from . import (
-        partner as partner_module,
-        project as project_module,
-        support_subscription_type as support_subscription_type_module,
-    )
+from . import record_base, record_manager_base, util
 
 
 class SupportSubscription(record_base.RecordBase):
@@ -42,105 +36,81 @@ class SupportSubscription(record_base.RecordBase):
     end_date: date
     """The end date of the credit."""
 
-    @property
-    def partner_id(self) -> Optional[int]:
-        """The ID for the partner linked to this support subscription,
-        if it is linked to a partner.
+    partner_id: Annotated[Optional[int], util.ModelRef("partner")]
+    """The ID for the partner linked to this support subscription,
+    if it is linked to a partner.
 
-        Support subscriptions linked to a partner
-        cover all projects the partner owns.
-        """
-        return self._get_ref_id("partner", optional=True)
+    Support subscriptions linked to a partner
+    cover all projects the partner owns.
+    """
 
-    @property
-    def partner_name(self) -> Optional[str]:
-        """The name of thepartner linked to this support subscription,
-        if it is linked to a partner.
+    partner_name: Annotated[Optional[str], util.ModelRef("partner")]
+    """The name of thepartner linked to this support subscription,
+    if it is linked to a partner.
 
-        Support subscriptions linked to a partner
-        cover all projects the partner owns.
-        """
-        return self._get_ref_name("partner", optional=True)
+    Support subscriptions linked to a partner
+    cover all projects the partner owns.
+    """
 
-    @cached_property
-    def partner(self) -> Optional[partner_module.Partner]:
-        """The partner linked to this support subscription,
-        if it is linked to a partner.
+    partner: Annotated[
+        Optional[partner_module.Partner],
+        util.ModelRef("partner"),
+    ]
+    """The partner linked to this support subscription,
+    if it is linked to a partner.
 
-        Support subscriptions linked to a partner
-        cover all projects the partner owns.
+    Support subscriptions linked to a partner
+    cover all projects the partner owns.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.partner_id
-        return (
-            self._client.partners.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
-    @property
-    def project_id(self) -> Optional[int]:
-        """The ID of the project this support subscription is for,
-        if it is linked to a specific project.
-        """
-        return self._get_ref_id("project", optional=True)
+    project_id: Annotated[Optional[int], util.ModelRef("project")]
+    """The ID of the project this support subscription is for,
+    if it is linked to a specific project.
+    """
 
-    @property
-    def project_name(self) -> Optional[str]:
-        """The name of the project this support subscription is for,
-        if it is linked to a specific project.
-        """
-        return self._get_ref_name("project", optional=True)
+    project_name: Annotated[Optional[str], util.ModelRef("project")]
+    """The name of the project this support subscription is for,
+    if it is linked to a specific project.
+    """
 
-    @cached_property
-    def project(self) -> Optional[project_module.Project]:
-        """The project this support subscription is for,
-        if it is linked to a specific project.
+    project: Annotated[
+        Optional[project_module.Project],
+        util.ModelRef("project"),
+    ]
+    """The project this support subscription is for,
+    if it is linked to a specific project.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.project_id
-        return (
-            self._client.projects.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     start_date: date
     """The start date of the credit."""
 
-    @property
-    def support_subscription_type_id(self) -> int:
-        """The ID of the type of the support subscription."""
-        return self._get_ref_id("support_subscription_type")
+    support_subscription_type_id: Annotated[
+        int,
+        util.ModelRef("support_subscription_type"),
+    ]
+    """The ID of the type of the support subscription."""
 
-    @property
-    def support_subscription_type_name(self) -> str:
-        """The name of the type of the support subscription."""
-        return self._get_ref_name("support_subscription_type")
+    support_subscription_type_name: Annotated[
+        str,
+        util.ModelRef("support_subscription_type"),
+    ]
+    """The name of the type of the support subscription."""
 
-    @cached_property
-    def support_subscription_type(
-        self,
-    ) -> support_subscription_type_module.SupportSubscriptionType:
-        """The type of the support subscription.
+    support_subscription_type: Annotated[
+        support_subscription_type_module.SupportSubscriptionType,
+        util.ModelRef("support_subscription_type"),
+    ]
+    """The type of the support subscription.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        return self._client.support_subscription_types.get(
-            self.support_subscription_type_id,
-        )
-
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "partner_id": "partner",
-        "project_id": "project",
-        "support_subscription_type_id": "support_subscription_type",
-    }
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
 
 class SupportSubscriptionManager(
@@ -148,3 +118,11 @@ class SupportSubscriptionManager(
 ):
     env_name = "openstack.support_subscription"
     record_class = SupportSubscription
+
+
+# NOTE(callumdickinson): Import here to avoid circular imports.
+from . import (  # noqa: E402
+    partner as partner_module,
+    project as project_module,
+    support_subscription_type as support_subscription_type_module,
+)

@@ -28,7 +28,7 @@ class Credit(record_base.RecordBase):
     """The ID of the type of this credit."""
 
     credit_type_name: Annotated[str, util.ModelRef("credit_type")]
-    """The name of thie type of this credit."""
+    """The name of the type of this credit."""
 
     credit_type: Annotated[
         credit_type_module.CreditType,

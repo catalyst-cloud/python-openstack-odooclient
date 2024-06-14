@@ -112,7 +112,7 @@ Display name for the sale order line in the sale order.
 invoice_line_ids: list[int]
 ```
 
-A list of IDs for the invoice (account move) lines created
+A list of IDs for the [account move (invoice) lines](account-move-line.md) created
 from this sale order line.
 
 ### `invoice_lines`
@@ -121,7 +121,7 @@ from this sale order line.
 invoice_lines: list[AccountMoveLine]
 ```
 
-The invoice (account move) lines created
+The [account move (invoice) lines](account-move-line.md) created
 from this sale order line.
 
 This fetches the full records from Odoo once,

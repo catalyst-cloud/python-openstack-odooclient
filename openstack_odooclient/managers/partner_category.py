@@ -15,99 +15,66 @@
 
 from __future__ import annotations
 
-from functools import cached_property
-from typing import TYPE_CHECKING, List, Literal, Optional, Union
+from typing import List, Literal, Optional, Union
 
-from . import record_base, record_manager_name_base
+from typing_extensions import Annotated
 
-if TYPE_CHECKING:
-    from . import partner
+from . import record_base, record_manager_name_base, util
 
 
 class PartnerCategory(record_base.RecordBase):
     active: bool
     """Whether or not the partner category is active (enabled)."""
 
-    @property
-    def child_ids(self) -> List[int]:
-        """A list of IDs for the child categories."""
-        return self._get_field("child_id")
+    child_ids: Annotated[List[int], util.ModelRef("child_id")]
+    """A list of IDs for the child categories."""
 
-    @cached_property
-    def children(self) -> List[PartnerCategory]:
-        """The list of child categories.
+    children: Annotated[List[PartnerCategory], util.ModelRef("child_id")]
+    """The list of child categories.
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.partner_categories.list(self.child_ids)
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
     color: int
     """Colour index for the partner category."""
 
-    @property
-    def colour(self) -> int:
-        """Alias for ``color``."""
-        return self.color
+    colour: Annotated[int, util.FieldAlias("color")]
+    """Alias for ``color``."""
 
     name: str
     """The name of the partner category."""
 
-    @property
-    def parent_id(self) -> Optional[int]:
-        """The ID for the parent partner category, if this category
-        is the child of another category.
-        """
-        return self._get_ref_id("parent_id", optional=True)
+    parent_id: Annotated[Optional[int], util.ModelRef("parent_id")]
+    """The ID for the parent partner category, if this category
+    is the child of another category.
+    """
 
-    @property
-    def parent_name(self) -> Optional[str]:
-        """The name of the parent partner category, if this category
-        is the child of another category.
-        """
-        return self._get_ref_name("parent_id", optional=True)
+    parent_name: Annotated[Optional[str], util.ModelRef("parent_id")]
+    """The name of the parent partner category, if this category
+    is the child of another category.
+    """
 
-    @cached_property
-    def parent(self) -> Optional[PartnerCategory]:
-        """The parent partner category, if this category
-        is the child of another category.
+    parent: Annotated[Optional[PartnerCategory], util.ModelRef("parent_id")]
+    """The parent partner category, if this category
+    is the child of another category.
 
-        This fetches the full record from Odoo once,
-        and caches it for subsequent accesses.
-        """
-        record_id = self.parent_id
-        return (
-            self._client.partner_categories.get(record_id)
-            if record_id is not None
-            else None
-        )
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+    """
 
     parent_path: Union[str, Literal[False]]
     """The path of the parent partner category, if there is a parent."""
 
-    @property
-    def partner_ids(self) -> List[int]:
-        """A list of IDs for the partners in this category."""
-        return self._get_field("partner_id")
+    partner_ids: Annotated[List[int], util.ModelRef("partner_id")]
+    """A list of IDs for the partners in this category."""
 
-    @cached_property
-    def partners(self) -> List[partner.Partner]:
-        """The list of partners in this category.
+    partners: Annotated[List[partner.Partner], util.ModelRef("partner_id")]
+    """The list of partners in this category.
 
-        This fetches the full records from Odoo once,
-        and caches them for subsequent accesses.
-        """
-        return self._client.partners.list(self.partner_ids)
-
-    _alias_mapping = {
-        # Key is local alias, value is remote field name.
-        "child_ids": "child_id",
-        "children": "child_id",
-        "colour": "color",
-        "parent": "parent_id",
-        "partner_ids": "partner_id",
-        "partners": "partner_id",
-    }
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+    """
 
 
 class PartnerCategoryManager(
@@ -115,3 +82,7 @@ class PartnerCategoryManager(
 ):
     env_name = "res.partner.category"
     record_class = PartnerCategory
+
+
+# NOTE(callumdickinson): Import here to make sure circular imports work.
+from . import partner  # noqa: E402

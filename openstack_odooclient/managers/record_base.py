@@ -27,7 +27,6 @@ from typing import (
     Sequence,
     Type,
     Union,
-    overload,
 )
 
 from typing_extensions import (
@@ -212,70 +211,6 @@ class RecordBase:
         #     cls._base_alias_mapping.get(alias, alias),
         # )
 
-    @overload
-    def _get_ref_id(
-        self,
-        name: str,
-        optional: Literal[False] = ...,
-    ) -> int: ...
-
-    @overload
-    def _get_ref_id(
-        self,
-        name: str,
-        optional: Literal[True],
-    ) -> Optional[int]: ...
-
-    @overload
-    def _get_ref_id(
-        self, name: str, optional: bool = ...
-    ) -> Optional[int]: ...
-
-    def _get_ref_id(self, name: str, optional: bool = False) -> Optional[int]:
-        # NOTE(callumdickinson): This method intentionally does not test
-        # for field existence, so an error is raised if the field is not
-        # actually selected in the query.
-        # If an optional ref is selected in a query but a ref is not set,
-        # ``False`` is returned instead of the expected 2-element list.
-        ref = self._get_field(name)
-        if not optional:
-            return ref[0]
-        return ref[0] if ref else None
-
-    @overload
-    def _get_ref_name(
-        self,
-        name: str,
-        optional: Literal[False] = ...,
-    ) -> str: ...
-
-    @overload
-    def _get_ref_name(
-        self,
-        name: str,
-        optional: Literal[True],
-    ) -> Optional[str]: ...
-
-    @overload
-    def _get_ref_name(
-        self, name: str, optional: bool = ...
-    ) -> Optional[str]: ...
-
-    def _get_ref_name(
-        self,
-        name: str,
-        optional: bool = False,
-    ) -> Optional[str]:
-        # NOTE(callumdickinson): This method intentionally does not test
-        # for field existence, so an error is raised if the field is not
-        # actually selected in the query.
-        # If an optional ref is selected in a query but a ref is not set,
-        # ``False`` is returned instead of the expected 2-element list.
-        ref = self._get_field(name)
-        if not optional:
-            return ref[1]
-        return ref[1] if ref else None
-
     def __getattr__(self, name: str) -> Any:
         # If the field value has already been decoded,
         # return the cached value.
@@ -303,7 +238,8 @@ class RecordBase:
                 # If this field is a field alias,
                 # recursively fetch the value for the target field.
                 if isinstance(annotation, FieldAlias):
-                    return getattr(self, annotation.field)
+                    self._values[name] = getattr(self, annotation.field)
+                    return self._values[name]
                 # If this field is a model ref, resolve the model ref
                 # and return the intended value.
                 if isinstance(annotation, ModelRef):
