@@ -31,8 +31,6 @@ from typing_extensions import (
     get_origin as get_type_origin,
 )
 
-# from . import base
-
 if TYPE_CHECKING:
     from typing import Any, List, Mapping, Optional
 

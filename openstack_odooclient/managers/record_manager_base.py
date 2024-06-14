@@ -495,6 +495,7 @@ class RecordManagerBase(Generic[Record]):
                     # iterate over the given value and decode the elements
                     # appropriately.
                     if get_type_origin(attr_type) is list:
+                        value_type = get_type_args(attr_type)[0]
                         if not value:
                             return (model_ref_field, [])
                         remote_values: List[
@@ -510,7 +511,7 @@ class RecordManagerBase(Generic[Record]):
                                 remote_values.append((4, v.id))
                             elif isinstance(v, dict):
                                 manager = self._client._record_manager_mapping[
-                                    attr_type
+                                    value_type
                                 ]
                                 remote_values.append(
                                     (
