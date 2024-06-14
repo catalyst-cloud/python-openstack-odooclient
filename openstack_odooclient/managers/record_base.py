@@ -205,11 +205,16 @@ class RecordBase:
 
     @classmethod
     def _resolve_alias(cls, alias: str) -> str:
+        type_hints = get_type_hints(cls, include_extras=True)
+        if alias not in type_hints:
+            return alias
+        type_hint = type_hints[alias]
+        if get_type_origin(type_hint) is not Annotated:
+            return alias
+        for annotation in get_type_args(type_hint)[1:]:
+            if isinstance(annotation, FieldAlias):
+                return annotation.field
         return alias
-        # return cls._alias_mapping.get(
-        #     alias,
-        #     cls._base_alias_mapping.get(alias, alias),
-        # )
 
     def __getattr__(self, name: str) -> Any:
         # If the field value has already been decoded,

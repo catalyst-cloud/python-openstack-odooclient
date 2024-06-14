@@ -27,7 +27,7 @@ from typing_extensions import (
 
 from ..exceptions import RecordNotFoundError
 from .record_base import RecordBase
-from .util import FieldAlias, ModelRef, get_mapped_field
+from .util import ModelRef, get_mapped_field
 
 if TYPE_CHECKING:
     from typing import (
@@ -443,8 +443,10 @@ class RecordManagerBase(Generic[Record]):
         value: Any,
     ) -> Tuple[str, Any]:
         # Fetch the local and remote representations of the given field.
-        local_field = self._get_local_field(field)
-        remote_field = self._get_remote_field(field)
+        # Field aliases are resolved at this point.
+        orig_field = self._resolve_alias(field)
+        local_field = self._get_local_field(orig_field)
+        remote_field = self._get_remote_field(orig_field)
         # If there is no type hint for the given field, map the value
         # to the field unchanged.
         if local_field not in type_hints:
@@ -458,14 +460,6 @@ class RecordManagerBase(Generic[Record]):
             annotations = type_args[1:]
             if len(annotations) == 1:
                 annotation = annotations[0]
-                # If this field is a field alias,
-                # recursively encode the field as the target field.
-                if isinstance(annotation, FieldAlias):
-                    return self._encode_create_field(
-                        type_hints=type_hints,
-                        field=annotation.field,
-                        value=value,
-                    )
                 # If this field is a model ref, encode the model ref
                 # according to the given value's type, and map the result
                 # to the Odoo model's ref field name.
