@@ -586,6 +586,13 @@ class RecordManagerBase(Generic[Record]):
                         f"{annotation}"
                     ),
                 )
+            raise ValueError(
+                (
+                    f"More annotations than expected on field '{field}' "
+                    f"(found {len(annotations)}, expected 1): "
+                    f"{annotations}"
+                ),
+            )
         # For regular fields, encode the value based on its type hint.
         # TODO(callumdickinson): Rename _encode_create_value to _encode_value.
         return (
