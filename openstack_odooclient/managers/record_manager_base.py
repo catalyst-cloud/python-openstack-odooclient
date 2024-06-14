@@ -15,7 +15,7 @@
 
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import date, datetime, time
 from typing import TYPE_CHECKING, Generic, TypeVar, overload
 
 from typing_extensions import (
@@ -27,7 +27,13 @@ from typing_extensions import (
 
 from ..exceptions import RecordNotFoundError
 from .record_base import RecordBase
-from .util import ModelRef, get_mapped_field
+from .util import (
+    DEFAULT_SERVER_DATE_FORMAT,
+    DEFAULT_SERVER_DATETIME_FORMAT,
+    DEFAULT_SERVER_TIME_FORMAT,
+    ModelRef,
+    get_mapped_field,
+)
 
 if TYPE_CHECKING:
     from typing import (
@@ -464,6 +470,26 @@ class RecordManagerBase(Generic[Record]):
                 # according to the given value's type, and map the result
                 # to the Odoo model's ref field name.
                 if isinstance(annotation, ModelRef):
+                    # NOTE(callumdickinson): JSON RPC API model link
+                    # definition reference.
+                    # https://www.odoo.com/documentation/14.0/developer/reference/addons/orm.html#odoo.models.Model.write
+                    #  * (0, 0, {values}) - Link to a new record that needs to
+                    #    be created with the given values dictionary.
+                    #  * (1, id, {values}) - Update the linked record *id*
+                    #    (write *values* to it).
+                    #  * (2, id) - Remove and delete the linked record *id*.
+                    #    Calls ``unlink`` on ID, deleting the object
+                    #    completely, and the link to it as well.
+                    #  * (3, id) - Cut the link to the linked record *id*.
+                    #    Deletes the relationship between the two objects,
+                    #    but does not delete the target object itself.
+                    #  * (4, id) - Link to existing record *id*
+                    #    (adds a relationship).
+                    #  * (5) - Unlink all record links.
+                    #    Functions like using (3,ID) for all linked records.
+                    #  * (6, 0, [ids]) - Replace the list of linked IDs
+                    #    with *ids*. Functions like using (5), then (4, id)
+                    #    for each ID in the list of IDs.
                     model_ref_field = self._get_remote_field(annotation.field)
                     # If the field is a list of multiple model refs,
                     # iterate over the given value and decode the elements
@@ -471,18 +497,27 @@ class RecordManagerBase(Generic[Record]):
                     if get_type_origin(attr_type) is list:
                         if not value:
                             return (model_ref_field, [])
-                        remote_values: List[Union[int, Dict[str, Any]]] = []
+                        remote_values: List[
+                            Union[
+                                Tuple[int, int],
+                                Tuple[int, int, Dict[str, Any]],
+                            ],
+                        ] = []
                         for v in value:
                             if isinstance(v, int):
-                                remote_values.append(v)
+                                remote_values.append((4, v))
                             elif isinstance(v, RecordBase):
-                                remote_values.append(v.id)
+                                remote_values.append((4, v.id))
                             elif isinstance(v, dict):
                                 manager = self._client._record_manager_mapping[
                                     attr_type
                                 ]
                                 remote_values.append(
-                                    manager._encode_create_fields(value),
+                                    (
+                                        0,
+                                        0,
+                                        manager._encode_create_fields(value),
+                                    ),
                                 )
                             else:
                                 raise ValueError(
@@ -509,14 +544,19 @@ class RecordManagerBase(Generic[Record]):
                     # using the record class's manager object,
                     # and assign it to the parent record so they can
                     # both be created.
+                    # TODO(callumdickinson): Check that this works.
                     if isinstance(value, dict):
                         return (
                             model_ref_field,
-                            (
-                                self._client._record_manager_mapping[
-                                    attr_type
-                                ]._encode_create_fields(value)
-                            ),
+                            [
+                                (
+                                    0,
+                                    0,
+                                    self._client._record_manager_mapping[
+                                        attr_type
+                                    ]._encode_create_fields(value),
+                                ),
+                            ],
                         )
                     raise ValueError(
                         (
@@ -538,11 +578,12 @@ class RecordManagerBase(Generic[Record]):
 
     def _encode_create_value(self, type_hint: Type[Any], value: Any) -> Any:
         value_type = get_type_origin(type_hint)
-        if value_type in (date, datetime) and isinstance(
-            value,
-            (date, datetime),
-        ):
-            return value.isoformat()
+        if value_type is date and isinstance(value, date):
+            return value.strftime(DEFAULT_SERVER_DATE_FORMAT)
+        if value_type is time and isinstance(value, time):
+            return value.strftime(DEFAULT_SERVER_TIME_FORMAT)
+        if value_type is datetime and isinstance(value, datetime):
+            return value.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
         if value_type is list and isinstance(value, (list, set, tuple)):
             v_type = get_type_args(type_hint)[0]
             return [self._encode_create_value(v_type, v) for v in value]
@@ -613,7 +654,7 @@ class RecordManagerBase(Generic[Record]):
     def _encode_value(self, value: Any) -> Any:
         if isinstance(value, RecordBase):
             return value.id
-        if isinstance(value, (date, datetime)):
+        if isinstance(value, (date, time, datetime)):
             return value.isoformat()
         if isinstance(value, (list, set, tuple)):
             return [self._encode_value(v) for v in value]
