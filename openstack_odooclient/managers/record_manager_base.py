@@ -386,6 +386,25 @@ class RecordManagerBase(Generic[Record]):
             return self.list(ids, fields=fields, as_dict=as_dict)
         return []  # type: ignore[return-value]
 
+    def _encode_filters(self, filters: Sequence[Any]) -> List[Any]:
+        # TODO(callumdickinson): Parse nested field references
+        # (e.g. "product.categ_id") in filters.
+        # TODO(callumdickinson): Replace usage of _encode_value
+        # with _encode_create_value, and rename _encode_create_value
+        # to _encode_value.
+        _filters: List[Any] = []
+        for f in filters:
+            if isinstance(f, tuple):
+                _filter = (
+                    self._encode_field(f[0]),  # Field name.
+                    f[1],  # Filter operator (=, >=, in, etc).
+                    self._encode_value(f[2]),  # Possible value(s).
+                )
+            else:
+                _filter = f
+            _filters.append(_filter)
+        return _filters
+
     def create(self, **fields) -> int:
         """Create a new record, using the specified keyword arguments
         as input fields.
@@ -450,9 +469,8 @@ class RecordManagerBase(Generic[Record]):
     ) -> Tuple[str, Any]:
         # Fetch the local and remote representations of the given field.
         # Field aliases are resolved at this point.
-        orig_field = self._resolve_alias(field)
-        local_field = self._get_local_field(orig_field)
-        remote_field = self._get_remote_field(orig_field)
+        local_field = self._decode_field(field)
+        remote_field = self._encode_field(field)
         # If there is no type hint for the given field, map the value
         # to the field unchanged.
         if local_field not in type_hints:
@@ -505,6 +523,7 @@ class RecordManagerBase(Generic[Record]):
                             ],
                         ] = []
                         for v in value:
+                            # TODO(callumdickinson): Check if this works.
                             if isinstance(v, int):
                                 remote_values.append((4, v))
                             elif isinstance(v, RecordBase):
@@ -568,23 +587,11 @@ class RecordManagerBase(Generic[Record]):
                     ),
                 )
         # For regular fields, encode the value based on its type hint.
+        # TODO(callumdickinson): Rename _encode_create_value to _encode_value.
         return (
             remote_field,
             self._encode_create_value(type_hint=type_hint, value=value),
         )
-
-    def _encode_create_value(self, type_hint: Type[Any], value: Any) -> Any:
-        value_type = get_type_origin(type_hint)
-        if value_type is date and isinstance(value, date):
-            return value.strftime(DEFAULT_SERVER_DATE_FORMAT)
-        if value_type is time and isinstance(value, time):
-            return value.strftime(DEFAULT_SERVER_TIME_FORMAT)
-        if value_type is datetime and isinstance(value, datetime):
-            return value.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
-        if value_type is list and isinstance(value, (list, set, tuple)):
-            v_type = get_type_args(type_hint)[0]
-            return [self._encode_create_value(v_type, v) for v in value]
-        return value
 
     def unlink(
         self,
@@ -645,10 +652,15 @@ class RecordManagerBase(Generic[Record]):
     def _resolve_alias(self, alias: str) -> str:
         return self.record_class._resolve_alias(alias)
 
+    def _decode_field(self, field: str) -> str:
+        return self._get_local_field(self._resolve_alias(field))
+
     def _encode_field(self, field: str) -> str:
         return self._get_remote_field(self._resolve_alias(field))
 
     def _encode_value(self, value: Any) -> Any:
+        # TODO: Replace with _encode_create_value,
+        # and rename _encode_create_value to _encode_value.
         if isinstance(value, RecordBase):
             return value.id
         if isinstance(value, (date, time, datetime)):
@@ -657,18 +669,15 @@ class RecordManagerBase(Generic[Record]):
             return [self._encode_value(v) for v in value]
         return value
 
-    def _encode_filters(self, filters: Sequence[Any]) -> List[Any]:
-        # TODO(callumdickinson): Parse nested field references
-        # (e.g. "product.categ_id") in filters.
-        _filters: List[Any] = []
-        for f in filters:
-            if isinstance(f, tuple):
-                _filter = (
-                    self._encode_field(f[0]),  # Field name.
-                    f[1],  # Filter operator (=, >=, in, etc).
-                    self._encode_value(f[2]),  # Possible value(s).
-                )
-            else:
-                _filter = f
-            _filters.append(_filter)
-        return _filters
+    def _encode_create_value(self, type_hint: Type[Any], value: Any) -> Any:
+        value_type = get_type_origin(type_hint)
+        if value_type is date and isinstance(value, date):
+            return value.strftime(DEFAULT_SERVER_DATE_FORMAT)
+        if value_type is time and isinstance(value, time):
+            return value.strftime(DEFAULT_SERVER_TIME_FORMAT)
+        if value_type is datetime and isinstance(value, datetime):
+            return value.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+        if value_type is list and isinstance(value, (list, set, tuple)):
+            v_type = get_type_args(type_hint)[0]
+            return [self._encode_create_value(v_type, v) for v in value]
+        return value
