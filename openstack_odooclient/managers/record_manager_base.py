@@ -536,7 +536,7 @@ class RecordManagerBase(Generic[Record]):
                         f"{annotation}"
                     ),
                 )
-        # For non-annotated fields, encode the value based on its type hint.
+        # For regular fields, encode the value based on its type hint.
         return (
             remote_field,
             self._encode_create_value(type_hint=type_hint, value=value),
