@@ -16,7 +16,24 @@
 from __future__ import annotations
 
 from datetime import date, datetime, time
-from typing import TYPE_CHECKING, Generic, TypeVar, overload
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Generic,
+    Iterable,
+    List,
+    Literal,
+    Mapping,
+    Optional,
+    Sequence,
+    Set,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+    overload,
+)
 
 from typing_extensions import (
     Annotated,
@@ -37,21 +54,6 @@ from .util import (
 )
 
 if TYPE_CHECKING:
-    from typing import (
-        Any,
-        Dict,
-        Iterable,
-        List,
-        Literal,
-        Mapping,
-        Optional,
-        Sequence,
-        Set,
-        Tuple,
-        Type,
-        Union,
-    )
-
     from odoorpc import ODOO  # type: ignore[import]
     from odoorpc.env import Environment  # type: ignore[import]
 
