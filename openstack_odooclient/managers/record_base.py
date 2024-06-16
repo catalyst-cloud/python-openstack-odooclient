@@ -22,9 +22,11 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Dict,
+    List,
     Literal,
     Optional,
     Sequence,
+    Set,
     Type,
     Union,
 )
@@ -204,17 +206,34 @@ class RecordBase:
             raise AttributeError(str(err)) from None
 
     @classmethod
-    def _resolve_alias(cls, alias: str) -> str:
+    def _resolve_alias(cls, field: str) -> str:
         type_hints = get_type_hints(cls, include_extras=True)
-        if alias not in type_hints:
-            return alias
-        type_hint = type_hints[alias]
-        if get_type_origin(type_hint) is not Annotated:
-            return alias
-        for annotation in get_type_args(type_hint)[1:]:
-            if isinstance(annotation, FieldAlias):
-                return annotation.field
-        return alias
+        if field not in type_hints:
+            return field
+        # NOTE(callumdickinson): Continually resolve field aliases
+        # until we get to a field that is not an alias.
+        resolved_aliases: Set[str] = set()
+        alias_chain: List[str] = []
+        annotation = FieldAlias.get(type_hints[field])
+        while annotation:
+            # Check if field aliases loop back on each other.
+            if field in resolved_aliases:
+                raise ValueError(
+                    (
+                        "Found recursive field alias definitions "
+                        f"on {cls.__name__}: {' -> '.join(alias_chain)}"
+                    ),
+                )
+            resolved_aliases.add(field)
+            alias_chain.append(field)
+            # Resolve the target field from the alias annotation,
+            # and try to fetch the target field's annotation to check
+            # if it is also an alias.
+            field = annotation.field
+            if field not in type_hints:
+                break
+            annotation = FieldAlias.get(type_hints[field])
+        return field
 
     def __getattr__(self, name: str) -> Any:
         # If the field value has already been decoded,

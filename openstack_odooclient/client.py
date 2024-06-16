@@ -192,7 +192,7 @@ class Client:
                 opener=opener,
             )
             self._odoo.login(database, username, password)
-        # Create aninternal mapping between record classes and their managers.
+        # Create an internal mapping between record classes and their managers.
         # This is populated by the manager classes themselves when created,
         # and used when converting model references on record objects into
         # # new record objects.

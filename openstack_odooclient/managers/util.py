@@ -18,8 +18,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date, datetime
 from typing import (
-    TYPE_CHECKING,
+    Any,
+    List,
     Literal,
+    Mapping,
+    Optional,
     Tuple,
     Type,
     TypeVar,
@@ -27,12 +30,11 @@ from typing import (
 )
 
 from typing_extensions import (
+    Annotated,
+    Self,
     get_args as get_type_args,
     get_origin as get_type_origin,
 )
-
-if TYPE_CHECKING:
-    from typing import Any, List, Mapping, Optional
 
 T = TypeVar("T")
 
@@ -44,8 +46,43 @@ DEFAULT_SERVER_DATETIME_FORMAT = (
 )
 
 
+class AnnotationBase:
+    @classmethod
+    def get(cls, type_hint: Any) -> Optional[Self]:
+        """Return the annotation applied to the given type hint,
+        if the type hint is annotated with this type of annotation.
+
+        If multiple matching annotations are found, the last occurrence
+        is returned.
+
+        :param type_hint: The type hint to parse
+        :type type_hint: Any
+        :return: Applied annotation, or ``None`` if no annotation was found
+        :rtype: Optional[Self]
+        """
+        if get_type_origin(type_hint) is not Annotated:
+            return None
+        matching_annotation: Optional[Self] = None
+        for annotation in get_type_args(type_hint)[1:]:
+            if isinstance(annotation, cls):
+                matching_annotation = annotation
+        return matching_annotation
+
+    @classmethod
+    def is_annotated(cls, type_hint: Any) -> bool:
+        """Checks whether or not the given type hint is annotated
+        with an annotation of this type.
+
+        :param type_hint: The type hint to parse
+        :type type_hint: Any
+        :return: ``True`` if annotated, otherwise ``False``
+        :rtype: bool
+        """
+        return bool(cls.get(type_hint))
+
+
 @dataclass(frozen=True)
-class FieldAlias:
+class FieldAlias(AnnotationBase):
     """An annotation for alias attributes to define the Odoo field name
     the attribute is an alias for.
     """
@@ -54,7 +91,7 @@ class FieldAlias:
 
 
 @dataclass(frozen=True)
-class ModelRef:
+class ModelRef(AnnotationBase):
     """An annotation for attributes that decode an Odoo model reference,
     to define the Odoo field name to be decoded.
     """
@@ -118,7 +155,7 @@ def is_subclass(
         return False
 
 
-def get_type_tree(type_hint: Type[Any]) -> Tuple[Type[Any], ...]:
+def get_type_tree(type_hint: Any) -> Tuple[Any, ...]:
     """Generate the type tree for the given annotation.
 
     This function peels back the annotation layers
@@ -159,12 +196,12 @@ def get_type_tree(type_hint: Type[Any]) -> Tuple[Type[Any], ...]:
     (<class 'int'>, <class 'str'>)
 
     :param type_hint: Type hint to parse
-    :type type_hint: Type[Any]
+    :type type_hint: Any
     :return: Type hint tree
-    :rtype: Tuple[Type[Any]]
+    :rtype: Tuple[Any]
     """
 
-    type_tree: List[Type[Any]] = [type_hint]
+    type_tree: List[Any] = [type_hint]
 
     while get_type_origin(type_tree[-1]) is not None:
         origin_type = get_type_origin(type_tree[-1])
