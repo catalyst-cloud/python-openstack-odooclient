@@ -19,7 +19,6 @@ from dataclasses import dataclass
 from datetime import date, datetime
 from typing import (
     Any,
-    List,
     Literal,
     Mapping,
     Optional,
@@ -155,62 +154,6 @@ def is_subclass(
         return False
 
 
-def get_type_tree(type_hint: Any) -> Tuple[Any, ...]:
-    """Generate the type tree for the given annotation.
-
-    This function peels back the annotation layers
-    and generates a list containing the type hint encapsulations,
-    from the outermost layer to the innermost layer.
-
-    The expected basic data type will end up at the end of the list.
-
-    If the annotation is a union of possible values, the final two elements
-    will be as follows:
-
-    >>> from typing import Literal, Union
-    >>> from openstack_odooclient.managers.record.util import get_type_tree
-    >>> get_type_tree(Union[str, Literal[False]])
-    (typing.Union[str, typing.Literal[False]], typing.Union)
-
-    ``Union[T, ...]`` can be evaluated to get the candidate types using
-    ``typing.get_args``. This includes ``Optional[T]``,
-    which is syntantic sugar for ``Union[T, type(None)]``.
-
-    >>> from typing import Literal, Union, get_args
-    >>> get_args(Union[str, Literal[False]])
-    (<class 'str'>, typing.Literal[False])
-
-    Similarly, if the data type is a generic type such as ``list``
-    or ``dict`` that take type arguments, the final two elements will be
-    as follows.
-
-    >>> from typing import Dict
-    >>> from openstack_odooclient.managers.record.util import get_type_tree
-    >>> get_type_tree(Dict[int, str])
-    (typing.Dict[str, int], <class 'dict'>)
-
-    The generic types can be retrieved using ``typing.get_args``.
-
-    >>> from typing import Dict, get_args
-    >>> get_args(Dict[int, str])
-    (<class 'int'>, <class 'str'>)
-
-    :param type_hint: Type hint to parse
-    :type type_hint: Any
-    :return: Type hint tree
-    :rtype: Tuple[Any]
-    """
-
-    type_tree: List[Any] = [type_hint]
-
-    while get_type_origin(type_tree[-1]) is not None:
-        origin_type = get_type_origin(type_tree[-1])
-        if origin_type is not None:
-            type_tree.append(origin_type)
-
-    return tuple(type_tree)
-
-
 def decode_value(type_hint: Type[T], value: Any) -> T:
     """Decode a raw Odoo JSON field value to its local representation,
     based on the given type hint from the record class.
@@ -223,26 +166,26 @@ def decode_value(type_hint: Type[T], value: Any) -> T:
     :rtype: T
     """
 
-    type_tree = get_type_tree(type_hint)
+    value_type = get_type_origin(type_hint)
 
     # The basic data types that need special handling.
-    if type_tree[-1] is date:
+    if value_type is date:
         return date.fromisoformat(value)  # type: ignore[return-value]
 
-    if type_tree[-1] is datetime:
+    if value_type is datetime:
         return datetime.fromisoformat(value)  # type: ignore[return-value]
 
     # When a list is expected, decode each value individually
     # and return the result as a new list with the same order.
-    if type_tree[-1] is list:
+    if value_type is list:
         return [  # type: ignore[return-value]
-            decode_value(get_type_args(type_tree[-2])[0], v) for v in value
+            decode_value(get_type_args(type_hint)[0], v) for v in value
         ]
 
     # When a dict is expected, decode the key and the value of each
     # item separately, and combine the result into a new dict.
-    if type_tree[-1] is dict:
-        key_type, value_type = get_type_args(type_tree[-2])
+    if value_type is dict:
+        key_type, value_type = get_type_args(type_hint)
         return {  # type: ignore[return-value]
             decode_value(key_type, k): decode_value(value_type, v)
             for k, v in value.items()
@@ -252,8 +195,8 @@ def decode_value(type_hint: Type[T], value: Any) -> T:
     # Not suitable for handling complicated union structures.
     # TODO(callumdickinson): Find a way to handle complicated
     # union structures more smartly.
-    if type_tree[-1] is Union:
-        attr_union_types = get_type_args(type_tree[-2])
+    if value_type is Union:
+        attr_union_types = get_type_args(type_hint)
         if len(attr_union_types) == 2:  # noqa: PLR2004
             # Optional[T]
             if type(None) in attr_union_types and value is not None:
