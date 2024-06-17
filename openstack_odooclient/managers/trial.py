@@ -20,10 +20,11 @@ from typing import Literal, Union
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_base
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager import RecordManagerBase
 
 
-class Trial(record_base.RecordBase):
+class Trial(RecordBase):
     account_suspended_date: Union[date, Literal[False]]
     """The date the account was suspended, following the end of the trial."""
 
@@ -38,22 +39,13 @@ class Trial(record_base.RecordBase):
     end_date: date
     """The end date of this trial."""
 
-    partner_id: Annotated[
-        int,
-        record_base.ModelRef("partner", partner_module.Partner),
-    ]
+    partner_id: Annotated[int, ModelRef("partner", Partner)]
     """The ID for the target partner for this trial."""
 
-    partner_name: Annotated[
-        str,
-        record_base.ModelRef("partner", partner_module.Partner),
-    ]
+    partner_name: Annotated[str, ModelRef("partner", Partner)]
     """The name of the target partner for this trial."""
 
-    partner: Annotated[
-        partner_module.Partner,
-        record_base.ModelRef("partner", partner_module.Partner),
-    ]
+    partner: Annotated[Partner, ModelRef("partner", Partner)]
     """The target partner for this trial.
 
     This fetches the full record from Odoo once,
@@ -64,10 +56,10 @@ class Trial(record_base.RecordBase):
     """The start date of this trial."""
 
 
-class TrialManager(record_manager_base.RecordManagerBase[Trial]):
+class TrialManager(RecordManagerBase[Trial]):
     env_name = "openstack.trial"
     record_class = Trial
 
 
 # NOTE(callumdickinson): Import here to avoid circular imports.
-from . import partner as partner_module  # noqa: E402
+from .partner import Partner  # noqa: E402

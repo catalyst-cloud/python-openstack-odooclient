@@ -19,10 +19,11 @@ from typing import Literal
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_name_base
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager_named import NamedRecordManagerBase
 
 
-class Tax(record_base.RecordBase):
+class Tax(RecordBase):
     active: bool
     """Whether or not this tax is active (enabled)."""
 
@@ -44,22 +45,13 @@ class Tax(record_base.RecordBase):
     to the same analytic account as the invoice line (if any).
     """
 
-    company_id: Annotated[
-        int,
-        record_base.ModelRef("company_id", company_module.Company),
-    ]
+    company_id: Annotated[int, ModelRef("company_id", Company)]
     """The ID for the company this tax is owned by."""
 
-    company_name: Annotated[
-        str,
-        record_base.ModelRef("company_id", company_module.Company),
-    ]
+    company_name: Annotated[str, ModelRef("company_id", Company)]
     """The name of the company this tax is owned by."""
 
-    company: Annotated[
-        company_module.Company,
-        record_base.ModelRef("company_id", company_module.Company),
-    ]
+    company: Annotated[Company, ModelRef("company_id", Company)]
     """The company this tax is owned by.
 
     This fetches the full record from Odoo once,
@@ -92,22 +84,13 @@ class Tax(record_base.RecordBase):
     * ``on_payment`` - Due as soon as payment of the invoice is received
     """
 
-    tax_group_id: Annotated[
-        int,
-        record_base.ModelRef("tax_group_id", tax_group_module.TaxGroup),
-    ]
+    tax_group_id: Annotated[int, ModelRef("tax_group_id", TaxGroup)]
     """The ID for the tax group this tax is categorised under."""
 
-    tax_group_name: Annotated[
-        str,
-        record_base.ModelRef("tax_group_id", tax_group_module.TaxGroup),
-    ]
+    tax_group_name: Annotated[str, ModelRef("tax_group_id", TaxGroup)]
     """The name of the tax group this tax is categorised under."""
 
-    tax_group: Annotated[
-        tax_group_module.TaxGroup,
-        record_base.ModelRef("tax_group_id", tax_group_module.TaxGroup),
-    ]
+    tax_group: Annotated[TaxGroup, ModelRef("tax_group_id", TaxGroup)]
     """The tax group this tax is categorised under.
 
     This fetches the full record from Odoo once,
@@ -115,13 +98,11 @@ class Tax(record_base.RecordBase):
     """
 
 
-class TaxManager(record_manager_name_base.NamedRecordManagerBase[Tax]):
+class TaxManager(NamedRecordManagerBase[Tax]):
     env_name = "account.tax"
     record_class = Tax
 
 
 # NOTE(callumdickinson): Import here to avoid circular imports.
-from . import (  # noqa: E402
-    company as company_module,
-    tax_group as tax_group_module,
-)
+from .company import Company  # noqa: E402
+from .tax_group import TaxGroup  # noqa: E402

@@ -15,64 +15,44 @@
 
 from __future__ import annotations
 
-import ssl
-import urllib.request
-
-from pathlib import Path
-from typing import TYPE_CHECKING, overload
-
-from odoorpc import ODOO  # type: ignore[import]
-from packaging.version import Version
-
-from .base import record
-from .managers import (
-    account_move,
-    account_move_line,
-    company,
-    credit,
-    credit_transaction,
-    credit_type,
-    currency,
-    customer_group,
-    grant,
-    grant_type,
-    partner,
-    partner_category,
-    pricelist,
-    product,
-    product_category,
-    project,
-    project_contact,
-    referral_code,
-    reseller,
-    reseller_tier,
-    sale_order,
-    sale_order_line,
-    support_subscription,
-    support_subscription_type,
-    tax,
-    tax_group,
-    term_discount,
-    trial,
-    uom,
-    uom_category,
-    user,
-    volume_discount_range,
-    voucher_code,
-)
-
-if TYPE_CHECKING:
-    from typing import Dict, Literal, Optional, Type, Union
-
-    from odoorpc.db import DB  # type: ignore[import]
-    from odoorpc.env import Environment  # type: ignore[import]
-    from odoorpc.report import Report  # type: ignore[import]
-
-    from .managers import record_manager_base
+from .base.client import ClientBase
+from .managers.account_move import AccountMoveManager
+from .managers.account_move_line import AccountMoveLineManager
+from .managers.company import CompanyManager
+from .managers.credit import CreditManager
+from .managers.credit_transaction import CreditTransactionManager
+from .managers.credit_type import CreditTypeManager
+from .managers.currency import CurrencyManager
+from .managers.customer_group import CustomerGroupManager
+from .managers.grant import GrantManager
+from .managers.grant_type import GrantTypeManager
+from .managers.partner import PartnerManager
+from .managers.partner_category import PartnerCategoryManager
+from .managers.pricelist import PricelistManager
+from .managers.product import ProductManager
+from .managers.product_category import ProductCategoryManager
+from .managers.project import ProjectManager
+from .managers.project_contact import ProjectContactManager
+from .managers.referral_code import ReferralCodeManager
+from .managers.reseller import ResellerManager
+from .managers.reseller_tier import ResellerTierManager
+from .managers.sale_order import SaleOrderManager
+from .managers.sale_order_line import SaleOrderLineManager
+from .managers.support_subscription import SupportSubscriptionManager
+from .managers.support_subscription_type import SupportSubscriptionTypeManager
+from .managers.tax import TaxManager
+from .managers.tax_group import TaxGroupManager
+from .managers.term_discount import TermDiscountManager
+from .managers.trial import TrialManager
+from .managers.uom import UomManager
+from .managers.uom_category import UomCategoryManager
+from .managers.user import User, UserManager
+from .managers.volume_discount_range import VolumeDiscountRangeManager
+from .managers.voucher_code import VoucherCodeManager
 
 
-class Client:
-    """A client class for managing the OpenStack Odoo ERP.
+class Client(ClientBase):
+    """The client for managing the OpenStack Odoo ERP.
 
     Connect to an Odoo server by either passing the required
     connection and authentication information,
@@ -104,223 +84,109 @@ class Client:
     :type version: Optional[str], optional
     """
 
-    # TODO(callumdickinson): Use type hints to define managers,
-    # to allow for easy expansion of the Odoo client class.
+    account_moves: AccountMoveManager
+    """Account move (invoice) manager."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        hostname: Optional[str] = ...,
-        database: Optional[str] = ...,
-        username: Optional[str] = ...,
-        password: Optional[str] = ...,
-        protocol: str = "jsonrpc",
-        port: int = 8069,
-        verify: Union[bool, Path, str] = ...,
-        version: Optional[str] = ...,
-        odoo: ODOO,
-    ) -> None: ...
+    account_move_lines: AccountMoveLineManager
+    """Account move (invoice) line manager."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        hostname: str,
-        database: str,
-        username: str,
-        password: str,
-        protocol: str = "jsonrpc",
-        port: int = 8069,
-        verify: Union[bool, Path, str] = ...,
-        version: Optional[str] = ...,
-        odoo: Literal[None] = ...,
-    ) -> None: ...
+    companies: CompanyManager
+    """Company manager."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        hostname: Optional[str] = ...,
-        database: Optional[str] = ...,
-        username: Optional[str] = ...,
-        password: Optional[str] = ...,
-        protocol: str = "jsonrpc",
-        port: int = 8069,
-        verify: Union[bool, Path, str] = ...,
-        version: Optional[str] = ...,
-        odoo: Optional[ODOO] = ...,
-    ) -> None: ...
+    credits: CreditManager
+    """OpenStack credit manager."""
 
-    def __init__(
-        self,
-        *,
-        hostname: Optional[str] = None,
-        database: Optional[str] = None,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
-        protocol: str = "jsonrpc",
-        port: int = 8069,
-        verify: Union[bool, Path, str] = True,
-        version: Optional[str] = None,
-        odoo: Optional[ODOO] = None,
-    ) -> None:
-        # If an OdooRPC object is provided, use that directly.
-        # Otherwise, make a new one with the provided settings.
-        if odoo:
-            self._odoo = odoo
-        else:
-            opener = None
-            if protocol.endswith("+ssl"):
-                ssl_verify = verify is not False
-                ssl_cafile = (
-                    str(verify) if isinstance(verify, (Path, str)) else None
-                )
-                if not ssl_verify or ssl_cafile:
-                    ssl_context = ssl.create_default_context(cafile=ssl_cafile)
-                    if not ssl_verify:
-                        ssl_context.check_hostname = False
-                        ssl_context.verify_mode = ssl.CERT_NONE
-                    opener = urllib.request.build_opener(
-                        urllib.request.HTTPSHandler(context=ssl_context),
-                        urllib.request.HTTPCookieProcessor(),
-                    )
-            self._odoo = ODOO(
-                protocol=protocol,
-                host=hostname,
-                port=port,
-                version=version,
-                opener=opener,
-            )
-            self._odoo.login(database, username, password)
-        # Create an internal mapping between record classes and their managers.
-        # This is populated by the manager classes themselves when created,
-        # and used when converting model references on record objects into
-        # # new record objects.
-        self._record_manager_mapping: Dict[
-            Type[record.RecordBase],
-            record_manager_base.RecordManagerBase,
-        ] = {}
-        # Create record managers.
-        self.account_moves = account_move.AccountMoveManager(self)
-        """Account Move (Invoice) manager."""
-        self.account_move_lines = account_move_line.AccountMoveLineManager(
-            self,
-        )
-        """Company manager."""
-        self.companies = company.CompanyManager(self)
-        """Account Move (Invoice) Line manager."""
-        self.credits = credit.CreditManager(self)
-        """Credit manager."""
-        self.credit_transactions = credit_transaction.CreditTransactionManager(
-            self
-        )
-        """Credit Transaction manager."""
-        self.credit_types = credit_type.CreditTypeManager(self)
-        """Credit Type manager."""
-        self.currencies = currency.CurrencyManager(self)
-        """Currency manager."""
-        self.customer_groups = customer_group.CustomerGroupManager(self)
-        """Customer Group manager."""
-        self.grants = grant.GrantManager(self)
-        """Grant manager."""
-        self.grant_types = grant_type.GrantTypeManager(self)
-        """Grant Type manager."""
-        self.partners = partner.PartnerManager(self)
-        """Partner manager."""
-        self.partner_categories = partner_category.PartnerCategoryManager(
-            self,
-        )
-        """Partner Category manager."""
-        self.pricelists = pricelist.PricelistManager(self)
-        """Pricelist manager."""
-        self.products = product.ProductManager(self)
-        """Product manager."""
-        self.product_categories = product_category.ProductCategoryManager(
-            self,
-        )
-        """Product Category manager."""
-        self.projects = project.ProjectManager(self)
-        """OpenStack Project manager."""
-        self.project_contacts = project_contact.ProjectContactManager(self)
-        """Project Contact manager."""
-        self.referral_codes = referral_code.ReferralCodeManager(self)
-        """Referral Code manager."""
-        self.resellers = reseller.ResellerManager(self)
-        """Reseller manager."""
-        self.reseller_tiers = reseller_tier.ResellerTierManager(self)
-        """Reseller Tier manager."""
-        self.sale_orders = sale_order.SaleOrderManager(self)
-        """Sale Order manager."""
-        self.sale_order_lines = sale_order_line.SaleOrderLineManager(self)
-        """Sale Order Line manager."""
-        self.support_subscriptions = (
-            support_subscription.SupportSubscriptionManager(self)
-        )
-        """Support Subscription manager."""
-        self.support_subscription_types = (
-            support_subscription_type.SupportSubscriptionTypeManager(self)
-        )
-        self.taxes = tax.TaxManager(self)
-        """Tax manager."""
-        self.tax_groups = tax_group.TaxGroupManager(self)
-        """Tax Group manager."""
-        """Support Subscription Type manager."""
-        self.term_discounts = term_discount.TermDiscountManager(self)
-        """Term Discount manager."""
-        self.trials = trial.TrialManager(self)
-        """Trial manager."""
-        self.uoms = uom.UomManager(self)
-        """Unit of Measure (UoM) manager."""
-        self.uom_categories = uom_category.UomCategoryManager(self)
-        """Unit of Measure (UoM) Category manager."""
-        self.users = user.UserManager(self)
-        """User manager."""
-        self.volume_discount_ranges = (
-            volume_discount_range.VolumeDiscountRangeManager(self)
-        )
-        """Volume Discount Range manager."""
-        self.voucher_codes = voucher_code.VoucherCodeManager(self)
-        """Voucher Code manager."""
+    credit_transactions: CreditTransactionManager
+    """OpenStack credit transaction manager."""
+
+    credit_types: CreditTypeManager
+    """OpenStack credit type manager."""
+
+    currencies: CurrencyManager
+    """Currency manager."""
+
+    customer_groups: CustomerGroupManager
+    """OpenStack customer group manager."""
+
+    grants: GrantManager
+    """OpenStack grant manager."""
+
+    grant_types: GrantTypeManager
+    """OpenStack grant type manager."""
+
+    partners: PartnerManager
+    """Partner manager."""
+
+    partner_categories: PartnerCategoryManager
+    """Partner category manager."""
+
+    pricelists: PricelistManager
+    """Pricelist manager."""
+
+    products: ProductManager
+    """Product manager."""
+
+    product_categories: ProductCategoryManager
+    """Product category manager."""
+
+    projects: ProjectManager
+    """OpenStack project manager."""
+
+    project_contacts: ProjectContactManager
+    """OpenStack project contact manager."""
+
+    referral_codes: ReferralCodeManager
+    """OpenStack referral code manager."""
+
+    resellers: ResellerManager
+    """OpenStack reseller manager."""
+
+    reseller_tiers: ResellerTierManager
+    """OpenStack reseller tier manager."""
+
+    sale_orders: SaleOrderManager
+    """Sale order manager."""
+
+    sale_order_lines: SaleOrderLineManager
+    """Sale order line manager."""
+
+    support_subscriptions: SupportSubscriptionManager
+    """OpenStack support subscription manager."""
+
+    support_subscription_types: SupportSubscriptionTypeManager
+    """OpenStack support subscription type manager."""
+
+    taxes: TaxManager
+    """Tax manager."""
+
+    tax_groups: TaxGroupManager
+    """Tax Group manager."""
+
+    term_discounts: TermDiscountManager
+    """OpenStack term discount manager."""
+
+    trials: TrialManager
+    """OpenStack trial manager."""
+
+    uoms: UomManager
+    """Unit of Measure (UoM) manager."""
+
+    uom_categories: UomCategoryManager
+    """Unit of Measure (UoM) category manager."""
+
+    users: UserManager
+    """User manager."""
+
+    volume_discount_ranges: VolumeDiscountRangeManager
+    """OpenStack volume discount range manager."""
+
+    voucher_codes: VoucherCodeManager
+    """Voucher code manager."""
 
     @property
-    def db(self) -> DB:
-        """The database management service."""
-        return self._odoo.db
+    def user(self) -> User:
+        """The currently logged in user.
 
-    @property
-    def report(self) -> Report:
-        """The report management service."""
-        return self._odoo.report
-
-    @property
-    def env(self) -> Environment:
-        """The OdooRPC environment wrapper object.
-
-        This allows interacting with models that do not have managers
-        within this Odoo client.
-        Usage is the same as on a native ``odoorpc.ODOO`` object.
+        This fetches the full record from Odoo.
         """
-        return self._odoo.env
-
-    @property
-    def user_id(self) -> int:
-        """The ID for the currently logged in user."""
-        return self._odoo.env.uid
-
-    @property
-    def user(self) -> user.User:
-        """The currently logged in user."""
         return self.users.get(self.user_id)
-
-    @property
-    def version(self) -> Version:
-        """The version of the server,
-        as a comparable ``packaging.version.Version`` object.
-        """
-        return Version(self._odoo.version)
-
-    @property
-    def version_str(self) -> str:
-        """The version of the server, as a string."""
-        return self._odoo.version

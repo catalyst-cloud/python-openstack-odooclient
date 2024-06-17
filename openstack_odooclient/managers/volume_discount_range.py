@@ -19,16 +19,14 @@ from typing import List, Optional, Union
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_base
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager import RecordManagerBase
 
 
-class VolumeDiscountRange(record_base.RecordBase):
+class VolumeDiscountRange(RecordBase):
     customer_group_id: Annotated[
         Optional[int],
-        record_base.ModelRef(
-            "customer_group",
-            customer_group_module.CustomerGroup,
-        ),
+        ModelRef("customer_group", CustomerGroup),
     ]
     """The ID for the customer group this volume discount range
     applies to, if a specific customer group is set.
@@ -36,21 +34,15 @@ class VolumeDiscountRange(record_base.RecordBase):
 
     customer_group_name: Annotated[
         Optional[str],
-        record_base.ModelRef(
-            "customer_group",
-            customer_group_module.CustomerGroup,
-        ),
+        ModelRef("customer_group", CustomerGroup),
     ]
     """The name of the customer group this volume discount range
     applies to, if a specific customer group is set.
     """
 
     customer_group: Annotated[
-        Optional[customer_group_module.CustomerGroup],
-        record_base.ModelRef(
-            "customer_group",
-            customer_group_module.CustomerGroup,
-        ),
+        Optional[CustomerGroup],
+        ModelRef("customer_group", CustomerGroup),
     ]
     """The customer group this volume discount range
     applies to, if a specific customer group is set.
@@ -80,18 +72,14 @@ class VolumeDiscountRange(record_base.RecordBase):
     """Use the ``max`` field, if defined."""
 
 
-class VolumeDiscountRangeManager(
-    record_manager_base.RecordManagerBase[VolumeDiscountRange],
-):
+class VolumeDiscountRangeManager(RecordManagerBase[VolumeDiscountRange]):
     env_name = "openstack.volume_discount_range"
     record_class = VolumeDiscountRange
 
     def get_for_charge(
         self,
         charge: float,
-        customer_group: Optional[
-            Union[int, customer_group_module.CustomerGroup],
-        ] = None,
+        customer_group: Optional[Union[int, CustomerGroup]] = None,
     ) -> Optional[VolumeDiscountRange]:
         """Return the volume discount range to apply to a given charge.
 
@@ -127,4 +115,4 @@ class VolumeDiscountRangeManager(
 
 
 # NOTE(callumdickinson): Import here to avoid circular imports.
-from . import customer_group as customer_group_module  # noqa: E402
+from .customer_group import CustomerGroup  # noqa: E402

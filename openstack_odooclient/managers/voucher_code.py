@@ -20,10 +20,11 @@ from typing import List, Literal, Optional, Union
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_name_base
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager_named import NamedRecordManagerBase
 
 
-class VoucherCode(record_base.RecordBase):
+class VoucherCode(RecordBase):
     claimed: bool
     """Whether or not this voucher code has been claimed."""
 
@@ -37,7 +38,7 @@ class VoucherCode(record_base.RecordBase):
 
     credit_type_id: Annotated[
         Optional[int],
-        record_base.ModelRef("credit_type", credit_type_module.CreditType),
+        ModelRef("credit_type", CreditType),
     ]
     """The ID of the credit type to use, if a credit is to be
     created by this voucher code.
@@ -45,15 +46,15 @@ class VoucherCode(record_base.RecordBase):
 
     credit_type_name: Annotated[
         Optional[str],
-        record_base.ModelRef("credit_type", credit_type_module.CreditType),
+        ModelRef("credit_type", CreditType),
     ]
     """The name of the credit type to use, if a credit is to be
     created by this voucher code.
     """
 
     credit_type: Annotated[
-        Optional[credit_type_module.CreditType],
-        record_base.ModelRef("credit_type", credit_type_module.CreditType),
+        Optional[CreditType],
+        ModelRef("credit_type", CreditType),
     ]
     """The credit type to use, if a credit is to be
     created by this voucher code.
@@ -69,10 +70,7 @@ class VoucherCode(record_base.RecordBase):
 
     customer_group_id: Annotated[
         Optional[int],
-        record_base.ModelRef(
-            "customer_group",
-            customer_group_module.CustomerGroup,
-        ),
+        ModelRef("customer_group", CustomerGroup),
     ]
     """The ID of the customer group this voucher code is available to.
 
@@ -81,10 +79,7 @@ class VoucherCode(record_base.RecordBase):
 
     customer_group_name: Annotated[
         Optional[str],
-        record_base.ModelRef(
-            "customer_group",
-            customer_group_module.CustomerGroup,
-        ),
+        ModelRef("customer_group", CustomerGroup),
     ]
     """The name of the customer group this voucher code is available to.
 
@@ -92,11 +87,8 @@ class VoucherCode(record_base.RecordBase):
     """
 
     customer_group: Annotated[
-        Optional[customer_group_module.CustomerGroup],
-        record_base.ModelRef(
-            "customer_group",
-            customer_group_module.CustomerGroup,
-        ),
+        Optional[CustomerGroup],
+        ModelRef("customer_group", CustomerGroup),
     ]
     """The customer group this voucher code is available to.
 
@@ -114,25 +106,22 @@ class VoucherCode(record_base.RecordBase):
     created by the voucher code.
     """
 
-    grant_type_id: Annotated[
-        Optional[int],
-        record_base.ModelRef("grant_type", grant_type_module.GrantType),
-    ]
+    grant_type_id: Annotated[Optional[int], ModelRef("grant_type", GrantType)]
     """The ID of the grant type to use, if a grant is to be
     created by this voucher code.
     """
 
     grant_type_name: Annotated[
         Optional[str],
-        record_base.ModelRef("grant_type", grant_type_module.GrantType),
+        ModelRef("grant_type", GrantType),
     ]
     """The name of the grant type to use, if a grant is to be
     created by this voucher code.
     """
 
     grant_type: Annotated[
-        Optional[grant_type_module.GrantType],
-        record_base.ModelRef("grant_type", grant_type_module.GrantType),
+        Optional[GrantType],
+        ModelRef("grant_type", GrantType),
     ]
     """The grant type to use, if a grant is to be
     created by this voucher code.
@@ -168,7 +157,7 @@ class VoucherCode(record_base.RecordBase):
 
     sales_person_id: Annotated[
         Optional[int],
-        record_base.ModelRef("sales_person", partner.Partner),
+        ModelRef("sales_person", Partner),
     ]
     """The ID for the salesperson partner responsible for this
     voucher code, if assigned.
@@ -176,15 +165,15 @@ class VoucherCode(record_base.RecordBase):
 
     sales_person_name: Annotated[
         Optional[str],
-        record_base.ModelRef("sales_person", partner.Partner),
+        ModelRef("sales_person", Partner),
     ]
     """The name of the salesperson partner responsible for this
     voucher code, if assigned.
     """
 
     sales_person: Annotated[
-        Optional[partner.Partner],
-        record_base.ModelRef("sales_person"),
+        Optional[Partner],
+        ModelRef("sales_person", Partner),
     ]
     """The salesperson partner responsible for this
     voucher code, if assigned.
@@ -193,18 +182,12 @@ class VoucherCode(record_base.RecordBase):
     and caches it for subsequent accesses.
     """
 
-    tag_ids: Annotated[
-        List[int],
-        record_base.ModelRef("tags", partner_category.PartnerCategory),
-    ]
+    tag_ids: Annotated[List[int], ModelRef("tags", PartnerCategory)]
     """A list of IDs for the tags (partner categories) to assign
     to partners for new accounts that signed up using this voucher code.
     """
 
-    tags: Annotated[
-        List[partner_category.PartnerCategory],
-        record_base.ModelRef("tags", partner_category.PartnerCategory),
-    ]
+    tags: Annotated[List[PartnerCategory], ModelRef("tags", PartnerCategory)]
     """The list of tags (partner categories) to assign
     to partners for new accounts that signed up using this voucher code.
 
@@ -213,18 +196,14 @@ class VoucherCode(record_base.RecordBase):
     """
 
 
-class VoucherCodeManager(
-    record_manager_name_base.NamedRecordManagerBase[VoucherCode],
-):
+class VoucherCodeManager(NamedRecordManagerBase[VoucherCode]):
     env_name = "openstack.voucher_code"
     record_class = VoucherCode
 
 
 # NOTE(callumdickinson): Import here to avoid circular imports.
-from . import (  # noqa: E402
-    credit_type as credit_type_module,
-    customer_group as customer_group_module,
-    grant_type as grant_type_module,
-    partner,
-    partner_category,
-)
+from .credit_type import CreditType  # noqa: E402
+from .customer_group import CustomerGroup  # noqa: E402
+from .grant_type import GrantType  # noqa: E402
+from .partner import Partner  # noqa: E402
+from .partner_category import PartnerCategory  # noqa: E402

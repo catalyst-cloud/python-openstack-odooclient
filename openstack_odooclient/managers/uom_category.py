@@ -17,10 +17,11 @@ from __future__ import annotations
 
 from typing import Literal
 
-from . import record_base, record_manager_base
+from ..base.record import RecordBase
+from ..base.record_manager import RecordManagerBase
 
 
-class UomCategory(record_base.RecordBase):
+class UomCategory(RecordBase):
     measure_type: Literal[
         "unit",
         "weight",
@@ -45,6 +46,6 @@ class UomCategory(record_base.RecordBase):
     """Unit of Measure (UoM) category name."""
 
 
-class UomCategoryManager(record_manager_base.RecordManagerBase[UomCategory]):
+class UomCategoryManager(RecordManagerBase[UomCategory]):
     env_name = "uom.category"
     record_class = UomCategory

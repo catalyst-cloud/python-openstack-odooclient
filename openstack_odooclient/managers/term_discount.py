@@ -20,10 +20,11 @@ from typing import Optional
 
 from typing_extensions import Annotated, Self
 
-from . import record_base, record_manager_base
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager import RecordManagerBase
 
 
-class TermDiscount(record_base.RecordBase):
+class TermDiscount(RecordBase):
     discount_percent: float
     """The maximum discount percentage for this term discount (0-100)."""
 
@@ -36,32 +37,20 @@ class TermDiscount(record_base.RecordBase):
     min_commit: float
     """The minimum commitment for this term discount to apply."""
 
-    partner_id: Annotated[
-        int,
-        record_base.ModelRef("partner", partner_module.Partner),
-    ]
+    partner_id: Annotated[int, ModelRef("partner", Partner)]
     """The ID for the partner that receives this term discount."""
 
-    partner_name: Annotated[
-        str,
-        record_base.ModelRef("partner", partner_module.Partner),
-    ]
+    partner_name: Annotated[str, ModelRef("partner", Partner)]
     """The name of the partner that receives this term discount."""
 
-    partner: Annotated[
-        partner_module.Partner,
-        record_base.ModelRef("partner", partner_module.Partner),
-    ]
+    partner: Annotated[Partner, ModelRef("partner", Partner)]
     """The partner that receives this term discount.
 
     This fetches the full record from Odoo once,
     and caches it for subsequent accesses.
     """
 
-    project_id: Annotated[
-        Optional[int],
-        record_base.ModelRef("project", project_module.Project),
-    ]
+    project_id: Annotated[Optional[int], ModelRef("project", Project)]
     """The ID for the project this term discount applies to,
     if it is a project-specific term discount.
 
@@ -69,10 +58,7 @@ class TermDiscount(record_base.RecordBase):
     the partner owns.
     """
 
-    project_name: Annotated[
-        Optional[str],
-        record_base.ModelRef("project", project_module.Project),
-    ]
+    project_name: Annotated[Optional[str], ModelRef("project", Project)]
     """The name of the project this term discount applies to,
     if it is a project-specific term discount.
 
@@ -80,10 +66,7 @@ class TermDiscount(record_base.RecordBase):
     the partner owns.
     """
 
-    project: Annotated[
-        Optional[project_module.Project],
-        record_base.ModelRef("project", project_module.Project),
-    ]
+    project: Annotated[Optional[Project], ModelRef("project", Project)]
     """The project this term discount applies to,
     if it is a project-specific term discount.
 
@@ -99,7 +82,7 @@ class TermDiscount(record_base.RecordBase):
 
     superseded_by_id: Annotated[
         Optional[int],
-        record_base.ModelRef("superseded_by", Self),
+        ModelRef("superseded_by", Self),
     ]
     """The ID for the term discount that supersedes this one,
     if superseded.
@@ -107,7 +90,7 @@ class TermDiscount(record_base.RecordBase):
 
     superseded_by_name: Annotated[
         Optional[str],
-        record_base.ModelRef("superseded_by", Self),
+        ModelRef("superseded_by", Self),
     ]
     """The name of the term discount that supersedes this one,
     if superseded.
@@ -115,7 +98,7 @@ class TermDiscount(record_base.RecordBase):
 
     superseded_by: Annotated[
         Optional[Self],
-        record_base.ModelRef("superseded_by", Self),
+        ModelRef("superseded_by", Self),
     ]
     """The term discount that supersedes this one,
     if superseded.
@@ -125,15 +108,11 @@ class TermDiscount(record_base.RecordBase):
     """
 
 
-class TermDiscountManager(
-    record_manager_base.RecordManagerBase[TermDiscount],
-):
+class TermDiscountManager(RecordManagerBase[TermDiscount]):
     env_name = "openstack.term_discount"
     record_class = TermDiscount
 
 
 # NOTE(callumdickinson): Import here to avoid circular imports.
-from . import (  # noqa :E402
-    partner as partner_module,
-    project as project_module,
-)
+from .partner import Partner  # noqa: E402
+from .project import Project  # noqa: E402

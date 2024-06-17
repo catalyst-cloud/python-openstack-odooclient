@@ -17,36 +17,25 @@ from __future__ import annotations
 
 from typing_extensions import Annotated
 
-from . import (
-    company as company_module,
-    record_base,
-    record_manager_base,
-)
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager import RecordManagerBase
+from .company import Company
 
 
-class User(record_base.RecordBase):
+class User(RecordBase):
     active: bool
     """Whether or not this user is active."""
 
     active_partner: bool
     """Whether or not the partner this user is associated with is active."""
 
-    company_id: Annotated[
-        int,
-        record_base.ModelRef("company_id", company_module.Company),
-    ]
+    company_id: Annotated[int, ModelRef("company_id", Company)]
     """The ID for the default company this user is logged in as."""
 
-    company_name: Annotated[
-        str,
-        record_base.ModelRef("company_id", company_module.Company),
-    ]
+    company_name: Annotated[str, ModelRef("company_id", Company)]
     """The name of the default company this user is logged in as."""
 
-    company: Annotated[
-        company_module.Company,
-        record_base.ModelRef("company_id", company_module.Company),
-    ]
+    company: Annotated[Company, ModelRef("company_id", Company)]
     """The default company this user is logged in as.
 
     This fetches the full record from Odoo once,
@@ -56,22 +45,13 @@ class User(record_base.RecordBase):
     name: str
     """User name."""
 
-    partner_id: Annotated[
-        int,
-        record_base.ModelRef("partner_id", partner_module.Partner),
-    ]
+    partner_id: Annotated[int, ModelRef("partner_id", Partner)]
     """The ID for the partner that this user is associated with."""
 
-    partner_name: Annotated[
-        str,
-        record_base.ModelRef("partner_id", partner_module.Partner),
-    ]
+    partner_name: Annotated[str, ModelRef("partner_id", Partner)]
     """The name of the partner that this user is associated with."""
 
-    partner: Annotated[
-        partner_module.Partner,
-        record_base.ModelRef("partner_id", partner_module.Partner),
-    ]
+    partner: Annotated[Partner, ModelRef("partner_id", Partner)]
     """The partner that this user is associated with.
 
     This fetches the full record from Odoo once,
@@ -79,10 +59,10 @@ class User(record_base.RecordBase):
     """
 
 
-class UserManager(record_manager_base.RecordManagerBase[User]):
+class UserManager(RecordManagerBase[User]):
     env_name = "res.users"
     record_class = User
 
 
 # NOTE(callumdickinson): Import here to make sure circular imports work.
-from . import partner as partner_module  # noqa: E402
+from .partner import Partner  # noqa: E402

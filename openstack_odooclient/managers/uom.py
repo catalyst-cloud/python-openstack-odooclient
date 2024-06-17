@@ -19,29 +19,21 @@ from typing import Literal
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_base
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager import RecordManagerBase
 
 
-class Uom(record_base.RecordBase):
+class Uom(RecordBase):
     active: bool
     """Whether or not this Unit of Measure is active (enabled)."""
 
-    category_id: Annotated[
-        int,
-        record_base.ModelRef("category_id", uom_category.UomCategory),
-    ]
+    category_id: Annotated[int, ModelRef("category_id", UomCategory)]
     """The ID for the category this Unit of Measure is classified as."""
 
-    category_name: Annotated[
-        str,
-        record_base.ModelRef("category_id", uom_category.UomCategory),
-    ]
+    category_name: Annotated[str, ModelRef("category_id", UomCategory)]
     """The name of the category this Unit of Measure is classified as."""
 
-    category: Annotated[
-        uom_category.UomCategory,
-        record_base.ModelRef("category_id", uom_category.UomCategory),
-    ]
+    category: Annotated[UomCategory, ModelRef("category_id", UomCategory)]
     """The category this Unit of Measure is classified as.
 
     This fetches the full record from Odoo once,
@@ -94,10 +86,10 @@ class Uom(record_base.RecordBase):
     """
 
 
-class UomManager(record_manager_base.RecordManagerBase[Uom]):
+class UomManager(RecordManagerBase[Uom]):
     env_name = "uom.uom"
     record_class = Uom
 
 
 # NOTE(callumdickinson): Import here to avoid circular imports.
-from . import uom_category  # noqa: E402
+from .uom_category import UomCategory  # noqa: E402
