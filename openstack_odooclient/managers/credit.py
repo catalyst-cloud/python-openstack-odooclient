@@ -20,19 +20,25 @@ from typing import List, Optional
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_base, util
+from . import record_base, record_manager_base
 
 
 class Credit(record_base.RecordBase):
-    credit_type_id: Annotated[int, util.ModelRef("credit_type")]
+    credit_type_id: Annotated[
+        int,
+        record_base.ModelRef("credit_type", credit_type_module.CreditType),
+    ]
     """The ID of the type of this credit."""
 
-    credit_type_name: Annotated[str, util.ModelRef("credit_type")]
+    credit_type_name: Annotated[
+        str,
+        record_base.ModelRef("credit_type", credit_type_module.CreditType),
+    ]
     """The name of the type of this credit."""
 
     credit_type: Annotated[
         credit_type_module.CreditType,
-        util.ModelRef("credit_type"),
+        record_base.ModelRef("credit_type", credit_type_module.CreditType),
     ]
     """The type of this credit.
 
@@ -55,14 +61,23 @@ class Credit(record_base.RecordBase):
     start_date: date
     """The start date of the credit."""
 
-    transaction_ids: Annotated[List[int], util.ModelRef("transactions")]
+    transaction_ids: Annotated[
+        List[int],
+        record_base.ModelRef(
+            "transactions",
+            credit_transaction.CreditTransaction,
+        ),
+    ]
     """A list of IDs for the transactions that have been made
     using this credit.
     """
 
     transactions: Annotated[
         List[credit_transaction.CreditTransaction],
-        util.ModelRef("transactions"),
+        record_base.ModelRef(
+            "transactions",
+            credit_transaction.CreditTransaction,
+        ),
     ]
     """The transactions that have been made using this credit.
 
@@ -70,19 +85,25 @@ class Credit(record_base.RecordBase):
     and caches them for subsequent accesses.
     """
 
-    voucher_code_id: Annotated[Optional[int], util.ModelRef("voucher_code")]
+    voucher_code_id: Annotated[
+        Optional[int],
+        record_base.ModelRef("voucher_code", voucher_code_module.VoucherCode),
+    ]
     """The ID of the voucher code used when applying for the credit,
     if one was supplied.
     """
 
-    voucher_code_name: Annotated[Optional[str], util.ModelRef("voucher_code")]
+    voucher_code_name: Annotated[
+        Optional[str],
+        record_base.ModelRef("voucher_code", voucher_code_module.VoucherCode),
+    ]
     """The name of the voucher code used when applying for the credit,
     if one was supplied.
     """
 
     voucher_code: Annotated[
         Optional[voucher_code_module.VoucherCode],
-        util.ModelRef("voucher_code"),
+        record_base.ModelRef("voucher_code", voucher_code_module.VoucherCode),
     ]
     """The voucher code used when applying for the credit,
     if one was supplied.

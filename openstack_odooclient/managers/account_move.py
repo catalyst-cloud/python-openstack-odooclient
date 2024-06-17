@@ -25,7 +25,6 @@ from . import (
     project,
     record_base,
     record_manager_name_base,
-    util,
 )
 
 
@@ -36,15 +35,21 @@ class AccountMove(record_base.RecordBase):
     amount_untaxed: float
     """Total (untaxed) amount charged on the account move (invoice)."""
 
-    currency_id: Annotated[int, util.ModelRef("currency_id")]
+    currency_id: Annotated[
+        int,
+        record_base.ModelRef("currency_id", currency_module.Currency),
+    ]
     """The ID for the currency used in this account move (invoice)."""
 
-    currency_name: Annotated[str, util.ModelRef("currency_id")]
+    currency_name: Annotated[
+        str,
+        record_base.ModelRef("currency_id", currency_module.Currency),
+    ]
     """The name of the currency used in this account move (invoice)."""
 
     currency: Annotated[
         currency_module.Currency,
-        util.ModelRef("currency_id"),
+        record_base.ModelRef("currency_id", currency_module.Currency),
     ]
     """The currency used in this account move (invoice).
 
@@ -57,7 +62,10 @@ class AccountMove(record_base.RecordBase):
 
     invoice_line_ids: Annotated[
         List[int],
-        record_base.ModelRef("invoice_line_ids"),
+        record_base.ModelRef(
+            "invoice_line_ids",
+            account_move_line.AccountMoveLine,
+        ),
     ]
     """The list of the IDs for the account move (invoice) lines
     that comprise this account move (invoice).
@@ -65,7 +73,10 @@ class AccountMove(record_base.RecordBase):
 
     invoice_lines: Annotated[
         List[account_move_line.AccountMoveLine],
-        record_base.ModelRef("invoice_line_ids"),
+        record_base.ModelRef(
+            "invoice_line_ids",
+            account_move_line.AccountMoveLine,
+        ),
     ]
     """A list of account move (invoice) lines
     that comprise this account move (invoice).
@@ -102,19 +113,25 @@ class AccountMove(record_base.RecordBase):
     name: Union[str, Literal[False]]
     """Name assigned to the account move (invoice), if posted."""
 
-    os_project_id: Annotated[Optional[int], util.ModelRef("os_project")]
+    os_project_id: Annotated[
+        Optional[int],
+        record_base.ModelRef("os_project", project.Project),
+    ]
     """The ID of the OpenStack project this account move (invoice)
     was generated for, if this is an invoice for OpenStack project usage.
     """
 
-    os_project_name: Annotated[Optional[str], util.ModelRef("os_project")]
+    os_project_name: Annotated[
+        Optional[str],
+        record_base.ModelRef("os_project", project.Project),
+    ]
     """The name of the OpenStack project this account move (invoice)
     was generated for, if this is an invoice for OpenStack project usage.
     """
 
     os_project: Annotated[
         Optional[project.Project],
-        util.ModelRef("os_project"),
+        record_base.ModelRef("os_project", project.Project),
     ]
     """The OpenStack project this account move (invoice)
     was generated for, if this is an invoice for OpenStack project usage.

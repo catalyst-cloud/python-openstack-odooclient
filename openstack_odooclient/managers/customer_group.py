@@ -19,38 +19,50 @@ from typing import List, Optional
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_name_base, util
+from . import record_base, record_manager_name_base
 
 
 class CustomerGroup(record_base.RecordBase):
     name: str
     """The name of the customer group."""
 
-    partner_ids: Annotated[List[int], util.ModelRef("partners")]
+    partner_ids: Annotated[
+        List[int],
+        record_base.ModelRef("partners", partner.Partner),
+    ]
     """A list of IDs for the partners that are part
     of this customer group.
     """
 
-    partners: Annotated[List[partner.Partner], util.ModelRef("partners")]
+    partners: Annotated[
+        List[partner.Partner],
+        record_base.ModelRef("partners", partner.Partner),
+    ]
     """The partners that are part of this customer group.
 
     This fetches the full records from Odoo once,
     and caches them for subsequent accesses.
     """
 
-    pricelist_id: Annotated[Optional[int], util.ModelRef("pricelist")]
+    pricelist_id: Annotated[
+        Optional[int],
+        record_base.ModelRef("pricelist", pricelist_module.Pricelist),
+    ]
     """The ID for the pricelist this customer group uses,
     if not the default one.
     """
 
-    pricelist_name: Annotated[Optional[str], util.ModelRef("pricelist")]
+    pricelist_name: Annotated[
+        Optional[str],
+        record_base.ModelRef("pricelist", pricelist_module.Pricelist),
+    ]
     """The name of the pricelist this customer group uses,
     if not the default one.
     """
 
     pricelist: Annotated[
         Optional[pricelist_module.Pricelist],
-        util.ModelRef("pricelist"),
+        record_base.ModelRef("pricelist", pricelist_module.Pricelist),
     ]
     """The pricelist this customer group uses, if not the default one.
 

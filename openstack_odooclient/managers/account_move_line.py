@@ -25,24 +25,29 @@ from . import (
     project,
     record_base,
     record_manager_base,
-    util,
 )
 
 
 class AccountMoveLine(record_base.RecordBase):
-    currency_id: Annotated[int, util.ModelRef("currency_id")]
+    currency_id: Annotated[
+        int,
+        record_base.ModelRef("currency_id", currency_module.Currency),
+    ]
     """The ID for the currency used in this
     account move (invoice) line.
     """
 
-    currency_name: Annotated[str, util.ModelRef("currency_id")]
+    currency_name: Annotated[
+        int,
+        record_base.ModelRef("currency_id", currency_module.Currency),
+    ]
     """The name of the currency used in this
     account move (invoice) line.
     """
 
     currency: Annotated[
         currency_module.Currency,
-        util.ModelRef("currency_id"),
+        record_base.ModelRef("currency_id", currency_module.Currency),
     ]
     """The currency used in this
     account move (invoice) line.
@@ -54,13 +59,22 @@ class AccountMoveLine(record_base.RecordBase):
     line_tax_amount: float
     """Amount charged in tax on the account move (invoice) line."""
 
-    move_id: Annotated[int, util.ModelRef("move_id")]
+    move_id: Annotated[
+        int,
+        record_base.ModelRef("move_id", account_move.AccountMove),
+    ]
     """The ID for the account move (invoice) this line is part of."""
 
-    move_name: Annotated[str, util.ModelRef("move_id")]
+    move_name: Annotated[
+        str,
+        record_base.ModelRef("move_id", account_move.AccountMove),
+    ]
     """The name of the account move (invoice) this line is part of."""
 
-    move: Annotated[account_move.AccountMove, util.ModelRef("move_id")]
+    move: Annotated[
+        account_move.AccountMove,
+        record_base.ModelRef("move_id", account_move.AccountMove),
+    ]
     """The account move (invoice) this line is part of.
 
     This fetches the full record from Odoo once,
@@ -70,19 +84,25 @@ class AccountMoveLine(record_base.RecordBase):
     name: str
     """Name of the product charged on the account move (invoice) line."""
 
-    os_project_id: Annotated[Optional[int], util.ModelRef("os_project")]
+    os_project_id: Annotated[
+        Optional[int],
+        record_base.ModelRef("os_project", project.Project),
+    ]
     """The ID for the OpenStack project this account move (invoice) line
     was generated for.
     """
 
-    os_project_name: Annotated[Optional[str], util.ModelRef("os_project")]
+    os_project_name: Annotated[
+        Optional[str],
+        record_base.ModelRef("os_project", project.Project),
+    ]
     """The name of the OpenStack project this account move (invoice) line
     was generated for.
     """
 
     os_project: Annotated[
         Optional[project.Project],
-        util.ModelRef("os_project"),
+        record_base.ModelRef("os_project", project.Project),
     ]
     """The OpenStack project this account move (invoice) line
     was generated for.
@@ -122,17 +142,26 @@ class AccountMoveLine(record_base.RecordBase):
     price_unit: float
     """Unit price for the product used on the account move (invoice) line."""
 
-    product_id: Annotated[int, util.ModelRef("product_id")]
+    product_id: Annotated[
+        int,
+        record_base.ModelRef("product_id", product_module.Product),
+    ]
     """The ID for the product charged on the
     account move (invoice) line.
     """
 
-    product_name: Annotated[str, util.ModelRef("product_id")]
+    product_name: Annotated[
+        str,
+        record_base.ModelRef("product_id", product_module.Product),
+    ]
     """The name of the product charged on the
     account move (invoice) line.
     """
 
-    product: Annotated[product_module.Product, util.ModelRef("product_id")]
+    product: Annotated[
+        product_module.Product,
+        record_base.ModelRef("product_id", product_module.Product),
+    ]
     """The product charged on the
     account move (invoice) line.
 

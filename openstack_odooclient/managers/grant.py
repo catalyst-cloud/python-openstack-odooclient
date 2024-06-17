@@ -20,22 +20,28 @@ from typing import Optional
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_base, util
+from . import record_base, record_manager_base
 
 
 class Grant(record_base.RecordBase):
     expiry_date: date
     """The date the grant expires."""
 
-    grant_type_id: Annotated[int, util.ModelRef("grant_type")]
+    grant_type_id: Annotated[
+        int,
+        record_base.ModelRef("grant_type", grant_type_module.GrantType),
+    ]
     """The ID of the type of this grant."""
 
-    grant_type_name: Annotated[str, util.ModelRef("grant_type")]
+    grant_type_name: Annotated[
+        str,
+        record_base.ModelRef("grant_type", grant_type_module.GrantType),
+    ]
     """The name of the type of this grant."""
 
     grant_type: Annotated[
         grant_type_module.GrantType,
-        util.ModelRef("grant_type"),
+        record_base.ModelRef("grant_type", grant_type_module.GrantType),
     ]
     """The type of this grant.
 
@@ -52,19 +58,25 @@ class Grant(record_base.RecordBase):
     value: float
     """The value of the grant."""
 
-    voucher_code_id: Annotated[Optional[int], util.ModelRef("voucher_code")]
+    voucher_code_id: Annotated[
+        Optional[int],
+        record_base.ModelRef("voucher_code", voucher_code_module.VoucherCode),
+    ]
     """The ID of the voucher code used when applying for the grant,
     if one was supplied.
     """
 
-    voucher_code_name: Annotated[Optional[str], util.ModelRef("voucher_code")]
+    voucher_code_name: Annotated[
+        Optional[str],
+        record_base.ModelRef("voucher_code", voucher_code_module.VoucherCode),
+    ]
     """The name of the voucher code used when applying for the grant,
     if one was supplied.
     """
 
     voucher_code: Annotated[
         Optional[voucher_code_module.VoucherCode],
-        util.ModelRef("voucher_code"),
+        record_base.ModelRef("voucher_code"),
     ]
     """The voucher code used when applying for the grant,
     if one was supplied.

@@ -17,19 +17,25 @@ from __future__ import annotations
 
 from typing import List, Literal, Optional, Union
 
-from typing_extensions import Annotated
+from typing_extensions import Annotated, Self
 
-from . import record_base, record_manager_name_base, util
+from . import record_base, record_manager_name_base
 
 
 class Company(record_base.RecordBase):
     active: bool
     """Whether or not this company is active (enabled)."""
 
-    child_ids: Annotated[List[int], util.ModelRef("child_ids")]
+    child_ids: Annotated[
+        List[int],
+        record_base.ModelRef("child_ids", Self),
+    ]
     """A list of IDs for the child companies."""
 
-    children: Annotated[List[Company], util.ModelRef("child_ids")]
+    children: Annotated[
+        List[Self],
+        record_base.ModelRef("child_ids", Self),
+    ]
     """The list of child companies.
 
     This fetches the full records from Odoo once,
@@ -39,17 +45,23 @@ class Company(record_base.RecordBase):
     name: str
     """Company name, set from the partner name."""
 
-    parent_id: Annotated[Optional[int], util.ModelRef("parent_id")]
+    parent_id: Annotated[
+        Optional[int],
+        record_base.ModelRef("parent_id", Self),
+    ]
     """The ID for the parent company, if this company
     is the child of another company.
     """
 
-    parent_name: Annotated[Optional[str], util.ModelRef("parent_id")]
+    parent_name: Annotated[
+        Optional[str],
+        record_base.ModelRef("parent_id", Self),
+    ]
     """The name of the parent company, if this company
     is the child of another company.
     """
 
-    parent: Annotated[Optional[Company], util.ModelRef("parent_id")]
+    parent: Annotated[Optional[Self], record_base.ModelRef("parent_id", Self)]
     """The parent company, if this company
     is the child of another company.
 
@@ -60,13 +72,22 @@ class Company(record_base.RecordBase):
     parent_path: Union[str, Literal[False]]
     """The path of the parent company, if there is a parent."""
 
-    partner_id: Annotated[int, util.ModelRef("partner_id")]
+    partner_id: Annotated[
+        int,
+        record_base.ModelRef("partner_id", partner_module.Partner),
+    ]
     """The ID for the partner for the company."""
 
-    partner_name: Annotated[str, util.ModelRef("partner_id")]
+    partner_name: Annotated[
+        str,
+        record_base.ModelRef("partner_id", partner_module.Partner),
+    ]
     """The name of the partner for the company."""
 
-    partner: Annotated[partner_module.Partner, util.ModelRef("partner_id")]
+    partner: Annotated[
+        partner_module.Partner,
+        record_base.ModelRef("partner_id", partner_module.Partner),
+    ]
     """The partner for the company.
 
     This fetches the full record from Odoo once,

@@ -15,7 +15,6 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from datetime import date, datetime
 from typing import (
     Any,
@@ -29,8 +28,6 @@ from typing import (
 )
 
 from typing_extensions import (
-    Annotated,
-    Self,
     get_args as get_type_args,
     get_origin as get_type_origin,
 )
@@ -43,59 +40,6 @@ DEFAULT_SERVER_TIME_FORMAT = "%H:%M:%S"
 DEFAULT_SERVER_DATETIME_FORMAT = (
     f"{DEFAULT_SERVER_DATE_FORMAT} {DEFAULT_SERVER_TIME_FORMAT}"
 )
-
-
-class AnnotationBase:
-    @classmethod
-    def get(cls, type_hint: Any) -> Optional[Self]:
-        """Return the annotation applied to the given type hint,
-        if the type hint is annotated with this type of annotation.
-
-        If multiple matching annotations are found, the last occurrence
-        is returned.
-
-        :param type_hint: The type hint to parse
-        :type type_hint: Any
-        :return: Applied annotation, or ``None`` if no annotation was found
-        :rtype: Optional[Self]
-        """
-        if get_type_origin(type_hint) is not Annotated:
-            return None
-        matching_annotation: Optional[Self] = None
-        for annotation in get_type_args(type_hint)[1:]:
-            if isinstance(annotation, cls):
-                matching_annotation = annotation
-        return matching_annotation
-
-    @classmethod
-    def is_annotated(cls, type_hint: Any) -> bool:
-        """Checks whether or not the given type hint is annotated
-        with an annotation of this type.
-
-        :param type_hint: The type hint to parse
-        :type type_hint: Any
-        :return: ``True`` if annotated, otherwise ``False``
-        :rtype: bool
-        """
-        return bool(cls.get(type_hint))
-
-
-@dataclass(frozen=True)
-class FieldAlias(AnnotationBase):
-    """An annotation for alias attributes to define the Odoo field name
-    the attribute is an alias for.
-    """
-
-    field: str
-
-
-@dataclass(frozen=True)
-class ModelRef(AnnotationBase):
-    """An annotation for attributes that decode an Odoo model reference,
-    to define the Odoo field name to be decoded.
-    """
-
-    field: str
 
 
 def get_mapped_field(

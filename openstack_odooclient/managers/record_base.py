@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import copy
 
+from dataclasses import dataclass
 from datetime import datetime
 from typing import (
     TYPE_CHECKING,
@@ -39,7 +40,7 @@ from typing_extensions import (
     get_type_hints,
 )
 
-from .util import FieldAlias, ModelRef, decode_value, is_subclass
+from .util import decode_value, is_subclass
 
 if TYPE_CHECKING:
     from odoorpc import ODOO  # type: ignore[import]
@@ -49,6 +50,60 @@ if TYPE_CHECKING:
     from . import record_manager_base
 
 
+class AnnotationBase:
+    @classmethod
+    def get(cls, type_hint: Any) -> Optional[Self]:
+        """Return the annotation applied to the given type hint,
+        if the type hint is annotated with this type of annotation.
+
+        If multiple matching annotations are found, the last occurrence
+        is returned.
+
+        :param type_hint: The type hint to parse
+        :type type_hint: Any
+        :return: Applied annotation, or ``None`` if no annotation was found
+        :rtype: Optional[Self]
+        """
+        if get_type_origin(type_hint) is not Annotated:
+            return None
+        matching_annotation: Optional[Self] = None
+        for annotation in get_type_args(type_hint)[1:]:
+            if isinstance(annotation, cls):
+                matching_annotation = annotation
+        return matching_annotation
+
+    @classmethod
+    def is_annotated(cls, type_hint: Any) -> bool:
+        """Checks whether or not the given type hint is annotated
+        with an annotation of this type.
+
+        :param type_hint: The type hint to parse
+        :type type_hint: Any
+        :return: ``True`` if annotated, otherwise ``False``
+        :rtype: bool
+        """
+        return bool(cls.get(type_hint))
+
+
+@dataclass(frozen=True)
+class FieldAlias(AnnotationBase):
+    """An annotation for alias attributes to define the Odoo field name
+    the attribute is an alias for.
+    """
+
+    field: str
+
+
+@dataclass(frozen=True)
+class ModelRef(AnnotationBase):
+    """An annotation for attributes that decode an Odoo model reference,
+    to define the Odoo field name to be decoded.
+    """
+
+    field: str
+    record_class: Any
+
+
 class RecordBase:
     id: int
     """The record's ID in Odoo."""
@@ -56,13 +111,13 @@ class RecordBase:
     create_date: datetime
     """The time the record was created."""
 
-    create_uid: Annotated[int, ModelRef("create_uid")]
+    create_uid: Annotated[int, ModelRef("create_uid", user.User)]
     """The ID of the user that created this record."""
 
-    create_name: Annotated[str, ModelRef("create_uid")]
+    create_name: Annotated[str, ModelRef("create_uid", user.User)]
     """The name of the user that created this record."""
 
-    create_user: Annotated[user.User, ModelRef("create_uid")]
+    create_user: Annotated[user.User, ModelRef("create_uid", user.User)]
     """The user that created this record.
 
     This fetches the full record from Odoo once,
@@ -72,13 +127,13 @@ class RecordBase:
     write_date: datetime
     """The time the record was last modified."""
 
-    write_uid: Annotated[int, ModelRef("write_uid")]
+    write_uid: Annotated[int, ModelRef("write_uid", user.User)]
     """The ID for the user that last modified this record."""
 
-    write_name: Annotated[str, ModelRef("write_uid")]
+    write_name: Annotated[str, ModelRef("write_uid", user.User)]
     """The name of the user that last modified this record."""
 
-    write_user: Annotated[user.User, ModelRef("create_uid")]
+    write_user: Annotated[user.User, ModelRef("write_uid", user.User)]
     """The user that last modified this record.
 
     This fetches the full record from Odoo once,
@@ -293,6 +348,11 @@ class RecordBase:
         # as a list of model IDs or objects.
         if get_type_origin(attr_type) is list:
             value_type = get_type_args(attr_type)[0]
+            # Handle a model ref list with the same record type as the
+            # parent record. Fetch the records from Odoo, and return
+            # the results.
+            if value_type is Self:
+                return self._manager.list(field_value)
             # List of model objects. Fetch the objects from Odoo,
             # and return the results.
             if is_subclass(value_type, RecordBase):
@@ -340,14 +400,16 @@ class RecordBase:
         # and generate the value.
         record_id: int = field_value[0]
         record_name: str = field_value[1]
-        if value_type is int:
-            return record_id
-        if value_type is str:
-            return record_name
+        if value_type is Self:
+            return self._manager.get(record_id)
         if is_subclass(value_type, RecordBase):
             return self._client._record_manager_mapping[value_type].get(
                 record_id,
             )
+        if value_type is int:
+            return record_id
+        if value_type is str:
+            return record_name
         raise ValueError(
             (
                 "Unsupported field value type for singular model ref: "

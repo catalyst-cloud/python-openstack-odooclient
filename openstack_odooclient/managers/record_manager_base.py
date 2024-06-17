@@ -37,18 +37,18 @@ from typing import (
 
 from typing_extensions import (
     Annotated,
+    Self,
     get_args as get_type_args,
     get_origin as get_type_origin,
     get_type_hints,
 )
 
 from ..exceptions import RecordNotFoundError
-from .record_base import RecordBase
+from .record_base import ModelRef, RecordBase
 from .util import (
     DEFAULT_SERVER_DATE_FORMAT,
     DEFAULT_SERVER_DATETIME_FORMAT,
     DEFAULT_SERVER_TIME_FORMAT,
-    ModelRef,
     get_mapped_field,
     is_subclass,
 )
@@ -430,12 +430,19 @@ class RecordManagerBase(Generic[Record]):
             type_hint: Any = type_hints[local_field]
             model_ref = ModelRef.get(type_hint)
             if model_ref:
-                value_type = get_type_args(type_hint)[0]
+                record_class: Type[RecordBase] = (
+                    self.record_class
+                    if model_ref.record_class is Self
+                    else model_ref.record_class
+                )
                 type_hint, remote_field_refs = (
                     self._client._record_manager_mapping[
-                        value_type
+                        record_class  # type: ignore[index]
                     ]._encode_filter_field(
-                        type_hints=get_type_hints(value_type),
+                        type_hints=get_type_hints(
+                            record_class,
+                            include_extras=True,
+                        ),
                         field=".".join(field_refs[1:]),
                     )
                 )

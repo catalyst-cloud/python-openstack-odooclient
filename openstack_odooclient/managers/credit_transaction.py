@@ -17,17 +17,26 @@ from __future__ import annotations
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_base, util
+from . import record_base, record_manager_base
 
 
 class CreditTransaction(record_base.RecordBase):
-    credit_id: Annotated[int, util.ModelRef("credit")]
+    credit_id: Annotated[
+        int,
+        record_base.ModelRef("credit", credit_module.Credit),
+    ]
     """The ID of the credit this transaction was made against."""
 
-    credit_name: Annotated[str, util.ModelRef("credit")]
+    credit_name: Annotated[
+        str,
+        record_base.ModelRef("credit", credit_module.Credit),
+    ]
     """The name of the credit this transaction was made against."""
 
-    credit: Annotated[credit_module.Credit, util.ModelRef("credit")]
+    credit: Annotated[
+        credit_module.Credit,
+        record_base.ModelRef("credit", credit_module.Credit),
+    ]
     """The credit this transaction was made against.
 
     This fetches the full record from Odoo once,

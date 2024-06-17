@@ -24,15 +24,20 @@ from . import (
     product_category,
     record_base,
     record_manager_name_base,
-    util,
 )
 
 
 class CreditType(record_base.RecordBase):
-    credit_ids: Annotated[List[int], util.ModelRef("credits")]
+    credit_ids: Annotated[
+        List[int],
+        record_base.ModelRef("credits", credit.Credit),
+    ]
     """A list of IDs for the credits which are of this credit type."""
 
-    credits: Annotated[List[credit.Credit], util.ModelRef("credits")]
+    credits: Annotated[
+        List[credit.Credit],
+        record_base.ModelRef("credits", credit.Credit),
+    ]
     """A list of credits which are of this credit type.
 
     This fetches the full records from Odoo once,
@@ -44,7 +49,7 @@ class CreditType(record_base.RecordBase):
 
     only_for_product_ids: Annotated[
         List[int],
-        util.ModelRef("only_for_products"),
+        record_base.ModelRef("only_for_products", product_module.Product),
     ]
     """A list of IDs for the products this credit applies to.
 
@@ -54,7 +59,7 @@ class CreditType(record_base.RecordBase):
 
     only_for_products: Annotated[
         List[product_module.Product],
-        util.ModelRef("only_for_products"),
+        record_base.ModelRef("only_for_products", product_module.Product),
     ]
     """A list of products which this credit applies to.
 
@@ -67,7 +72,10 @@ class CreditType(record_base.RecordBase):
 
     only_for_product_category_ids: Annotated[
         List[int],
-        util.ModelRef("only_for_product_categories"),
+        record_base.ModelRef(
+            "only_for_product_categories",
+            product_category.ProductCategory,
+        ),
     ]
     """A list of IDs for the product categories this credit applies to.
 
@@ -78,7 +86,10 @@ class CreditType(record_base.RecordBase):
 
     only_for_product_categories: Annotated[
         List[product_category.ProductCategory],
-        util.ModelRef("only_for_product_categories"),
+        record_base.ModelRef(
+            "only_for_product_categories",
+            product_category.ProductCategory,
+        ),
     ]
     """A list of product categories which this credit applies to.
 
@@ -90,17 +101,26 @@ class CreditType(record_base.RecordBase):
     and caches them for subsequent accesses.
     """
 
-    product_id: Annotated[int, util.ModelRef("product")]
+    product_id: Annotated[
+        int,
+        record_base.ModelRef("product", product_module.Product),
+    ]
     """The ID of the product to use when applying
     the credit to invoices.
     """
 
-    product_name: Annotated[str, util.ModelRef("product")]
+    product_name: Annotated[
+        str,
+        record_base.ModelRef("product", product_module.Product),
+    ]
     """The name of the product to use when applying
     the credit to invoices.
     """
 
-    product: Annotated[product_module.Product, util.ModelRef("product")]
+    product: Annotated[
+        product_module.Product,
+        record_base.ModelRef("product", product_module.Product),
+    ]
     """The product to use when applying the credit to invoices.
 
     This fetches the full record from Odoo once,
