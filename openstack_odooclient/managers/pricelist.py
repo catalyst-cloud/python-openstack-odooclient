@@ -21,7 +21,6 @@ from typing_extensions import Annotated
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
-from .product import Product
 
 
 class Pricelist(RecordBase):
@@ -119,3 +118,4 @@ class PricelistManager(NamedRecordManagerBase[Pricelist]):
 # NOTE(callumdickinson): Import here to make sure circular imports work.
 from .company import Company  # noqa: E402
 from .currency import Currency  # noqa: E402
+from .product import Product  # noqa: E402

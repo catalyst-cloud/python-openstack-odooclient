@@ -21,7 +21,6 @@ from typing_extensions import Annotated, Self
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
-from .pricelist import Pricelist
 
 
 class Partner(RecordBase):
@@ -281,6 +280,7 @@ class PartnerManager(RecordManagerBase[Partner]):
 # NOTE(callumdickinson): Import here to make sure circular imports work.
 from .company import Company  # noqa: E402
 from .customer_group import CustomerGroup  # noqa: E402
+from .pricelist import Pricelist  # noqa: E402
 from .project import Project  # noqa: E402
 from .project_contact import ProjectContact  # noqa: E402
 from .referral_code import ReferralCode  # noqa: E402

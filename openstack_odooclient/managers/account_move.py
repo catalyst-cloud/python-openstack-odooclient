@@ -22,8 +22,6 @@ from typing_extensions import Annotated
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
-from .currency import Currency
-from .project import Project
 
 
 class AccountMove(RecordBase):
@@ -181,3 +179,5 @@ class AccountMoveManager(NamedRecordManagerBase[AccountMove]):
 
 # NOTE(callumdickinson): Import here to make sure circular imports work.
 from .account_move_line import AccountMoveLine  # noqa: E402
+from .currency import Currency  # noqa: E402
+from .project import Project  # noqa: E402

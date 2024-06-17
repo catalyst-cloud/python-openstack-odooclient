@@ -78,7 +78,7 @@ class ClientBase:
     :param port: Access port, defaults to ``8069``
     :type port: int, optional
     :param verify: Configure SSL cert verification, defaults to ``True``
-    :type verify: Union[bool, Path, str]
+    :type verify: Union[bool, str, Path]
     :param version: Server version, defaults to ``None`` (auto-detect)
     :type version: Optional[str], optional
     """
@@ -93,7 +93,7 @@ class ClientBase:
         password: Optional[str] = ...,
         protocol: str = "jsonrpc",
         port: int = 8069,
-        verify: Union[bool, Path, str] = ...,
+        verify: Union[bool, str, Path] = ...,
         version: Optional[str] = ...,
         odoo: ODOO,
     ) -> None: ...
@@ -108,7 +108,7 @@ class ClientBase:
         password: str,
         protocol: str = "jsonrpc",
         port: int = 8069,
-        verify: Union[bool, Path, str] = ...,
+        verify: Union[bool, str, Path] = ...,
         version: Optional[str] = ...,
         odoo: Literal[None] = ...,
     ) -> None: ...
@@ -123,7 +123,7 @@ class ClientBase:
         password: Optional[str] = ...,
         protocol: str = "jsonrpc",
         port: int = 8069,
-        verify: Union[bool, Path, str] = ...,
+        verify: Union[bool, str, Path] = ...,
         version: Optional[str] = ...,
         odoo: Optional[ODOO] = ...,
     ) -> None: ...
@@ -137,7 +137,7 @@ class ClientBase:
         password: Optional[str] = None,
         protocol: str = "jsonrpc",
         port: int = 8069,
-        verify: Union[bool, Path, str] = True,
+        verify: Union[bool, str, Path] = True,
         version: Optional[str] = None,
         odoo: Optional[ODOO] = None,
     ) -> None:

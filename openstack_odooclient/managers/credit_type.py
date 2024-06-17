@@ -21,8 +21,6 @@ from typing_extensions import Annotated
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
-from .product import Product
-from .product_category import ProductCategory
 
 
 class CreditType(RecordBase):
@@ -115,3 +113,5 @@ class CreditTypeManager(NamedRecordManagerBase[CreditType]):
 
 # NOTE(callumdickinson): Import here to make sure circular imports work.
 from .credit import Credit  # noqa: E402
+from .product import Product  # noqa: E402
+from .product_category import ProductCategory  # noqa: E402

@@ -19,7 +19,6 @@ from typing_extensions import Annotated
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
-from .company import Company
 
 
 class User(RecordBase):
@@ -65,4 +64,5 @@ class UserManager(RecordManagerBase[User]):
 
 
 # NOTE(callumdickinson): Import here to make sure circular imports work.
+from .company import Company  # noqa: E402
 from .partner import Partner  # noqa: E402

@@ -79,7 +79,7 @@ class Client(ClientBase):
     :param port: Access port, defaults to ``8069``
     :type port: int, optional
     :param verify: Configure SSL cert verification, defaults to ``True``
-    :type verify: Union[bool, Path, str]
+    :type verify: Union[bool, str, Path]
     :param version: Server version, defaults to ``None`` (auto-detect)
     :type version: Optional[str], optional
     """
