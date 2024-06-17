@@ -15,24 +15,10 @@
 
 from __future__ import annotations
 
-from datetime import date, datetime
-from typing import (
-    Any,
-    Literal,
-    Mapping,
-    Optional,
-    Tuple,
-    Type,
-    TypeVar,
-    Union,
-)
+from typing import TYPE_CHECKING
 
-from typing_extensions import (
-    get_args as get_type_args,
-    get_origin as get_type_origin,
-)
-
-T = TypeVar("T")
+if TYPE_CHECKING:
+    from typing import Any, Mapping, Optional, Tuple, Type, Union
 
 # Same values as defined in odoo.tools.misc.
 DEFAULT_SERVER_DATE_FORMAT = "%Y-%m-%d"
@@ -96,70 +82,3 @@ def is_subclass(
         return issubclass(type_obj, classes)
     except TypeError:
         return False
-
-
-def decode_value(type_hint: Type[T], value: Any) -> T:
-    """Decode a raw Odoo JSON field value to its local representation,
-    based on the given type hint from the record class.
-
-    :param type_hint: The type hint to use to decode the value
-    :type type_hint: Type[T]
-    :param value: The value to decode
-    :type value: Any
-    :return: The decoded value
-    :rtype: T
-    """
-
-    value_type = get_type_origin(type_hint) or type_hint
-
-    # The basic data types that need special handling.
-    if value_type is date:
-        return date.fromisoformat(value)  # type: ignore[return-value]
-
-    if value_type is datetime:
-        return datetime.fromisoformat(value)  # type: ignore[return-value]
-
-    # When a list is expected, decode each value individually
-    # and return the result as a new list with the same order.
-    if value_type is list:
-        return [  # type: ignore[return-value]
-            decode_value(get_type_args(type_hint)[0], v) for v in value
-        ]
-
-    # When a dict is expected, decode the key and the value of each
-    # item separately, and combine the result into a new dict.
-    if value_type is dict:
-        key_type, value_type = get_type_args(type_hint)
-        return {  # type: ignore[return-value]
-            decode_value(key_type, k): decode_value(value_type, v)
-            for k, v in value.items()
-        }
-
-    # Basic case for handling specific union structures.
-    # Not suitable for handling complicated union structures.
-    # TODO(callumdickinson): Find a way to handle complicated
-    # union structures more smartly.
-    if value_type is Union:
-        attr_union_types = get_type_args(type_hint)
-        if len(attr_union_types) == 2:  # noqa: PLR2004
-            # Optional[T]
-            if type(None) in attr_union_types and value is not None:
-                return decode_value(
-                    next(t for t in attr_union_types if t is not type(None)),
-                    value,
-                )
-            # Union[T, Literal[False]]
-            if Literal[False] in attr_union_types and value is not False:
-                return decode_value(
-                    next(
-                        (
-                            t
-                            for t in attr_union_types
-                            if t is not Literal[False]
-                        ),
-                    ),
-                    value,
-                )
-
-    # Base case: Return the passed value unmodified.
-    return value

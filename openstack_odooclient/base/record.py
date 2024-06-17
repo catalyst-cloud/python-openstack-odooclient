@@ -18,7 +18,7 @@ from __future__ import annotations
 import copy
 
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import date, datetime, time
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -40,7 +40,7 @@ from typing_extensions import (
     get_type_hints,
 )
 
-from ..util import decode_value, is_subclass
+from ..util import is_subclass
 
 if TYPE_CHECKING:
     from odoorpc import ODOO  # type: ignore[import]
@@ -335,7 +335,10 @@ class RecordBase:
                 )
         # Base case: Decode the value according to the field's type hint,
         # cache the value, and return it.
-        self._values[name] = decode_value(type_hint, self._get_field(name))
+        self._values[name] = self._decode_value(
+            type_hint,
+            self._get_field(name),
+        )
         return self._values[name]
 
     def _getattr_model_ref(
@@ -416,6 +419,65 @@ class RecordBase:
                 f"{value_type}"
             ),
         )
+
+    @classmethod
+    def _decode_value(cls, type_hint: Any, value: Any) -> Any:
+        value_type = get_type_origin(type_hint) or type_hint
+        # The basic data types that need special handling.
+        if value_type is date:
+            return date.fromisoformat(value)
+        if value_type is datetime:
+            return datetime.fromisoformat(value)
+        if value_type is time:
+            return time.fromisoformat(value)
+        # When a list is expected, decode each value individually
+        # and return the result as a new list with the same order.
+        if value_type is list:
+            return [
+                cls._decode_value(get_type_args(type_hint)[0], v)
+                for v in value
+            ]
+        # When a dict is expected, decode the key and the value of each
+        # item separately, and combine the result into a new dict.
+        if value_type is dict:
+            k_type, v_type = get_type_args(type_hint)
+            return {
+                cls._decode_value(k_type, k): cls._decode_value(v_type, v)
+                for k, v in value.items()
+            }
+        # Basic case for handling specific union structures.
+        # Not suitable for handling complicated union structures.
+        # TODO(callumdickinson): Find a way to handle complicated
+        # union structures more smartly.
+        if value_type is Union:
+            attr_union_types = get_type_args(type_hint)
+            if len(attr_union_types) == 2:  # noqa: PLR2004
+                # Optional[T]
+                if type(None) in attr_union_types and value is not None:
+                    return cls._decode_value(
+                        next(
+                            (
+                                t
+                                for t in attr_union_types
+                                if t is not type(None)
+                            ),
+                        ),
+                        value,
+                    )
+                # Union[T, Literal[False]]
+                if Literal[False] in attr_union_types and value is not False:
+                    return cls._decode_value(
+                        next(
+                            (
+                                t
+                                for t in attr_union_types
+                                if t is not Literal[False]
+                            ),
+                        ),
+                        value,
+                    )
+        # Base case: Return the passed value unmodified.
+        return value
 
     def __str__(self) -> str:
         return (
