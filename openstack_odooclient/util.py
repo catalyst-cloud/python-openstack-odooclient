@@ -110,7 +110,7 @@ def decode_value(type_hint: Type[T], value: Any) -> T:
     :rtype: T
     """
 
-    value_type = get_type_origin(type_hint)
+    value_type = get_type_origin(type_hint) or type_hint
 
     # The basic data types that need special handling.
     if value_type is date:

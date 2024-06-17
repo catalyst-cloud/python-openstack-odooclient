@@ -733,7 +733,7 @@ class RecordManagerBase(Generic[Record]):
         return self._get_remote_field(self._resolve_alias(field))
 
     def _encode_value(self, type_hint: Any, value: Any) -> Any:
-        type_origin = get_type_origin(type_hint)
+        type_origin = get_type_origin(type_hint) or type_hint
         value_types = (
             get_type_args(type_hint) if type_origin is Union else [type_origin]
         )

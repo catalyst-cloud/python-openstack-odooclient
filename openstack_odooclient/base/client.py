@@ -23,7 +23,7 @@ from typing import TYPE_CHECKING, overload
 
 from odoorpc import ODOO  # type: ignore[import]
 from packaging.version import Version
-from typing_extensions import get_origin as get_type_origin, get_type_hints
+from typing_extensions import get_type_hints
 
 from ..util import is_subclass
 from .record import RecordBase
@@ -178,8 +178,7 @@ class ClientBase:
             RecordManagerBase,
         ] = {}
         # Create record managers defined in the type hints.
-        for attr_name, type_hint in get_type_hints(type(self)).items():
-            attr_type = get_type_origin(type_hint)
+        for attr_name, attr_type in get_type_hints(type(self)).items():
             if is_subclass(attr_type, RecordManagerBase):
                 setattr(self, attr_name, attr_type(self))
 
