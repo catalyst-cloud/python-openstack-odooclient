@@ -399,7 +399,30 @@ class RecordManagerBase(Generic[Record]):
                     field=f[0],
                 )
                 operator = f[1]
-                value = self._encode_value(type_hint=field_type, value=f[2])
+                # NOTE(callumdickinson): ORM API search domains.
+                # https://www.odoo.com/documentation/14.0/developer/reference/addons/orm.html#search-domains
+                if operator in ("in", "not in"):
+                    value = [
+                        self._encode_value(type_hint=field_type, value=v)
+                        for v in f[2]
+                    ]
+                elif operator in ("child_of", "parent_of"):
+                    value = (
+                        [
+                            self._encode_value(type_hint=field_type, value=v)
+                            for v in f[2]
+                        ]
+                        if isinstance(f[2], (list, set, tuple))
+                        else self._encode_value(
+                            type_hint=field_type,
+                            value=f[2],
+                        )
+                    )
+                else:
+                    value = self._encode_value(
+                        type_hint=field_type,
+                        value=f[2],
+                    )
                 _filter = (field_name, operator, value)
             else:
                 _filter = f
