@@ -101,17 +101,26 @@ class GrantType(record_base.RecordBase):
     part of an invoice grouping if it is on the group root project.
     """
 
-    product_id: Annotated[int, record_base.ModelRef("product")]
+    product_id: Annotated[
+        int,
+        record_base.ModelRef("product", product_module.Product),
+    ]
     """The ID of the product to use when applying
     the grant to invoices.
     """
 
-    product_name: Annotated[str, record_base.ModelRef("product")]
+    product_name: Annotated[
+        str,
+        record_base.ModelRef("product", product_module.Product),
+    ]
     """The name of the product to use when applying
     the grant to invoices.
     """
 
-    product: Annotated[product_module.Product, record_base.ModelRef("product")]
+    product: Annotated[
+        product_module.Product,
+        record_base.ModelRef("product", product_module.Product),
+    ]
     """The product to use when applying the grant to invoices.
 
     This fetches the full record from Odoo once,
