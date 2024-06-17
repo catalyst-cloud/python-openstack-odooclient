@@ -76,7 +76,7 @@ class Grant(record_base.RecordBase):
 
     voucher_code: Annotated[
         Optional[voucher_code_module.VoucherCode],
-        record_base.ModelRef("voucher_code"),
+        record_base.ModelRef("voucher_code", voucher_code_module.VoucherCode),
     ]
     """The voucher code used when applying for the grant,
     if one was supplied.
