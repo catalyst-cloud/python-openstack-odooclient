@@ -903,7 +903,7 @@ The time the record was created.
 create_uid: int
 ```
 
-The ID of the partner that created this record.
+The ID of the [user](user.md) that created this record.
 
 #### `create_name`
 
@@ -911,15 +911,15 @@ The ID of the partner that created this record.
 create_name: str
 ```
 
-The name of the partner that created this record.
+The name of the [user](user.md) that created this record.
 
 #### `create_user`
 
 ```python
-create_user: Partner
+create_user: User
 ```
 
-The partner that created this record.
+The [user](user.md) that created this record.
 
 This fetches the full record from Odoo once,
 and caches it for subsequent accesses.
@@ -938,7 +938,7 @@ The time the record was last modified.
 write_uid: int
 ```
 
-The ID of the partner that last modified this record.
+The ID of the [user](user.md) that last modified this record.
 
 #### `write_name`
 
@@ -946,18 +946,18 @@ The ID of the partner that last modified this record.
 write_name: str
 ```
 
-The name of the partner that modified this record.
+The name of the [user](user.md) that modified this record.
 
 #### `write_user`
 
 ```python
-write_user: Partner
+write_user: User
 ```
 
-The partner that last modified this record.
+The [user](user.md) that last modified this record.
 
-This fetches a full Partner object from Odoo once,
-and caches it for subsequence access.
+This fetches the full record from Odoo once,
+and caches it for subsequence accesses.
 
 #### `as_dict`
 

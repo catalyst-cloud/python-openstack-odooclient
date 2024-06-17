@@ -18,9 +18,9 @@ from __future__ import annotations
 from datetime import date
 from typing import Optional
 
-from typing_extensions import Annotated
+from typing_extensions import Annotated, Self
 
-from . import record_base, record_manager_base, util
+from . import record_base, record_manager_base
 
 
 class TermDiscount(record_base.RecordBase):
@@ -36,20 +36,32 @@ class TermDiscount(record_base.RecordBase):
     min_commit: float
     """The minimum commitment for this term discount to apply."""
 
-    partner_id: Annotated[int, util.ModelRef("partner")]
+    partner_id: Annotated[
+        int,
+        record_base.ModelRef("partner", partner_module.Partner),
+    ]
     """The ID for the partner that receives this term discount."""
 
-    partner_name: Annotated[str, util.ModelRef("partner")]
+    partner_name: Annotated[
+        str,
+        record_base.ModelRef("partner", partner_module.Partner),
+    ]
     """The name of the partner that receives this term discount."""
 
-    partner: Annotated[partner_module.Partner, util.ModelRef("partner")]
+    partner: Annotated[
+        partner_module.Partner,
+        record_base.ModelRef("partner", partner_module.Partner),
+    ]
     """The partner that receives this term discount.
 
     This fetches the full record from Odoo once,
     and caches it for subsequent accesses.
     """
 
-    project_id: Annotated[Optional[int], util.ModelRef("project")]
+    project_id: Annotated[
+        Optional[int],
+        record_base.ModelRef("project", project_module.Project),
+    ]
     """The ID for the project this term discount applies to,
     if it is a project-specific term discount.
 
@@ -57,7 +69,10 @@ class TermDiscount(record_base.RecordBase):
     the partner owns.
     """
 
-    project_name: Annotated[Optional[str], util.ModelRef("project")]
+    project_name: Annotated[
+        Optional[str],
+        record_base.ModelRef("project", project_module.Project),
+    ]
     """The name of the project this term discount applies to,
     if it is a project-specific term discount.
 
@@ -67,7 +82,7 @@ class TermDiscount(record_base.RecordBase):
 
     project: Annotated[
         Optional[project_module.Project],
-        util.ModelRef("project"),
+        record_base.ModelRef("project", project_module.Project),
     ]
     """The project this term discount applies to,
     if it is a project-specific term discount.
@@ -82,22 +97,25 @@ class TermDiscount(record_base.RecordBase):
     start_date: date
     """The date from which this term discount starts."""
 
-    superseded_by_id: Annotated[Optional[int], util.ModelRef("superseded_by")]
+    superseded_by_id: Annotated[
+        Optional[int],
+        record_base.ModelRef("superseded_by", Self),
+    ]
     """The ID for the term discount that supersedes this one,
     if superseded.
     """
 
     superseded_by_name: Annotated[
         Optional[str],
-        util.ModelRef("superseded_by"),
+        record_base.ModelRef("superseded_by", Self),
     ]
     """The name of the term discount that supersedes this one,
     if superseded.
     """
 
     superseded_by: Annotated[
-        Optional[TermDiscount],
-        util.ModelRef("superseded_by"),
+        Optional[Self],
+        record_base.ModelRef("superseded_by", Self),
     ]
     """The term discount that supersedes this one,
     if superseded.

@@ -23,7 +23,6 @@ from . import (
     product as product_module,
     record_base,
     record_manager_name_base,
-    util,
 )
 
 
@@ -31,15 +30,21 @@ class Pricelist(record_base.RecordBase):
     active: bool
     """Whether or not the pricelist is active."""
 
-    company_id: Annotated[Optional[int], util.ModelRef("company_id")]
+    company_id: Annotated[
+        Optional[int],
+        record_base.ModelRef("company_id", company_module.Company),
+    ]
     """The ID for the company for this pricelist, if set."""
 
-    company_name: Annotated[Optional[str], util.ModelRef("company_id")]
+    company_name: Annotated[
+        Optional[str],
+        record_base.ModelRef("company_id", company_module.Company),
+    ]
     """The name of the company for this pricelist, if set."""
 
     company: Annotated[
         Optional[company_module.Company],
-        util.ModelRef("company_id"),
+        record_base.ModelRef("company_id", company_module.Company),
     ]
     """The company for this pricelist, if set.
 
@@ -47,15 +52,21 @@ class Pricelist(record_base.RecordBase):
     and caches it for subsequent accesses.
     """
 
-    currency_id: Annotated[int, util.ModelRef("currency_id")]
+    currency_id: Annotated[
+        int,
+        record_base.ModelRef("currency_id", currency_module.Currency),
+    ]
     """The ID for the currency used in this pricelist."""
 
-    currency_name: Annotated[str, util.ModelRef("currency_id")]
+    currency_name: Annotated[
+        str,
+        record_base.ModelRef("currency_id", currency_module.Currency),
+    ]
     """The name of the currency used in this pricelist."""
 
     currency: Annotated[
         currency_module.Currency,
-        util.ModelRef("currency_id"),
+        record_base.ModelRef("currency_id", currency_module.Currency),
     ]
     """The currency used in this pricelist.
 

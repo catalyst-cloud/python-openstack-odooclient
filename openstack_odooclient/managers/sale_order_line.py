@@ -19,21 +19,30 @@ from typing import List, Literal, Optional, Union
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_base, util
+from . import record_base, record_manager_base
 
 
 class SaleOrderLine(record_base.RecordBase):
-    company_id: Annotated[int, util.ModelRef("company_id")]
+    company_id: Annotated[
+        int,
+        record_base.ModelRef("company_id", company_module.Company),
+    ]
     """The ID for the company this sale order line
     was generated for.
     """
 
-    company_name: Annotated[str, util.ModelRef("company_id")]
+    company_name: Annotated[
+        str,
+        record_base.ModelRef("company_id", company_module.Company),
+    ]
     """The name of the company this sale order line
     was generated for.
     """
 
-    company: Annotated[company_module.Company, util.ModelRef("company_id")]
+    company: Annotated[
+        company_module.Company,
+        record_base.ModelRef("company_id", company_module.Company),
+    ]
     """The company this sale order line
     was generated for.
 
@@ -41,15 +50,21 @@ class SaleOrderLine(record_base.RecordBase):
     and caches it for subsequent accesses.
     """
 
-    currency_id: Annotated[int, util.ModelRef("currency_id")]
+    currency_id: Annotated[
+        int,
+        record_base.ModelRef("currency_id", currency_module.Currency),
+    ]
     """The ID for the currency used in this sale order line."""
 
-    currency_name: Annotated[str, util.ModelRef("currency_id")]
+    currency_name: Annotated[
+        str,
+        record_base.ModelRef("currency_id", currency_module.Currency),
+    ]
     """The name of the currency used in this sale order line."""
 
     currency: Annotated[
         currency_module.Currency,
-        util.ModelRef("currency_id"),
+        record_base.ModelRef("currency_id", currency_module.Currency),
     ]
     """The currency used in this sale order line.
 
@@ -63,14 +78,23 @@ class SaleOrderLine(record_base.RecordBase):
     display_name: str
     """Display name for the sale order line in the sale order."""
 
-    invoice_line_ids: Annotated[List[int], util.ModelRef("invoice_lines")]
+    invoice_line_ids: Annotated[
+        List[int],
+        record_base.ModelRef(
+            "invoice_lines",
+            account_move_line.AccountMoveLine,
+        ),
+    ]
     """A list of IDs for the account move (invoice) lines created
     from this sale order line.
     """
 
     invoice_lines: Annotated[
         List[account_move_line.AccountMoveLine],
-        util.ModelRef("invoice_lines"),
+        record_base.ModelRef(
+            "invoice_lines",
+            account_move_line.AccountMoveLine,
+        ),
     ]
     """The account move (invoice) lines created
     from this sale order line.
@@ -104,28 +128,43 @@ class SaleOrderLine(record_base.RecordBase):
     the resource's name.
     """
 
-    order_id: Annotated[int, util.ModelRef("order_id")]
+    order_id: Annotated[
+        int,
+        record_base.ModelRef("order_id", sale_order.SaleOrder),
+    ]
     """The ID for the sale order this line is linked to."""
 
-    order_name: Annotated[str, util.ModelRef("order_id")]
+    order_name: Annotated[
+        str,
+        record_base.ModelRef("order_id", sale_order.SaleOrder),
+    ]
     """The name of the sale order this line is linked to."""
 
-    order: Annotated[sale_order.SaleOrder, util.ModelRef("order_id")]
+    order: Annotated[
+        sale_order.SaleOrder,
+        record_base.ModelRef("order_id", sale_order.SaleOrder),
+    ]
     """The sale order this line is linked to.
 
     This fetches the full record from Odoo once,
     and caches it for subsequent accesses.
     """
 
-    order_partner_id: Annotated[int, util.ModelRef("order_partner_id")]
+    order_partner_id: Annotated[
+        int,
+        record_base.ModelRef("order_partner_id", partner.Partner),
+    ]
     """The ID for the recipient partner for the sale order."""
 
-    order_partner_name: Annotated[str, util.ModelRef("order_partner_id")]
+    order_partner_name: Annotated[
+        str,
+        record_base.ModelRef("order_partner_id", partner.Partner),
+    ]
     """The name of the recipient partner for the sale order."""
 
     order_partner: Annotated[
         partner.Partner,
-        util.ModelRef("order_partner_id"),
+        record_base.ModelRef("order_partner_id", partner.Partner),
     ]
     """The recipient partner for the sale order.
 
@@ -133,19 +172,25 @@ class SaleOrderLine(record_base.RecordBase):
     and caches it for subsequent accesses.
     """
 
-    os_project_id: Annotated[Optional[int], util.ModelRef("os_project")]
+    os_project_id: Annotated[
+        Optional[int],
+        record_base.ModelRef("os_project", project.Project),
+    ]
     """The ID for the the OpenStack project this sale order line was
     was generated for.
     """
 
-    os_project_name: Annotated[Optional[str], util.ModelRef("os_project")]
+    os_project_name: Annotated[
+        Optional[str],
+        record_base.ModelRef("os_project", project.Project),
+    ]
     """The name of the the OpenStack project this sale order line was
     was generated for.
     """
 
     os_project: Annotated[
         Optional[project.Project],
-        util.ModelRef("os_project"),
+        record_base.ModelRef("os_project", project.Project),
     ]
     """The OpenStack project this sale order line was
     was generated for.
@@ -196,30 +241,48 @@ class SaleOrderLine(record_base.RecordBase):
     price_unit: float
     """Base unit price, excluding tax, before any discounts."""
 
-    product_id: Annotated[int, util.ModelRef("product_id")]
+    product_id: Annotated[
+        int,
+        record_base.ModelRef("product_id", product_module.Product),
+    ]
     """The ID of the product charged on this sale order line."""
 
-    product_name: Annotated[str, util.ModelRef("product_id")]
+    product_name: Annotated[
+        str,
+        record_base.ModelRef("product_id", product_module.Product),
+    ]
     """The name of the product charged on this sale order line."""
 
-    product: Annotated[product_module.Product, util.ModelRef("product_id")]
+    product: Annotated[
+        product_module.Product,
+        record_base.ModelRef("product_id", product_module.Product),
+    ]
     """The product charged on this sale order line.
 
     This fetches the full record from Odoo once,
     and caches it for subsequent accesses.
     """
 
-    product_uom_id: Annotated[int, util.ModelRef("product_uom")]
+    product_uom_id: Annotated[
+        int,
+        record_base.ModelRef("product_uom", uom.Uom),
+    ]
     """The ID for the Unit of Measure for the product being charged in
     this sale order line.
     """
 
-    product_uom_name: Annotated[str, util.ModelRef("product_uom")]
+    product_uom_name: Annotated[
+        str,
+        record_base.ModelRef("product_uom", uom.Uom),
+    ]
     """The name of the Unit of Measure for the product being charged in
     this sale order line.
     """
 
-    product_uom: Annotated[uom.Uom, util.ModelRef("product_uom")]
+    product_uom: Annotated[
+        uom.Uom,
+        record_base.ModelRef("product_uom", uom.Uom),
+    ]
     """The Unit of Measure for the product being charged in
     this sale order line.
 
@@ -244,17 +307,26 @@ class SaleOrderLine(record_base.RecordBase):
     qty_to_invoice: float
     """The product quantity that still needs to be invoiced."""
 
-    salesman_id: Annotated[int, util.ModelRef("salesman_id")]
+    salesman_id: Annotated[
+        int,
+        record_base.ModelRef("salesman_id", partner.Partner),
+    ]
     """The ID for the salesperson partner assigned
     to this sale order line.
     """
 
-    salesman_name: Annotated[str, util.ModelRef("salesman_id")]
+    salesman_name: Annotated[
+        str,
+        record_base.ModelRef("salesman_id", partner.Partner),
+    ]
     """The name of the salesperson partner assigned
     to this sale order line.
     """
 
-    salesman: Annotated[partner.Partner, util.ModelRef("salesman_id")]
+    salesman: Annotated[
+        partner.Partner,
+        record_base.ModelRef("salesman_id", partner.Partner),
+    ]
     """The salesperson partner assigned
     to this sale order line.
 
@@ -273,13 +345,16 @@ class SaleOrderLine(record_base.RecordBase):
     * ``cancel`` - Cancelled sale order, can be deleted
     """
 
-    tax_id: Annotated[int, util.ModelRef("tax_id")]
+    tax_id: Annotated[int, record_base.ModelRef("tax_id", tax_module.Tax)]
     """The ID for the tax used on this sale order line."""
 
-    tax_name: Annotated[str, util.ModelRef("tax_id")]
+    tax_name: Annotated[str, record_base.ModelRef("tax_id", tax_module.Tax)]
     """The name of the tax used on this sale order line."""
 
-    tax: Annotated[tax_module.Tax, util.ModelRef("tax_id")]
+    tax: Annotated[
+        tax_module.Tax,
+        record_base.ModelRef("tax_id", tax_module.Tax),
+    ]
     """The tax used on this sale order line.
 
     This fetches the full record from Odoo once,

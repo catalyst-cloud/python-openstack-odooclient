@@ -19,7 +19,7 @@ from typing import List, Literal
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_name_base, util
+from . import record_base, record_manager_name_base
 
 
 class SupportSubscriptionType(record_base.RecordBase):
@@ -29,17 +29,26 @@ class SupportSubscriptionType(record_base.RecordBase):
     name: str
     """The name of the support subscription type."""
 
-    product_id: Annotated[int, util.ModelRef("product")]
+    product_id: Annotated[
+        int,
+        record_base.ModelRef("product", product_module.Product),
+    ]
     """The ID for the product to use to invoice
     the support subscription.
     """
 
-    product_name: Annotated[str, util.ModelRef("product")]
+    product_name: Annotated[
+        str,
+        record_base.ModelRef("product", product_module.Product),
+    ]
     """The name of the product to use to invoice
     the support subscription.
     """
 
-    product: Annotated[product_module.Product, util.ModelRef("product")]
+    product: Annotated[
+        product_module.Product,
+        record_base.ModelRef("product", product_module.Product),
+    ]
     """The product to use to invoice
     the support subscription.
 
@@ -50,12 +59,21 @@ class SupportSubscriptionType(record_base.RecordBase):
     usage_percent: float
     """Percentage of usage compared to price (0-100)."""
 
-    support_subscription_ids: Annotated[List[int], util.ModelRef("product")]
+    support_subscription_ids: Annotated[
+        List[int],
+        record_base.ModelRef(
+            "support_subscription",
+            support_subscription_type.SupportSubscription,
+        ),
+    ]
     """A list of IDs for the support subscriptions of this type."""
 
     support_subscription: Annotated[
         List[support_subscription_type.SupportSubscription],
-        util.ModelRef("product"),
+        record_base.ModelRef(
+            "support_subscription",
+            support_subscription_type.SupportSubscription,
+        ),
     ]
     """The list of support subscriptions of this type.
 
@@ -65,7 +83,10 @@ class SupportSubscriptionType(record_base.RecordBase):
 
     support_subscriptions: Annotated[
         List[support_subscription_type.SupportSubscription],
-        util.FieldAlias("support_subscription"),
+        record_base.ModelRef(
+            "support_subscription",
+            support_subscription_type.SupportSubscription,
+        ),
     ]
     """An alias for ``support_subscription``."""
 
@@ -78,7 +99,7 @@ class SupportSubscriptionTypeManager(
 
 
 # NOTE(callumdickinson): Import here to avoid circular imports.
-from . import (  # noqa :E402
+from . import (  # noqa: E402
     product as product_module,
     support_subscription as support_subscription_type,
 )

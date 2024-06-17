@@ -137,7 +137,7 @@ class RecordBase:
     """The user that last modified this record.
 
     This fetches the full record from Odoo once,
-    and caches it for subsequence access.
+    and caches it for subsequence accesses.
     """
 
     _field_mapping: Dict[Optional[str], Dict[str, str]] = {}

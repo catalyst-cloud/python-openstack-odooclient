@@ -582,9 +582,13 @@ class RecordManagerBase(Generic[Record]):
                     elif isinstance(v, RecordBase):
                         remote_values.append((4, v.id))
                     elif isinstance(v, dict):
-                        manager = self._client._record_manager_mapping[
-                            value_type
-                        ]
+                        manager = (
+                            self
+                            if value_type is Self
+                            else self._client._record_manager_mapping[
+                                value_type
+                            ]
+                        )
                         remote_values.append(
                             (0, 0, manager._encode_create_fields(v)),
                         )
@@ -613,15 +617,18 @@ class RecordManagerBase(Generic[Record]):
             # parent record so they can both be created.
             # TODO(callumdickinson): Check that this works.
             if isinstance(value, dict):
+                manager = (
+                    self
+                    if value_type is Self
+                    else self._client._record_manager_mapping[value_type]
+                )
                 return (
                     model_ref_field,
                     [
                         (
                             0,
                             0,
-                            self._client._record_manager_mapping[
-                                attr_type
-                            ]._encode_create_fields(value),
+                            manager._encode_create_fields(value),
                         ),
                     ],
                 )

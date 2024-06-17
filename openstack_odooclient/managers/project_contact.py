@@ -19,7 +19,7 @@ from typing import Literal, Optional
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_base, util
+from . import record_base, record_manager_base
 
 
 class ProjectContact(record_base.RecordBase):
@@ -35,28 +35,43 @@ class ProjectContact(record_base.RecordBase):
     inherit: bool
     """Whether or not this contact should be inherited by child projects."""
 
-    partner_id: Annotated[int, util.ModelRef("partner")]
+    partner_id: Annotated[
+        int,
+        record_base.ModelRef("partner", partner_module.Partner),
+    ]
     """The ID for the partner linked to this project contact."""
 
-    partner_name: Annotated[str, util.ModelRef("partner")]
+    partner_name: Annotated[
+        str,
+        record_base.ModelRef("partner", partner_module.Partner),
+    ]
     """The name of the partner linked to this project contact."""
 
-    partner: Annotated[partner_module.Partner, util.ModelRef("partner")]
+    partner: Annotated[
+        partner_module.Partner,
+        record_base.ModelRef("partner", partner_module.Partner),
+    ]
     """The partner linked to this project contact.
 
     This fetches the full record from Odoo once,
     and caches it for subsequent accesses.
     """
 
-    project_id: Annotated[Optional[int], util.ModelRef("project")]
+    project_id: Annotated[
+        Optional[int],
+        record_base.ModelRef("project", project_module.Project),
+    ]
     """The ID for the project this contact is linked to, if set."""
 
-    project_name: Annotated[Optional[str], util.ModelRef("project")]
+    project_name: Annotated[
+        Optional[str],
+        record_base.ModelRef("project", project_module.Project),
+    ]
     """The name of the project this contact is linked to, if set."""
 
     project: Annotated[
         Optional[project_module.Project],
-        util.ModelRef("project"),
+        record_base.ModelRef("project", project_module.Project),
     ]
     """The project this contact is linked to, if set.
 

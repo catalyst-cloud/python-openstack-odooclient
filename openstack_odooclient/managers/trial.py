@@ -20,7 +20,7 @@ from typing import Literal, Union
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_base, util
+from . import record_base, record_manager_base
 
 
 class Trial(record_base.RecordBase):
@@ -38,13 +38,22 @@ class Trial(record_base.RecordBase):
     end_date: date
     """The end date of this trial."""
 
-    partner_id: Annotated[int, util.ModelRef("partner")]
+    partner_id: Annotated[
+        int,
+        record_base.ModelRef("partner", partner_module.Partner),
+    ]
     """The ID for the target partner for this trial."""
 
-    partner_name: Annotated[str, util.ModelRef("partner")]
+    partner_name: Annotated[
+        str,
+        record_base.ModelRef("partner", partner_module.Partner),
+    ]
     """The name of the target partner for this trial."""
 
-    partner: Annotated[partner_module.Partner, util.ModelRef("partner")]
+    partner: Annotated[
+        partner_module.Partner,
+        record_base.ModelRef("partner", partner_module.Partner),
+    ]
     """The target partner for this trial.
 
     This fetches the full record from Odoo once,

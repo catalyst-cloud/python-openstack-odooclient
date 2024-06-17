@@ -17,22 +17,19 @@ from __future__ import annotations
 
 from typing import List, Literal, Optional, Union
 
-from typing_extensions import Annotated
+from typing_extensions import Annotated, Self
 
-from . import record_base, record_manager_name_base, util
+from . import record_base, record_manager_name_base
 
 
 class ProductCategory(record_base.RecordBase):
-    child_id: Annotated[List[int], util.ModelRef("child_id")]
+    child_id: Annotated[List[int], record_base.ModelRef("child_id", Self)]
     """A list of IDs for the child categories."""
 
-    child_ids: Annotated[List[int], util.FieldAlias("child_id")]
+    child_ids: Annotated[List[int], record_base.FieldAlias("child_id")]
     """An alias for ``child_id``."""
 
-    children: Annotated[
-        List[ProductCategory],
-        util.ModelRef("child_id"),
-    ]
+    children: Annotated[List[Self], record_base.ModelRef("child_id", Self)]
     """The list of child categories.
 
     This fetches the full records from Odoo once,
@@ -45,17 +42,23 @@ class ProductCategory(record_base.RecordBase):
     name: str
     """Name of the product category."""
 
-    parent_id: Annotated[Optional[int], util.ModelRef("parent_id")]
+    parent_id: Annotated[
+        Optional[int],
+        record_base.ModelRef("parent_id", Self),
+    ]
     """The ID for the parent product category, if this category
     is the child of another category.
     """
 
-    parent_name: Annotated[Optional[str], util.ModelRef("parent_id")]
+    parent_name: Annotated[
+        Optional[str],
+        record_base.ModelRef("parent_id", Self),
+    ]
     """The name of the parent product category, if this category
     is the child of another category.
     """
 
-    parent: Annotated[Optional[ProductCategory], util.ModelRef("parent_id")]
+    parent: Annotated[Optional[Self], record_base.ModelRef("parent_id", Self)]
     """The parent product category, if this category
     is the child of another category.
 

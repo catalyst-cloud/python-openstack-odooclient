@@ -19,7 +19,7 @@ from typing import Literal
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_name_base, util
+from . import record_base, record_manager_name_base
 
 
 class Tax(record_base.RecordBase):
@@ -44,13 +44,22 @@ class Tax(record_base.RecordBase):
     to the same analytic account as the invoice line (if any).
     """
 
-    company_id: Annotated[int, util.ModelRef("company_id")]
+    company_id: Annotated[
+        int,
+        record_base.ModelRef("company_id", company_module.Company),
+    ]
     """The ID for the company this tax is owned by."""
 
-    company_name: Annotated[str, util.ModelRef("company_id")]
+    company_name: Annotated[
+        str,
+        record_base.ModelRef("company_id", company_module.Company),
+    ]
     """The name of the company this tax is owned by."""
 
-    company: Annotated[company_module.Company, util.ModelRef("company_id")]
+    company: Annotated[
+        company_module.Company,
+        record_base.ModelRef("company_id", company_module.Company),
+    ]
     """The company this tax is owned by.
 
     This fetches the full record from Odoo once,
@@ -83,15 +92,21 @@ class Tax(record_base.RecordBase):
     * ``on_payment`` - Due as soon as payment of the invoice is received
     """
 
-    tax_group_id: Annotated[int, util.ModelRef("tax_group_id")]
+    tax_group_id: Annotated[
+        int,
+        record_base.ModelRef("tax_group_id", tax_group_module.TaxGroup),
+    ]
     """The ID for the tax group this tax is categorised under."""
 
-    tax_group_name: Annotated[str, util.ModelRef("tax_group_id")]
+    tax_group_name: Annotated[
+        str,
+        record_base.ModelRef("tax_group_id", tax_group_module.TaxGroup),
+    ]
     """The name of the tax group this tax is categorised under."""
 
     tax_group: Annotated[
         tax_group_module.TaxGroup,
-        util.ModelRef("tax_group_id"),
+        record_base.ModelRef("tax_group_id", tax_group_module.TaxGroup),
     ]
     """The tax group this tax is categorised under.
 

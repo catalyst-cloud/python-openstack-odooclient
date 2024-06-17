@@ -20,7 +20,7 @@ from typing import Literal, Optional
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_base, util
+from . import record_base, record_manager_base
 
 
 class SupportSubscription(record_base.RecordBase):
@@ -36,7 +36,10 @@ class SupportSubscription(record_base.RecordBase):
     end_date: date
     """The end date of the credit."""
 
-    partner_id: Annotated[Optional[int], util.ModelRef("partner")]
+    partner_id: Annotated[
+        Optional[int],
+        record_base.ModelRef("partner", partner_module.Partner),
+    ]
     """The ID for the partner linked to this support subscription,
     if it is linked to a partner.
 
@@ -44,7 +47,10 @@ class SupportSubscription(record_base.RecordBase):
     cover all projects the partner owns.
     """
 
-    partner_name: Annotated[Optional[str], util.ModelRef("partner")]
+    partner_name: Annotated[
+        Optional[str],
+        record_base.ModelRef("partner", partner_module.Partner),
+    ]
     """The name of thepartner linked to this support subscription,
     if it is linked to a partner.
 
@@ -54,7 +60,7 @@ class SupportSubscription(record_base.RecordBase):
 
     partner: Annotated[
         Optional[partner_module.Partner],
-        util.ModelRef("partner"),
+        record_base.ModelRef("partner", partner_module.Partner),
     ]
     """The partner linked to this support subscription,
     if it is linked to a partner.
@@ -66,19 +72,25 @@ class SupportSubscription(record_base.RecordBase):
     and caches it for subsequent accesses.
     """
 
-    project_id: Annotated[Optional[int], util.ModelRef("project")]
+    project_id: Annotated[
+        Optional[int],
+        record_base.ModelRef("project", project_module.Project),
+    ]
     """The ID of the project this support subscription is for,
     if it is linked to a specific project.
     """
 
-    project_name: Annotated[Optional[str], util.ModelRef("project")]
+    project_name: Annotated[
+        Optional[str],
+        record_base.ModelRef("project", project_module.Project),
+    ]
     """The name of the project this support subscription is for,
     if it is linked to a specific project.
     """
 
     project: Annotated[
         Optional[project_module.Project],
-        util.ModelRef("project"),
+        record_base.ModelRef("project", project_module.Project),
     ]
     """The project this support subscription is for,
     if it is linked to a specific project.
@@ -92,19 +104,28 @@ class SupportSubscription(record_base.RecordBase):
 
     support_subscription_type_id: Annotated[
         int,
-        util.ModelRef("support_subscription_type"),
+        record_base.ModelRef(
+            "support_subscription_type",
+            support_subscription_type_module.SupportSubscriptionType,
+        ),
     ]
     """The ID of the type of the support subscription."""
 
     support_subscription_type_name: Annotated[
         str,
-        util.ModelRef("support_subscription_type"),
+        record_base.ModelRef(
+            "support_subscription_type",
+            support_subscription_type_module.SupportSubscriptionType,
+        ),
     ]
     """The name of the type of the support subscription."""
 
     support_subscription_type: Annotated[
         support_subscription_type_module.SupportSubscriptionType,
-        util.ModelRef("support_subscription_type"),
+        record_base.ModelRef(
+            "support_subscription_type",
+            support_subscription_type_module.SupportSubscriptionType,
+        ),
     ]
     """The type of the support subscription.
 

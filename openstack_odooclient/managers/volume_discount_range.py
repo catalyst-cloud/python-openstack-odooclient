@@ -19,13 +19,16 @@ from typing import List, Optional, Union
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_base, util
+from . import record_base, record_manager_base
 
 
 class VolumeDiscountRange(record_base.RecordBase):
     customer_group_id: Annotated[
         Optional[int],
-        util.ModelRef("customer_group"),
+        record_base.ModelRef(
+            "customer_group",
+            customer_group_module.CustomerGroup,
+        ),
     ]
     """The ID for the customer group this volume discount range
     applies to, if a specific customer group is set.
@@ -33,7 +36,10 @@ class VolumeDiscountRange(record_base.RecordBase):
 
     customer_group_name: Annotated[
         Optional[str],
-        util.ModelRef("customer_group"),
+        record_base.ModelRef(
+            "customer_group",
+            customer_group_module.CustomerGroup,
+        ),
     ]
     """The name of the customer group this volume discount range
     applies to, if a specific customer group is set.
@@ -41,7 +47,10 @@ class VolumeDiscountRange(record_base.RecordBase):
 
     customer_group: Annotated[
         Optional[customer_group_module.CustomerGroup],
-        util.ModelRef("customer_group"),
+        record_base.ModelRef(
+            "customer_group",
+            customer_group_module.CustomerGroup,
+        ),
     ]
     """The customer group this volume discount range
     applies to, if a specific customer group is set.
@@ -81,7 +90,7 @@ class VolumeDiscountRangeManager(
         self,
         charge: float,
         customer_group: Optional[
-            Union[customer_group_module.CustomerGroup, int],
+            Union[int, customer_group_module.CustomerGroup],
         ] = None,
     ) -> Optional[VolumeDiscountRange]:
         """Return the volume discount range to apply to a given charge.
@@ -98,25 +107,12 @@ class VolumeDiscountRangeManager(
         :param charge: The charge for to find the applicable discount range
         :type charge: float
         :param customer_group: Get discount for a specific customer group
-        :type customer_group: Union[Model, int, Literal[False]], optional
+        :type customer_group: Optional[Union[int, CustomerGroup]], optional
         :return: Highest percentage applicable discount range (if found)
         :rtype: Optional[VolumeDiscountRange]
         """
         ranges = self.search(
-            [
-                (
-                    "customer_group",
-                    "=",
-                    (
-                        customer_group.id
-                        if isinstance(
-                            customer_group,
-                            customer_group_module.CustomerGroup,
-                        )
-                        else (customer_group or False)
-                    ),
-                ),
-            ],
+            [("customer_group", "=", customer_group or False)],
         )
         found_ranges: List[VolumeDiscountRange] = []
         for vol_range in ranges:

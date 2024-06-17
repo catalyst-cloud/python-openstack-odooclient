@@ -28,19 +28,25 @@ from typing import (
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_unique_field_base, util
+from . import record_base, record_manager_unique_field_base
 
 
 class Product(record_base.RecordBase):
-    categ_id: Annotated[int, util.ModelRef("categ_id")]
+    categ_id: Annotated[
+        int,
+        record_base.ModelRef("categ_id", product_category.ProductCategory),
+    ]
     """The ID for the category this product is under."""
 
-    categ_name: Annotated[str, util.ModelRef("categ_id")]
+    categ_name: Annotated[
+        str,
+        record_base.ModelRef("categ_id", product_category.ProductCategory),
+    ]
     """The name of the category this product is under."""
 
     categ: Annotated[
         product_category.ProductCategory,
-        util.ModelRef("categ_id"),
+        record_base.ModelRef("categ_id", product_category.ProductCategory),
     ]
     """The category this product is under.
 
@@ -48,15 +54,21 @@ class Product(record_base.RecordBase):
     and caches it for subsequent accesses.
     """
 
-    company_id: Annotated[Optional[int], util.ModelRef("company_id")]
+    company_id: Annotated[
+        Optional[int],
+        record_base.ModelRef("company_id", company_module.Company),
+    ]
     """The ID for the company that owns this product, if set."""
 
-    company_name: Annotated[Optional[str], util.ModelRef("company_id")]
+    company_name: Annotated[
+        Optional[str],
+        record_base.ModelRef("company_id", company_module.Company),
+    ]
     """The name of the company that owns this product, if set."""
 
     company: Annotated[
         Optional[company_module.Company],
-        util.ModelRef("company_id"),
+        record_base.ModelRef("company_id", company_module.Company),
     ]
     """The company that owns this product, if set.
 
@@ -86,13 +98,16 @@ class Product(record_base.RecordBase):
     name: str
     """The name of the product."""
 
-    uom_id: Annotated[int, util.ModelRef("uom_id")]
+    uom_id: Annotated[int, record_base.ModelRef("uom_id", uom_module.Uom)]
     """The ID for the Unit of Measure for this product."""
 
-    uom_name: Annotated[str, util.ModelRef("uom_id")]
+    uom_name: Annotated[str, record_base.ModelRef("uom_id", uom_module.Uom)]
     """The name of the Unit of Measure for this product."""
 
-    uom: Annotated[uom_module.Uom, util.ModelRef("uom_id")]
+    uom: Annotated[
+        uom_module.Uom,
+        record_base.ModelRef("uom_id", uom_module.Uom),
+    ]
     """The Unit of Measure for this product.
 
     This fetches the full record from Odoo once,

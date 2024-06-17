@@ -19,22 +19,28 @@ from typing import Literal
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_base, util
+from . import record_base, record_manager_base
 
 
 class Uom(record_base.RecordBase):
     active: bool
     """Whether or not this Unit of Measure is active (enabled)."""
 
-    category_id: Annotated[int, util.ModelRef("category_id")]
+    category_id: Annotated[
+        int,
+        record_base.ModelRef("category_id", uom_category.UomCategory),
+    ]
     """The ID for the category this Unit of Measure is classified as."""
 
-    category_name: Annotated[str, util.ModelRef("category_id")]
+    category_name: Annotated[
+        str,
+        record_base.ModelRef("category_id", uom_category.UomCategory),
+    ]
     """The name of the category this Unit of Measure is classified as."""
 
     category: Annotated[
         uom_category.UomCategory,
-        util.ModelRef("category_id"),
+        record_base.ModelRef("category_id", uom_category.UomCategory),
     ]
     """The category this Unit of Measure is classified as.
 

@@ -17,22 +17,28 @@ from __future__ import annotations
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_name_base, util
+from . import record_base, record_manager_name_base
 
 
 class ResellerTier(record_base.RecordBase):
     discount_percent: float
     """The maximum discount percentage for this reseller tier (0-100)."""
 
-    discount_product_id: Annotated[int, util.ModelRef("discount_product")]
+    discount_product_id: Annotated[
+        int,
+        record_base.ModelRef("discount_product", product.Product),
+    ]
     """The ID of the discount product for the reseller tier."""
 
-    discount_product_name: Annotated[str, util.ModelRef("discount_product")]
+    discount_product_name: Annotated[
+        str,
+        record_base.ModelRef("discount_product", product.Product),
+    ]
     """The name of the discount product for the reseller tier."""
 
     discount_product: Annotated[
         product.Product,
-        util.ModelRef("discount_product"),
+        record_base.ModelRef("discount_product", product.Product),
     ]
     """The discount product for the reseller tier.
 
@@ -45,7 +51,7 @@ class ResellerTier(record_base.RecordBase):
 
     free_monthly_credit_product_id: Annotated[
         int,
-        util.ModelRef("free_monthly_credit_product"),
+        record_base.ModelRef("free_monthly_credit_product", product.Product),
     ]
     """The ID of the product to use when adding the free monthly credit
     to demo project invoices.
@@ -53,7 +59,7 @@ class ResellerTier(record_base.RecordBase):
 
     free_monthly_credit_product_name: Annotated[
         str,
-        util.ModelRef("free_monthly_credit_product"),
+        record_base.ModelRef("free_monthly_credit_product", product.Product),
     ]
     """The name of the product to use when adding the free monthly credit
     to demo project invoices.
@@ -61,7 +67,7 @@ class ResellerTier(record_base.RecordBase):
 
     free_monthly_credit_product: Annotated[
         product.Product,
-        util.ModelRef("free_monthly_credit_product"),
+        record_base.ModelRef("free_monthly_credit_product", product.Product),
     ]
     """The product to use when adding the free monthly credit
     to demo project invoices.

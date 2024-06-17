@@ -26,9 +26,9 @@ from typing import (
     overload,
 )
 
-from typing_extensions import Annotated
+from typing_extensions import Annotated, Self
 
-from . import record_base, record_manager_unique_field_base, util
+from . import record_base, record_manager_unique_field_base
 
 
 class Project(record_base.RecordBase):
@@ -61,30 +61,42 @@ class Project(record_base.RecordBase):
     set on this Project.
     """
 
-    owner_id: Annotated[int, util.ModelRef("owner")]
+    owner_id: Annotated[
+        int,
+        record_base.ModelRef("owner", partner_module.Partner),
+    ]
     """The ID for the partner that owns this project."""
 
-    owner_name: Annotated[str, util.ModelRef("owner")]
+    owner_name: Annotated[
+        str,
+        record_base.ModelRef("owner", partner_module.Partner),
+    ]
     """The name of the partner that owns this project."""
 
-    owner: Annotated[partner_module.Partner, util.ModelRef("owner")]
+    owner: Annotated[
+        partner_module.Partner,
+        record_base.ModelRef("owner", partner_module.Partner),
+    ]
     """The partner that owns this project.
 
     This fetches the full record from Odoo once,
     and caches it for subsequent accesses.
     """
 
-    parent_id: Annotated[Optional[int], util.ModelRef("parent")]
+    parent_id: Annotated[Optional[int], record_base.ModelRef("parent", Self)]
     """The ID for the parent project, if this project
     is the child of another project.
     """
 
-    parent_name: Annotated[Optional[str], util.ModelRef("parent")]
+    parent_name: Annotated[
+        Optional[str],
+        record_base.ModelRef("parent", Self),
+    ]
     """The name of the parent project, if this project
     is the child of another project.
     """
 
-    parent: Annotated[Optional[Project], util.ModelRef("parent")]
+    parent: Annotated[Optional[Self], record_base.ModelRef("parent", Self)]
     """The parent project, if this project
     is the child of another project.
 
@@ -106,13 +118,19 @@ class Project(record_base.RecordBase):
 
     project_contact_ids: Annotated[
         List[int],
-        util.ModelRef("project_contacts"),
+        record_base.ModelRef(
+            "project_contacts",
+            project_contact.ProjectContact,
+        ),
     ]
     """A list of IDs for the contacts for this project."""
 
     project_contacts: Annotated[
         List[project_contact.ProjectContact],
-        util.ModelRef("project_contacts"),
+        record_base.ModelRef(
+            "project_contacts",
+            project_contact.ProjectContact,
+        ),
     ]
     """The contacts for this project.
 
@@ -120,12 +138,15 @@ class Project(record_base.RecordBase):
     and caches them for subsequent accesses.
     """
 
-    project_credit_ids: Annotated[List[int], util.ModelRef("project_credits")]
+    project_credit_ids: Annotated[
+        List[int],
+        record_base.ModelRef("project_credits", credit.Credit),
+    ]
     """A list of IDs for the credits that apply to this project."""
 
     project_credits: Annotated[
         List[credit.Credit],
-        util.ModelRef("project_credits"),
+        record_base.ModelRef("project_credits", credit.Credit),
     ]
     """The credits that apply to this project.
 
@@ -133,12 +154,15 @@ class Project(record_base.RecordBase):
     and caches them for subsequent accesses.
     """
 
-    project_grant_ids: Annotated[List[int], util.ModelRef("project_grants")]
+    project_grant_ids: Annotated[
+        List[int],
+        record_base.ModelRef("project_grants", grant.Grant),
+    ]
     """A list of IDs for the grants that apply to this project."""
 
     project_grants: Annotated[
         List[grant.Grant],
-        util.ModelRef("project_grants"),
+        record_base.ModelRef("project_grants", grant.Grant),
     ]
     """The grants that apply to this project.
 
@@ -156,7 +180,10 @@ class Project(record_base.RecordBase):
 
     support_subscription_id: Annotated[
         Optional[int],
-        util.ModelRef("support_subscription"),
+        record_base.ModelRef(
+            "support_subscription",
+            support_subscription_module.SupportSubscription,
+        ),
     ]
     """The ID for the support subscription for this project,
     if the project has one.
@@ -164,7 +191,10 @@ class Project(record_base.RecordBase):
 
     support_subscription_name: Annotated[
         Optional[str],
-        util.ModelRef("support_subscription"),
+        record_base.ModelRef(
+            "support_subscription",
+            support_subscription_module.SupportSubscription,
+        ),
     ]
     """The name of the support subscription for this project,
     if the project has one.
@@ -172,7 +202,10 @@ class Project(record_base.RecordBase):
 
     support_subscription: Annotated[
         Optional[support_subscription_module.SupportSubscription],
-        util.ModelRef("support_subscription"),
+        record_base.ModelRef(
+            "support_subscription",
+            support_subscription_module.SupportSubscription,
+        ),
     ]
     """The support subscription for this project,
     if the project has one.
@@ -181,12 +214,15 @@ class Project(record_base.RecordBase):
     and caches it for subsequent accesses.
     """
 
-    term_discount_ids: Annotated[List[int], util.ModelRef("term_discounts")]
+    term_discount_ids: Annotated[
+        List[int],
+        record_base.ModelRef("term_discounts", term_discount.TermDiscount),
+    ]
     """A list of IDs for the term discounts that apply to this project."""
 
     term_discounts: Annotated[
         List[term_discount.TermDiscount],
-        util.ModelRef("term_discounts"),
+        record_base.ModelRef("term_discounts", term_discount.TermDiscount),
     ]
     """The term discounts that apply to this project.
 

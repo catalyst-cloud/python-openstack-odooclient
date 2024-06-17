@@ -19,7 +19,7 @@ from typing import List
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_code_base, util
+from . import record_base, record_manager_code_base
 
 
 class ReferralCode(record_base.RecordBase):
@@ -40,12 +40,18 @@ class ReferralCode(record_base.RecordBase):
     name: str
     """Automatically generated name for the referral code."""
 
-    referral_ids: Annotated[List[int], util.ModelRef("referrals")]
+    referral_ids: Annotated[
+        List[int],
+        record_base.ModelRef("referrals", partner.Partner),
+    ]
     """A list of IDs for the partners that signed up
     using this referral code.
     """
 
-    referrals: Annotated[List[partner.Partner], util.ModelRef("referrals")]
+    referrals: Annotated[
+        List[partner.Partner],
+        record_base.ModelRef("referrals", partner.Partner),
+    ]
     """The partners that signed up using this referral code.
 
     This fetches the full records from Odoo once,
@@ -60,19 +66,19 @@ class ReferralCode(record_base.RecordBase):
 
     referral_credit_type_id: Annotated[
         int,
-        util.ModelRef("referral_credit_type"),
+        record_base.ModelRef("referral_credit_type", credit_type.CreditType),
     ]
     """The ID of the credit type to use for the referral credit."""
 
     referral_credit_type_name: Annotated[
         str,
-        util.ModelRef("referral_credit_type"),
+        record_base.ModelRef("referral_credit_type", credit_type.CreditType),
     ]
     """The name of the credit type to use for the referral credit."""
 
     referral_credit_type: Annotated[
         credit_type.CreditType,
-        util.ModelRef("referral_credit_type"),
+        record_base.ModelRef("referral_credit_type", credit_type.CreditType),
     ]
     """The credit type to use for the referral credit.
 
@@ -86,18 +92,21 @@ class ReferralCode(record_base.RecordBase):
     reward_credit_duration: int
     """Duration of the reward credit, in days."""
 
-    reward_credit_type_id: Annotated[int, util.ModelRef("reward_credit_type")]
+    reward_credit_type_id: Annotated[
+        int,
+        record_base.ModelRef("reward_credit_type", credit_type.CreditType),
+    ]
     """The ID of the credit type to use for the reward credit."""
 
     reward_credit_type_name: Annotated[
         str,
-        util.ModelRef("reward_credit_type"),
+        record_base.ModelRef("reward_credit_type", credit_type.CreditType),
     ]
     """The name of the credit type to use for the reward credit."""
 
     reward_credit_type: Annotated[
         credit_type.CreditType,
-        util.ModelRef("reward_credit_type"),
+        record_base.ModelRef("reward_credit_type", credit_type.CreditType),
     ]
     """The credit type to use for the reward credit.
 

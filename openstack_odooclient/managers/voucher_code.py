@@ -20,7 +20,7 @@ from typing import List, Literal, Optional, Union
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_name_base, util
+from . import record_base, record_manager_name_base
 
 
 class VoucherCode(record_base.RecordBase):
@@ -35,19 +35,25 @@ class VoucherCode(record_base.RecordBase):
     created by the voucher code.
     """
 
-    credit_type_id: Annotated[Optional[int], util.ModelRef("credit_type")]
+    credit_type_id: Annotated[
+        Optional[int],
+        record_base.ModelRef("credit_type", credit_type_module.CreditType),
+    ]
     """The ID of the credit type to use, if a credit is to be
     created by this voucher code.
     """
 
-    credit_type_name: Annotated[Optional[str], util.ModelRef("credit_type")]
+    credit_type_name: Annotated[
+        Optional[str],
+        record_base.ModelRef("credit_type", credit_type_module.CreditType),
+    ]
     """The name of the credit type to use, if a credit is to be
     created by this voucher code.
     """
 
     credit_type: Annotated[
         Optional[credit_type_module.CreditType],
-        util.ModelRef("credit_type"),
+        record_base.ModelRef("credit_type", credit_type_module.CreditType),
     ]
     """The credit type to use, if a credit is to be
     created by this voucher code.
@@ -63,7 +69,10 @@ class VoucherCode(record_base.RecordBase):
 
     customer_group_id: Annotated[
         Optional[int],
-        util.ModelRef("customer_group"),
+        record_base.ModelRef(
+            "customer_group",
+            customer_group_module.CustomerGroup,
+        ),
     ]
     """The ID of the customer group this voucher code is available to.
 
@@ -72,7 +81,10 @@ class VoucherCode(record_base.RecordBase):
 
     customer_group_name: Annotated[
         Optional[str],
-        util.ModelRef("customer_group"),
+        record_base.ModelRef(
+            "customer_group",
+            customer_group_module.CustomerGroup,
+        ),
     ]
     """The name of the customer group this voucher code is available to.
 
@@ -81,7 +93,10 @@ class VoucherCode(record_base.RecordBase):
 
     customer_group: Annotated[
         Optional[customer_group_module.CustomerGroup],
-        util.ModelRef("customer_group"),
+        record_base.ModelRef(
+            "customer_group",
+            customer_group_module.CustomerGroup,
+        ),
     ]
     """The customer group this voucher code is available to.
 
@@ -99,19 +114,25 @@ class VoucherCode(record_base.RecordBase):
     created by the voucher code.
     """
 
-    grant_type_id: Annotated[Optional[int], util.ModelRef("grant_type")]
+    grant_type_id: Annotated[
+        Optional[int],
+        record_base.ModelRef("grant_type", grant_type_module.GrantType),
+    ]
     """The ID of the grant type to use, if a grant is to be
     created by this voucher code.
     """
 
-    grant_type_name: Annotated[Optional[str], util.ModelRef("grant_type")]
+    grant_type_name: Annotated[
+        Optional[str],
+        record_base.ModelRef("grant_type", grant_type_module.GrantType),
+    ]
     """The name of the grant type to use, if a grant is to be
     created by this voucher code.
     """
 
     grant_type: Annotated[
         Optional[grant_type_module.GrantType],
-        util.ModelRef("grant_type"),
+        record_base.ModelRef("grant_type", grant_type_module.GrantType),
     ]
     """The grant type to use, if a grant is to be
     created by this voucher code.
@@ -145,35 +166,44 @@ class VoucherCode(record_base.RecordBase):
     If unset, use the default quota size.
     """
 
-    sales_person_id: Annotated[Optional[int], util.ModelRef("sales_person")]
-    """The ID for the salesperson responsible for this
+    sales_person_id: Annotated[
+        Optional[int],
+        record_base.ModelRef("sales_person", partner.Partner),
+    ]
+    """The ID for the salesperson partner responsible for this
     voucher code, if assigned.
     """
 
-    sales_person_name: Annotated[Optional[str], util.ModelRef("sales_person")]
-    """The name of the salesperson responsible for this
+    sales_person_name: Annotated[
+        Optional[str],
+        record_base.ModelRef("sales_person", partner.Partner),
+    ]
+    """The name of the salesperson partner responsible for this
     voucher code, if assigned.
     """
 
     sales_person: Annotated[
         Optional[partner.Partner],
-        util.ModelRef("sales_person"),
+        record_base.ModelRef("sales_person"),
     ]
-    """The salesperson responsible for this
+    """The salesperson partner responsible for this
     voucher code, if assigned.
 
     This fetches the full record from Odoo once,
     and caches it for subsequent accesses.
     """
 
-    tag_ids: Annotated[List[int], util.ModelRef("tags")]
+    tag_ids: Annotated[
+        List[int],
+        record_base.ModelRef("tags", partner_category.PartnerCategory),
+    ]
     """A list of IDs for the tags (partner categories) to assign
     to partners for new accounts that signed up using this voucher code.
     """
 
     tags: Annotated[
         List[partner_category.PartnerCategory],
-        util.ModelRef("tags"),
+        record_base.ModelRef("tags", partner_category.PartnerCategory),
     ]
     """The list of tags (partner categories) to assign
     to partners for new accounts that signed up using this voucher code.
