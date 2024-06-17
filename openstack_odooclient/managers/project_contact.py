@@ -19,10 +19,11 @@ from typing import Literal, Optional
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_base
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager import RecordManagerBase
 
 
-class ProjectContact(record_base.RecordBase):
+class ProjectContact(RecordBase):
     contact_type: Literal[
         "primary",
         "billing",
@@ -35,44 +36,26 @@ class ProjectContact(record_base.RecordBase):
     inherit: bool
     """Whether or not this contact should be inherited by child projects."""
 
-    partner_id: Annotated[
-        int,
-        record_base.ModelRef("partner", partner_module.Partner),
-    ]
+    partner_id: Annotated[int, ModelRef("partner", Partner)]
     """The ID for the partner linked to this project contact."""
 
-    partner_name: Annotated[
-        str,
-        record_base.ModelRef("partner", partner_module.Partner),
-    ]
+    partner_name: Annotated[str, ModelRef("partner", Partner)]
     """The name of the partner linked to this project contact."""
 
-    partner: Annotated[
-        partner_module.Partner,
-        record_base.ModelRef("partner", partner_module.Partner),
-    ]
+    partner: Annotated[Partner, ModelRef("partner", Partner)]
     """The partner linked to this project contact.
 
     This fetches the full record from Odoo once,
     and caches it for subsequent accesses.
     """
 
-    project_id: Annotated[
-        Optional[int],
-        record_base.ModelRef("project", project_module.Project),
-    ]
+    project_id: Annotated[Optional[int], ModelRef("project", Project)]
     """The ID for the project this contact is linked to, if set."""
 
-    project_name: Annotated[
-        Optional[str],
-        record_base.ModelRef("project", project_module.Project),
-    ]
+    project_name: Annotated[Optional[str], ModelRef("project", Project)]
     """The name of the project this contact is linked to, if set."""
 
-    project: Annotated[
-        Optional[project_module.Project],
-        record_base.ModelRef("project", project_module.Project),
-    ]
+    project: Annotated[Optional[Project], ModelRef("project", Project)]
     """The project this contact is linked to, if set.
 
     This fetches the full record from Odoo once,
@@ -80,15 +63,11 @@ class ProjectContact(record_base.RecordBase):
     """
 
 
-class ProjectContactManager(
-    record_manager_base.RecordManagerBase[ProjectContact],
-):
+class ProjectContactManager(RecordManagerBase[ProjectContact]):
     env_name = "openstack.project_contact"
     record_class = ProjectContact
 
 
 # NOTE(callumdickinson): Import here to make sure circular imports work.
-from . import (  # noqa: E402
-    partner as partner_module,
-    project as project_module,
-)
+from .partner import Partner  # noqa: E402
+from .project import Project  # noqa: E402

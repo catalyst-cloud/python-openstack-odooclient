@@ -19,36 +19,28 @@ from typing import List, Literal
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_name_base
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager_named import NamedRecordManagerBase
 
 
-class SupportSubscriptionType(record_base.RecordBase):
+class SupportSubscriptionType(RecordBase):
     billing_type: Literal["paid", "complimentary"]
     """The type of support subscription."""
 
     name: str
     """The name of the support subscription type."""
 
-    product_id: Annotated[
-        int,
-        record_base.ModelRef("product", product_module.Product),
-    ]
+    product_id: Annotated[int, ModelRef("product", Product)]
     """The ID for the product to use to invoice
     the support subscription.
     """
 
-    product_name: Annotated[
-        str,
-        record_base.ModelRef("product", product_module.Product),
-    ]
+    product_name: Annotated[str, ModelRef("product", Product)]
     """The name of the product to use to invoice
     the support subscription.
     """
 
-    product: Annotated[
-        product_module.Product,
-        record_base.ModelRef("product", product_module.Product),
-    ]
+    product: Annotated[Product, ModelRef("product", Product)]
     """The product to use to invoice
     the support subscription.
 
@@ -61,19 +53,13 @@ class SupportSubscriptionType(record_base.RecordBase):
 
     support_subscription_ids: Annotated[
         List[int],
-        record_base.ModelRef(
-            "support_subscription",
-            support_subscription_type.SupportSubscription,
-        ),
+        ModelRef("support_subscription", SupportSubscription),
     ]
     """A list of IDs for the support subscriptions of this type."""
 
     support_subscription: Annotated[
-        List[support_subscription_type.SupportSubscription],
-        record_base.ModelRef(
-            "support_subscription",
-            support_subscription_type.SupportSubscription,
-        ),
+        List[SupportSubscription],
+        ModelRef("support_subscription", SupportSubscription),
     ]
     """The list of support subscriptions of this type.
 
@@ -82,24 +68,19 @@ class SupportSubscriptionType(record_base.RecordBase):
     """
 
     support_subscriptions: Annotated[
-        List[support_subscription_type.SupportSubscription],
-        record_base.ModelRef(
-            "support_subscription",
-            support_subscription_type.SupportSubscription,
-        ),
+        List[SupportSubscription],
+        ModelRef("support_subscription", SupportSubscription),
     ]
     """An alias for ``support_subscription``."""
 
 
 class SupportSubscriptionTypeManager(
-    record_manager_name_base.NamedRecordManagerBase[SupportSubscriptionType],
+    NamedRecordManagerBase[SupportSubscriptionType],
 ):
     env_name = "openstack.support_subscription.type"
     record_class = SupportSubscriptionType
 
 
 # NOTE(callumdickinson): Import here to avoid circular imports.
-from . import (  # noqa: E402
-    product as product_module,
-    support_subscription as support_subscription_type,
-)
+from .product import Product  # noqa: E402
+from .support_subscription import SupportSubscription  # noqa: E402

@@ -15,12 +15,12 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, overload
+import itertools
 
-from .record_manager_unique_field_base import (
-    Record,
-    RecordManagerWithUniqueFieldBase,
-)
+from typing import TYPE_CHECKING, Generic, TypeVar, overload
+
+from ..exceptions import MultipleRecordsFoundError, RecordNotFoundError
+from .record_manager import Record, RecordManagerBase
 
 if TYPE_CHECKING:
     from typing import (
@@ -32,18 +32,20 @@ if TYPE_CHECKING:
         Union,
     )
 
+T = TypeVar("T")
 
-class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
-    name_field: str = "name"
-    """The field name to use when querying by name in
-    the ``get_by_name`` method.
-    """
 
+class RecordManagerWithUniqueFieldBase(
+    RecordManagerBase[Record],
+    Generic[Record, T],
+):
     @overload
-    def get_by_name(
+    def _get_by_unique_field(
         self,
-        name: str,
+        field: str,
+        value: T,
         *,
+        filters: Optional[Iterable[Any]] = ...,
         fields: Optional[Iterable[str]] = ...,
         as_id: Literal[True],
         as_dict: Literal[True],
@@ -51,10 +53,12 @@ class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
     ) -> Optional[int]: ...
 
     @overload
-    def get_by_name(
+    def _get_by_unique_field(
         self,
-        name: str,
+        field: str,
+        value: T,
         *,
+        filters: Optional[Iterable[Any]] = ...,
         fields: Optional[Iterable[str]] = ...,
         as_id: Literal[True],
         as_dict: Literal[False] = ...,
@@ -62,10 +66,12 @@ class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
     ) -> Optional[int]: ...
 
     @overload
-    def get_by_name(
+    def _get_by_unique_field(
         self,
-        name: str,
+        field: str,
+        value: T,
         *,
+        filters: Optional[Iterable[Any]] = ...,
         fields: Optional[Iterable[str]] = ...,
         as_id: Literal[True],
         as_dict: Literal[True],
@@ -73,10 +79,12 @@ class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
     ) -> int: ...
 
     @overload
-    def get_by_name(
+    def _get_by_unique_field(
         self,
-        name: str,
+        field: str,
+        value: T,
         *,
+        filters: Optional[Iterable[Any]] = ...,
         fields: Optional[Iterable[str]] = ...,
         as_id: Literal[True],
         as_dict: Literal[False] = ...,
@@ -84,10 +92,12 @@ class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
     ) -> int: ...
 
     @overload
-    def get_by_name(
+    def _get_by_unique_field(
         self,
-        name: str,
+        field: str,
+        value: T,
         *,
+        filters: Optional[Iterable[Any]] = ...,
         fields: Optional[Iterable[str]] = ...,
         as_id: Literal[False] = ...,
         as_dict: Literal[True],
@@ -95,10 +105,12 @@ class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
     ) -> Optional[Dict[str, Any]]: ...
 
     @overload
-    def get_by_name(
+    def _get_by_unique_field(
         self,
-        name: str,
+        field: str,
+        value: T,
         *,
+        filters: Optional[Iterable[Any]] = ...,
         fields: Optional[Iterable[str]] = ...,
         as_id: Literal[False] = ...,
         as_dict: Literal[True],
@@ -106,10 +118,12 @@ class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
     ) -> Dict[str, Any]: ...
 
     @overload
-    def get_by_name(
+    def _get_by_unique_field(
         self,
-        name: str,
+        field: str,
+        value: T,
         *,
+        filters: Optional[Iterable[Any]] = ...,
         fields: Optional[Iterable[str]] = ...,
         as_id: Literal[False] = ...,
         as_dict: Literal[False] = ...,
@@ -117,10 +131,12 @@ class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
     ) -> Optional[Record]: ...
 
     @overload
-    def get_by_name(
+    def _get_by_unique_field(
         self,
-        name: str,
+        field: str,
+        value: T,
         *,
+        filters: Optional[Iterable[Any]] = ...,
         fields: Optional[Iterable[str]] = ...,
         as_id: Literal[False] = ...,
         as_dict: Literal[False] = ...,
@@ -128,48 +144,43 @@ class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
     ) -> Record: ...
 
     @overload
-    def get_by_name(
+    def _get_by_unique_field(
         self,
-        name: str,
+        field: str,
+        value: T,
         *,
+        filters: Optional[Iterable[Any]] = ...,
         fields: Optional[Iterable[str]] = ...,
         as_id: bool = ...,
         as_dict: bool = ...,
         optional: bool = ...,
     ) -> Optional[Union[Record, int, Dict[str, Any]]]: ...
 
-    def get_by_name(
+    def _get_by_unique_field(
         self,
-        name: str,
+        field: str,
+        value: T,
+        filters: Optional[Iterable[Any]] = None,
         fields: Optional[Iterable[str]] = None,
         as_id: bool = False,
         as_dict: bool = False,
         optional: bool = False,
     ) -> Optional[Union[Record, int, Dict[str, Any]]]:
-        """Query a unique record by name.
+        """Query a unique record by a specific field.
 
         A number of parameters are available to configure the return type,
         and what happens when a result is not found.
 
-        By default all fields available on the record model
-        will be selected, but this can be filtered using the
-        ``fields`` parameter.
-
-        Use the ``as_id`` parameter to return the ID of the record,
-        instead of the record object.
-
-        Use the ``as_dict`` parameter to return the record as
-        a ``dict`` object, instead of a record object.
-
-        When ``optional`` is ``True``, ``None`` is returned if a record
-        with the given name does not exist, instead of raising an error.
-
-        :param name: The record name
+        :param value: The unique field name to query by
         :type name: str
-        :param as_id: Return a record ID, defaults to False
-        :type as_id: bool, optional
+        :param value: The unique field value
+        :type name: T
+        :param filters: Optional additional filters to apply, defaults to None
+        :type filters: Optional[Iterable[Any]], optional
         :param fields: Fields to select, defaults to ``None`` (select all)
         :type fields: Iterable[int] or None, optional
+        :param as_id: Return a record ID, defaults to False
+        :type as_id: bool, optional
         :param as_dict: Return the record as a dictionary, defaults to False
         :type as_dict: bool, optional
         :param optional: Return ``None`` if not found, defaults to False
@@ -179,11 +190,35 @@ class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
         :return: Query result (or ``None`` if record not found and optional)
         :rtype: Optional[Union[Record, int, Dict[str, Any]]]
         """
-        return self._get_by_unique_field(
-            field=self.name_field,
-            value=name,
-            fields=fields,
-            as_id=as_id,
-            as_dict=as_dict,
-            optional=optional,
-        )
+        field_filter = [(field, "=", value)]
+        try:
+            records = self.search(
+                filters=(
+                    list(itertools.chain(field_filter, filters))
+                    if filters
+                    else field_filter
+                ),
+                fields=fields,
+                as_id=as_id,
+                as_dict=as_dict,
+            )
+            if len(records) > 1:
+                raise MultipleRecordsFoundError(
+                    (
+                        f"Multiple {self.record_class.__name__} records "
+                        f"found with {field!r} value {value!r} "
+                        "when only one was expected: "
+                        f"{', '.join(str(r) for r in records)}"
+                    ),
+                )
+            return records[0]
+        except IndexError:
+            if optional:
+                return None
+            else:
+                raise RecordNotFoundError(
+                    (
+                        f"{self.record_class.__name__} record not found "
+                        f"with {field!r} value: {value}"
+                    ),
+                ) from None

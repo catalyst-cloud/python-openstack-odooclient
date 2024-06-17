@@ -40,14 +40,14 @@ from typing_extensions import (
     get_type_hints,
 )
 
-from .util import decode_value, is_subclass
+from ..util import decode_value, is_subclass
 
 if TYPE_CHECKING:
     from odoorpc import ODOO  # type: ignore[import]
     from odoorpc.env import Environment  # type: ignore[import]
 
-    from .. import client
-    from . import record_manager_base
+    from ..client import Client
+    from .record_manager import RecordManagerBase
 
 
 class AnnotationBase:
@@ -111,13 +111,13 @@ class RecordBase:
     create_date: datetime
     """The time the record was created."""
 
-    create_uid: Annotated[int, ModelRef("create_uid", user.User)]
+    create_uid: Annotated[int, ModelRef("create_uid", User)]
     """The ID of the user that created this record."""
 
-    create_name: Annotated[str, ModelRef("create_uid", user.User)]
+    create_name: Annotated[str, ModelRef("create_uid", User)]
     """The name of the user that created this record."""
 
-    create_user: Annotated[user.User, ModelRef("create_uid", user.User)]
+    create_user: Annotated[User, ModelRef("create_uid", User)]
     """The user that created this record.
 
     This fetches the full record from Odoo once,
@@ -127,13 +127,13 @@ class RecordBase:
     write_date: datetime
     """The time the record was last modified."""
 
-    write_uid: Annotated[int, ModelRef("write_uid", user.User)]
+    write_uid: Annotated[int, ModelRef("write_uid", User)]
     """The ID for the user that last modified this record."""
 
-    write_name: Annotated[str, ModelRef("write_uid", user.User)]
+    write_name: Annotated[str, ModelRef("write_uid", User)]
     """The name of the user that last modified this record."""
 
-    write_user: Annotated[user.User, ModelRef("write_uid", user.User)]
+    write_user: Annotated[User, ModelRef("write_uid", User)]
     """The user that last modified this record.
 
     This fetches the full record from Odoo once,
@@ -155,8 +155,8 @@ class RecordBase:
 
     def __init__(
         self,
-        client: client.Client,
-        manager: record_manager_base.RecordManagerBase,
+        client: Client,
+        manager: RecordManagerBase,
         record: Dict[str, Any],
         fields: Optional[Sequence[str]],
     ) -> None:
@@ -430,4 +430,4 @@ class RecordBase:
 
 
 # NOTE(callumdickinson): Import here to avoid circular imports.
-from . import user  # noqa: E402
+from ..managers.user import User  # noqa: E402

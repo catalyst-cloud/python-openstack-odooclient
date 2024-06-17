@@ -28,48 +28,33 @@ from typing import (
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_unique_field_base
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager_with_unique_field import (
+    RecordManagerWithUniqueFieldBase,
+)
 
 
-class Product(record_base.RecordBase):
-    categ_id: Annotated[
-        int,
-        record_base.ModelRef("categ_id", product_category.ProductCategory),
-    ]
+class Product(RecordBase):
+    categ_id: Annotated[int, ModelRef("categ_id", ProductCategory)]
     """The ID for the category this product is under."""
 
-    categ_name: Annotated[
-        str,
-        record_base.ModelRef("categ_id", product_category.ProductCategory),
-    ]
+    categ_name: Annotated[str, ModelRef("categ_id", ProductCategory)]
     """The name of the category this product is under."""
 
-    categ: Annotated[
-        product_category.ProductCategory,
-        record_base.ModelRef("categ_id", product_category.ProductCategory),
-    ]
+    categ: Annotated[ProductCategory, ModelRef("categ_id", ProductCategory)]
     """The category this product is under.
 
     This fetches the full record from Odoo once,
     and caches it for subsequent accesses.
     """
 
-    company_id: Annotated[
-        Optional[int],
-        record_base.ModelRef("company_id", company_module.Company),
-    ]
+    company_id: Annotated[Optional[int], ModelRef("company_id", Company)]
     """The ID for the company that owns this product, if set."""
 
-    company_name: Annotated[
-        Optional[str],
-        record_base.ModelRef("company_id", company_module.Company),
-    ]
+    company_name: Annotated[Optional[str], ModelRef("company_id", Company)]
     """The name of the company that owns this product, if set."""
 
-    company: Annotated[
-        Optional[company_module.Company],
-        record_base.ModelRef("company_id", company_module.Company),
-    ]
+    company: Annotated[Optional[Company], ModelRef("company_id", Company)]
     """The company that owns this product, if set.
 
     This fetches the full record from Odoo once,
@@ -98,16 +83,13 @@ class Product(record_base.RecordBase):
     name: str
     """The name of the product."""
 
-    uom_id: Annotated[int, record_base.ModelRef("uom_id", uom_module.Uom)]
+    uom_id: Annotated[int, ModelRef("uom_id", Uom)]
     """The ID for the Unit of Measure for this product."""
 
-    uom_name: Annotated[str, record_base.ModelRef("uom_id", uom_module.Uom)]
+    uom_name: Annotated[str, ModelRef("uom_id", Uom)]
     """The name of the Unit of Measure for this product."""
 
-    uom: Annotated[
-        uom_module.Uom,
-        record_base.ModelRef("uom_id", uom_module.Uom),
-    ]
+    uom: Annotated[Uom, ModelRef("uom_id", Uom)]
     """The Unit of Measure for this product.
 
     This fetches the full record from Odoo once,
@@ -115,19 +97,14 @@ class Product(record_base.RecordBase):
     """
 
 
-class ProductManager(
-    record_manager_unique_field_base.RecordManagerWithUniqueFieldBase[
-        Product,
-        str,
-    ],
-):
+class ProductManager(RecordManagerWithUniqueFieldBase[Product, str]):
     env_name = "product.product"
     record_class = Product
 
     @overload
     def get_sellable_company_products(
         self,
-        company: Union[int, company_module.Company],
+        company: Union[int, Company],
         *,
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
@@ -138,7 +115,7 @@ class ProductManager(
     @overload
     def get_sellable_company_products(
         self,
-        company: Union[int, company_module.Company],
+        company: Union[int, Company],
         *,
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
@@ -149,7 +126,7 @@ class ProductManager(
     @overload
     def get_sellable_company_products(
         self,
-        company: Union[int, company_module.Company],
+        company: Union[int, Company],
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
         *,
@@ -160,7 +137,7 @@ class ProductManager(
     @overload
     def get_sellable_company_products(
         self,
-        company: Union[int, company_module.Company],
+        company: Union[int, Company],
         *,
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
@@ -171,7 +148,7 @@ class ProductManager(
     @overload
     def get_sellable_company_products(
         self,
-        company: Union[int, company_module.Company],
+        company: Union[int, Company],
         *,
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
@@ -181,7 +158,7 @@ class ProductManager(
 
     def get_sellable_company_products(
         self,
-        company: Union[int, company_module.Company],
+        company: Union[int, Company],
         fields: Optional[Iterable[str]] = None,
         order: Optional[str] = None,
         as_id: bool = False,
@@ -217,7 +194,7 @@ class ProductManager(
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, company_module.Company],
+        company: Union[int, Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -229,7 +206,7 @@ class ProductManager(
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, company_module.Company],
+        company: Union[int, Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -241,7 +218,7 @@ class ProductManager(
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, company_module.Company],
+        company: Union[int, Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -253,7 +230,7 @@ class ProductManager(
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, company_module.Company],
+        company: Union[int, Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -265,7 +242,7 @@ class ProductManager(
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, company_module.Company],
+        company: Union[int, Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -277,7 +254,7 @@ class ProductManager(
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, company_module.Company],
+        company: Union[int, Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -289,7 +266,7 @@ class ProductManager(
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, company_module.Company],
+        company: Union[int, Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -301,7 +278,7 @@ class ProductManager(
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, company_module.Company],
+        company: Union[int, Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -313,7 +290,7 @@ class ProductManager(
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, company_module.Company],
+        company: Union[int, Company],
         name: str,
         *,
         fields: Optional[Iterable[str]] = ...,
@@ -324,7 +301,7 @@ class ProductManager(
 
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, company_module.Company],
+        company: Union[int, Company],
         name: str,
         fields: Optional[Iterable[str]] = None,
         as_id: bool = False,
@@ -382,8 +359,6 @@ class ProductManager(
 
 
 # NOTE(callumdickinson): Import here to make sure circular imports work.
-from . import (  # noqa: E402
-    company as company_module,
-    product_category,
-    uom as uom_module,
-)
+from .company import Company  # noqa: E402
+from .product_category import ProductCategory  # noqa: E402
+from .uom import Uom  # noqa: E402

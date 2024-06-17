@@ -18,10 +18,11 @@ from __future__ import annotations
 from datetime import date as datetime_date
 from typing import Literal, Union
 
-from . import record_base, record_manager_name_base
+from ..base.record import RecordBase
+from ..base.record_manager_named import NamedRecordManagerBase
 
 
-class Currency(record_base.RecordBase):
+class Currency(RecordBase):
     active: bool
     """Whether or not this currency is active (enabled)."""
 
@@ -63,8 +64,6 @@ class Currency(record_base.RecordBase):
     """The currency sign to be used when printing amounts."""
 
 
-class CurrencyManager(
-    record_manager_name_base.NamedRecordManagerBase[Currency],
-):
+class CurrencyManager(NamedRecordManagerBase[Currency]):
     env_name = "res.currency"
     record_class = Currency

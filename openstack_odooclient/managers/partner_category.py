@@ -19,17 +19,18 @@ from typing import List, Literal, Optional, Union
 
 from typing_extensions import Annotated, Self
 
-from . import record_base, record_manager_name_base
+from ..base.record import FieldAlias, ModelRef, RecordBase
+from ..base.record_manager_named import NamedRecordManagerBase
 
 
-class PartnerCategory(record_base.RecordBase):
+class PartnerCategory(RecordBase):
     active: bool
     """Whether or not the partner category is active (enabled)."""
 
-    child_ids: Annotated[List[int], record_base.ModelRef("child_id", Self)]
+    child_ids: Annotated[List[int], ModelRef("child_id", Self)]
     """A list of IDs for the child categories."""
 
-    children: Annotated[List[Self], record_base.ModelRef("child_id", Self)]
+    children: Annotated[List[Self], ModelRef("child_id", Self)]
     """The list of child categories.
 
     This fetches the full records from Odoo once,
@@ -39,29 +40,23 @@ class PartnerCategory(record_base.RecordBase):
     color: int
     """Colour index for the partner category."""
 
-    colour: Annotated[int, record_base.FieldAlias("color")]
+    colour: Annotated[int, FieldAlias("color")]
     """Alias for ``color``."""
 
     name: str
     """The name of the partner category."""
 
-    parent_id: Annotated[
-        Optional[int],
-        record_base.ModelRef("parent_id", Self),
-    ]
+    parent_id: Annotated[Optional[int], ModelRef("parent_id", Self)]
     """The ID for the parent partner category, if this category
     is the child of another category.
     """
 
-    parent_name: Annotated[
-        Optional[str],
-        record_base.ModelRef("parent_id", Self),
-    ]
+    parent_name: Annotated[Optional[str], ModelRef("parent_id", Self)]
     """The name of the parent partner category, if this category
     is the child of another category.
     """
 
-    parent: Annotated[Optional[Self], record_base.ModelRef("parent_id", Self)]
+    parent: Annotated[Optional[Self], ModelRef("parent_id", Self)]
     """The parent partner category, if this category
     is the child of another category.
 
@@ -72,16 +67,10 @@ class PartnerCategory(record_base.RecordBase):
     parent_path: Union[str, Literal[False]]
     """The path of the parent partner category, if there is a parent."""
 
-    partner_ids: Annotated[
-        List[int],
-        record_base.ModelRef("partner_id", partner.Partner),
-    ]
+    partner_ids: Annotated[List[int], ModelRef("partner_id", Partner)]
     """A list of IDs for the partners in this category."""
 
-    partners: Annotated[
-        List[partner.Partner],
-        record_base.ModelRef("partner_id", partner.Partner),
-    ]
+    partners: Annotated[List[Partner], ModelRef("partner_id", Partner)]
     """The list of partners in this category.
 
     This fetches the full records from Odoo once,
@@ -89,12 +78,10 @@ class PartnerCategory(record_base.RecordBase):
     """
 
 
-class PartnerCategoryManager(
-    record_manager_name_base.NamedRecordManagerBase[PartnerCategory],
-):
+class PartnerCategoryManager(NamedRecordManagerBase[PartnerCategory]):
     env_name = "res.partner.category"
     record_class = PartnerCategory
 
 
 # NOTE(callumdickinson): Import here to make sure circular imports work.
-from . import partner  # noqa: E402
+from .partner import Partner  # noqa: E402

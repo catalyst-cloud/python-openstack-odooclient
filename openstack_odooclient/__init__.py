@@ -15,6 +15,13 @@
 
 from __future__ import annotations
 
+from .base.record import FieldAlias, ModelRef, RecordBase
+from .base.record_manager import RecordManagerBase
+from .base.record_manager_coded import CodedRecordManagerBase
+from .base.record_manager_named import NamedRecordManagerBase
+from .base.record_manager_with_unique_field import (
+    RecordManagerWithUniqueFieldBase,
+)
 from .client import Client
 from .exceptions import (
     ClientError,
@@ -38,13 +45,6 @@ from .managers.product import Product
 from .managers.product_category import ProductCategory
 from .managers.project import Project
 from .managers.project_contact import ProjectContact
-from .managers.record_base import FieldAlias, ModelRef, RecordBase
-from .managers.record_manager_base import RecordManagerBase
-from .managers.record_manager_code_base import CodedRecordManagerBase
-from .managers.record_manager_name_base import NamedRecordManagerBase
-from .managers.record_manager_unique_field_base import (
-    RecordManagerWithUniqueFieldBase,
-)
 from .managers.referral_code import ReferralCode
 from .managers.reseller import Reseller
 from .managers.reseller_tier import ResellerTier

@@ -19,25 +19,17 @@ from typing import List
 
 from typing_extensions import Annotated
 
-from . import (
-    product as product_module,
-    product_category,
-    record_base,
-    record_manager_name_base,
-)
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager_named import NamedRecordManagerBase
+from .product import Product
+from .product_category import ProductCategory
 
 
-class CreditType(record_base.RecordBase):
-    credit_ids: Annotated[
-        List[int],
-        record_base.ModelRef("credits", credit.Credit),
-    ]
+class CreditType(RecordBase):
+    credit_ids: Annotated[List[int], ModelRef("credits", Credit)]
     """A list of IDs for the credits which are of this credit type."""
 
-    credits: Annotated[
-        List[credit.Credit],
-        record_base.ModelRef("credits", credit.Credit),
-    ]
+    credits: Annotated[List[Credit], ModelRef("credits", Credit)]
     """A list of credits which are of this credit type.
 
     This fetches the full records from Odoo once,
@@ -49,7 +41,7 @@ class CreditType(record_base.RecordBase):
 
     only_for_product_ids: Annotated[
         List[int],
-        record_base.ModelRef("only_for_products", product_module.Product),
+        ModelRef("only_for_products", Product),
     ]
     """A list of IDs for the products this credit applies to.
 
@@ -58,8 +50,8 @@ class CreditType(record_base.RecordBase):
     """
 
     only_for_products: Annotated[
-        List[product_module.Product],
-        record_base.ModelRef("only_for_products", product_module.Product),
+        List[Product],
+        ModelRef("only_for_products", Product),
     ]
     """A list of products which this credit applies to.
 
@@ -72,10 +64,7 @@ class CreditType(record_base.RecordBase):
 
     only_for_product_category_ids: Annotated[
         List[int],
-        record_base.ModelRef(
-            "only_for_product_categories",
-            product_category.ProductCategory,
-        ),
+        ModelRef("only_for_product_categories", ProductCategory),
     ]
     """A list of IDs for the product categories this credit applies to.
 
@@ -85,11 +74,8 @@ class CreditType(record_base.RecordBase):
     """
 
     only_for_product_categories: Annotated[
-        List[product_category.ProductCategory],
-        record_base.ModelRef(
-            "only_for_product_categories",
-            product_category.ProductCategory,
-        ),
+        List[ProductCategory],
+        ModelRef("only_for_product_categories", ProductCategory),
     ]
     """A list of product categories which this credit applies to.
 
@@ -101,26 +87,17 @@ class CreditType(record_base.RecordBase):
     and caches them for subsequent accesses.
     """
 
-    product_id: Annotated[
-        int,
-        record_base.ModelRef("product", product_module.Product),
-    ]
+    product_id: Annotated[int, ModelRef("product", Product)]
     """The ID of the product to use when applying
     the credit to invoices.
     """
 
-    product_name: Annotated[
-        str,
-        record_base.ModelRef("product", product_module.Product),
-    ]
+    product_name: Annotated[str, ModelRef("product", Product)]
     """The name of the product to use when applying
     the credit to invoices.
     """
 
-    product: Annotated[
-        product_module.Product,
-        record_base.ModelRef("product", product_module.Product),
-    ]
+    product: Annotated[Product, ModelRef("product", Product)]
     """The product to use when applying the credit to invoices.
 
     This fetches the full record from Odoo once,
@@ -131,12 +108,10 @@ class CreditType(record_base.RecordBase):
     """Whether or not the credit is refundable."""
 
 
-class CreditTypeManager(
-    record_manager_name_base.NamedRecordManagerBase[CreditType],
-):
+class CreditTypeManager(NamedRecordManagerBase[CreditType]):
     env_name = "openstack.credit.type"
     record_class = CreditType
 
 
 # NOTE(callumdickinson): Import here to make sure circular imports work.
-from . import credit  # noqa: E402
+from .credit import Credit  # noqa: E402

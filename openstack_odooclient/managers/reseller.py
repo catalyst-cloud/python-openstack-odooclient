@@ -19,10 +19,11 @@ from typing import Optional
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_base
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager import RecordManagerBase
 
 
-class Reseller(record_base.RecordBase):
+class Reseller(RecordBase):
     alternative_billing_url: Optional[str]
     """The URL to the cloud billing page for the reseller, if available."""
 
@@ -31,19 +32,19 @@ class Reseller(record_base.RecordBase):
 
     demo_project_id: Annotated[
         Optional[int],
-        record_base.ModelRef("demo_project", project.Project),
+        ModelRef("demo_project", Project),
     ]
     """The ID for the optional demo project belonging to the reseller."""
 
     demo_project_name: Annotated[
         Optional[str],
-        record_base.ModelRef("demo_project", project.Project),
+        ModelRef("demo_project", Project),
     ]
     """The name of the optional demo project belonging to the reseller."""
 
     demo_project: Annotated[
-        Optional[project.Project],
-        record_base.ModelRef("demo_project", project.Project),
+        Optional[Project],
+        ModelRef("demo_project", Project),
     ]
     """An optional demo project belonging to the reseller.
 
@@ -63,44 +64,26 @@ class Reseller(record_base.RecordBase):
     This is set to the reseller partner's name.
     """
 
-    partner_id: Annotated[
-        int,
-        record_base.ModelRef("partner", partner_module.Partner),
-    ]
+    partner_id: Annotated[int, ModelRef("partner", Partner)]
     """The ID for the reseller partner."""
 
-    partner_name: Annotated[
-        str,
-        record_base.ModelRef("partner", partner_module.Partner),
-    ]
+    partner_name: Annotated[str, ModelRef("partner", Partner)]
     """The name of the reseller partner."""
 
-    partner: Annotated[
-        partner_module.Partner,
-        record_base.ModelRef("partner", partner_module.Partner),
-    ]
+    partner: Annotated[Partner, ModelRef("partner", Partner)]
     """The reseller partner.
 
     This fetches the full record from Odoo once,
     and caches it for subsequent accesses.
     """
 
-    tier_id: Annotated[
-        int,
-        record_base.ModelRef("tier", reseller_tier.ResellerTier),
-    ]
+    tier_id: Annotated[int, ModelRef("tier", ResellerTier)]
     """The ID for the tier this reseller is under."""
 
-    tier_name: Annotated[
-        str,
-        record_base.ModelRef("tier", reseller_tier.ResellerTier),
-    ]
+    tier_name: Annotated[str, ModelRef("tier", ResellerTier)]
     """The name of the tier this reseller is under."""
 
-    tier: Annotated[
-        reseller_tier.ResellerTier,
-        record_base.ModelRef("tier", reseller_tier.ResellerTier),
-    ]
+    tier: Annotated[ResellerTier, ModelRef("tier", ResellerTier)]
     """The tier this reseller is under.
 
     This fetches the full record from Odoo once,
@@ -108,10 +91,12 @@ class Reseller(record_base.RecordBase):
     """
 
 
-class ResellerManager(record_manager_base.RecordManagerBase[Reseller]):
+class ResellerManager(RecordManagerBase[Reseller]):
     env_name = "openstack.reseller"
     record_class = Reseller
 
 
 # NOTE(callumdickinson): Import here to avoid circular imports.
-from . import partner as partner_module, project, reseller_tier  # noqa: E402
+from .partner import Partner  # noqa: E402
+from .project import Project  # noqa: E402
+from .reseller_tier import ResellerTier  # noqa: E402

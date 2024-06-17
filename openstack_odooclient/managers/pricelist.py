@@ -19,55 +19,35 @@ from typing import Literal, Optional, Union
 
 from typing_extensions import Annotated
 
-from . import (
-    product as product_module,
-    record_base,
-    record_manager_name_base,
-)
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager_named import NamedRecordManagerBase
+from .product import Product
 
 
-class Pricelist(record_base.RecordBase):
+class Pricelist(RecordBase):
     active: bool
     """Whether or not the pricelist is active."""
 
-    company_id: Annotated[
-        Optional[int],
-        record_base.ModelRef("company_id", company_module.Company),
-    ]
+    company_id: Annotated[Optional[int], ModelRef("company_id", Company)]
     """The ID for the company for this pricelist, if set."""
 
-    company_name: Annotated[
-        Optional[str],
-        record_base.ModelRef("company_id", company_module.Company),
-    ]
+    company_name: Annotated[Optional[str], ModelRef("company_id", Company)]
     """The name of the company for this pricelist, if set."""
 
-    company: Annotated[
-        Optional[company_module.Company],
-        record_base.ModelRef("company_id", company_module.Company),
-    ]
+    company: Annotated[Optional[Company], ModelRef("company_id", Company)]
     """The company for this pricelist, if set.
 
     This fetches the full record from Odoo once,
     and caches it for subsequent accesses.
     """
 
-    currency_id: Annotated[
-        int,
-        record_base.ModelRef("currency_id", currency_module.Currency),
-    ]
+    currency_id: Annotated[int, ModelRef("currency_id", Currency)]
     """The ID for the currency used in this pricelist."""
 
-    currency_name: Annotated[
-        str,
-        record_base.ModelRef("currency_id", currency_module.Currency),
-    ]
+    currency_name: Annotated[str, ModelRef("currency_id", Currency)]
     """The name of the currency used in this pricelist."""
 
-    currency: Annotated[
-        currency_module.Currency,
-        record_base.ModelRef("currency_id", currency_module.Currency),
-    ]
+    currency: Annotated[Currency, ModelRef("currency_id", Currency)]
     """The currency used in this pricelist.
 
     This fetches the full record from Odoo once,
@@ -86,11 +66,7 @@ class Pricelist(record_base.RecordBase):
     name: str
     """The name of this pricelist."""
 
-    def get_price(
-        self,
-        product: Union[int, product_module.Product],
-        qty: float,
-    ) -> float:
+    def get_price(self, product: Union[int, Product], qty: float) -> float:
         """Get the price to charge for a given product and quantity.
 
         :param product: Product to get the price for (ID or object)
@@ -107,16 +83,14 @@ class Pricelist(record_base.RecordBase):
         )
 
 
-class PricelistManager(
-    record_manager_name_base.NamedRecordManagerBase[Pricelist],
-):
+class PricelistManager(NamedRecordManagerBase[Pricelist]):
     env_name = "product.pricelist"
     record_class = Pricelist
 
     def get_price(
         self,
         pricelist: Union[int, Pricelist],
-        product: Union[int, product_module.Product],
+        product: Union[int, Product],
         qty: float,
     ) -> float:
         """Get the price to charge for a given pricelist, product
@@ -136,18 +110,12 @@ class PricelistManager(
         )
         price = self._env.price_get(
             pricelist_id,
-            (
-                product.id
-                if isinstance(product, product_module.Product)
-                else product
-            ),
+            (product.id if isinstance(product, Product) else product),
             max(qty, 0),
         )[str(pricelist_id)]
         return price if qty >= 0 else -price
 
 
 # NOTE(callumdickinson): Import here to make sure circular imports work.
-from . import (  # noqa: E402
-    company as company_module,
-    currency as currency_module,
-)
+from .company import Company  # noqa: E402
+from .currency import Currency  # noqa: E402

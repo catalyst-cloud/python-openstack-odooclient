@@ -44,14 +44,14 @@ from typing_extensions import (
 )
 
 from ..exceptions import RecordNotFoundError
-from .record_base import ModelRef, RecordBase
-from .util import (
+from ..util import (
     DEFAULT_SERVER_DATE_FORMAT,
     DEFAULT_SERVER_DATETIME_FORMAT,
     DEFAULT_SERVER_TIME_FORMAT,
     get_mapped_field,
     is_subclass,
 )
+from .record import ModelRef, RecordBase
 
 if TYPE_CHECKING:
     from odoorpc import ODOO  # type: ignore[import]

@@ -20,10 +20,11 @@ from typing import Literal, Optional
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_base
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager import RecordManagerBase
 
 
-class SupportSubscription(record_base.RecordBase):
+class SupportSubscription(RecordBase):
     billing_type: Literal["paid", "complimentary"]
     """The method of billing for the support subscription.
 
@@ -36,10 +37,7 @@ class SupportSubscription(record_base.RecordBase):
     end_date: date
     """The end date of the credit."""
 
-    partner_id: Annotated[
-        Optional[int],
-        record_base.ModelRef("partner", partner_module.Partner),
-    ]
+    partner_id: Annotated[Optional[int], ModelRef("partner", Partner)]
     """The ID for the partner linked to this support subscription,
     if it is linked to a partner.
 
@@ -47,10 +45,7 @@ class SupportSubscription(record_base.RecordBase):
     cover all projects the partner owns.
     """
 
-    partner_name: Annotated[
-        Optional[str],
-        record_base.ModelRef("partner", partner_module.Partner),
-    ]
+    partner_name: Annotated[Optional[str], ModelRef("partner", Partner)]
     """The name of thepartner linked to this support subscription,
     if it is linked to a partner.
 
@@ -58,10 +53,7 @@ class SupportSubscription(record_base.RecordBase):
     cover all projects the partner owns.
     """
 
-    partner: Annotated[
-        Optional[partner_module.Partner],
-        record_base.ModelRef("partner", partner_module.Partner),
-    ]
+    partner: Annotated[Optional[Partner], ModelRef("partner", Partner)]
     """The partner linked to this support subscription,
     if it is linked to a partner.
 
@@ -72,26 +64,17 @@ class SupportSubscription(record_base.RecordBase):
     and caches it for subsequent accesses.
     """
 
-    project_id: Annotated[
-        Optional[int],
-        record_base.ModelRef("project", project_module.Project),
-    ]
+    project_id: Annotated[Optional[int], ModelRef("project", Project)]
     """The ID of the project this support subscription is for,
     if it is linked to a specific project.
     """
 
-    project_name: Annotated[
-        Optional[str],
-        record_base.ModelRef("project", project_module.Project),
-    ]
+    project_name: Annotated[Optional[str], ModelRef("project", Project)]
     """The name of the project this support subscription is for,
     if it is linked to a specific project.
     """
 
-    project: Annotated[
-        Optional[project_module.Project],
-        record_base.ModelRef("project", project_module.Project),
-    ]
+    project: Annotated[Optional[Project], ModelRef("project", Project)]
     """The project this support subscription is for,
     if it is linked to a specific project.
 
@@ -104,28 +87,19 @@ class SupportSubscription(record_base.RecordBase):
 
     support_subscription_type_id: Annotated[
         int,
-        record_base.ModelRef(
-            "support_subscription_type",
-            support_subscription_type_module.SupportSubscriptionType,
-        ),
+        ModelRef("support_subscription_type", SupportSubscriptionType),
     ]
     """The ID of the type of the support subscription."""
 
     support_subscription_type_name: Annotated[
         str,
-        record_base.ModelRef(
-            "support_subscription_type",
-            support_subscription_type_module.SupportSubscriptionType,
-        ),
+        ModelRef("support_subscription_type", SupportSubscriptionType),
     ]
     """The name of the type of the support subscription."""
 
     support_subscription_type: Annotated[
-        support_subscription_type_module.SupportSubscriptionType,
-        record_base.ModelRef(
-            "support_subscription_type",
-            support_subscription_type_module.SupportSubscriptionType,
-        ),
+        SupportSubscriptionType,
+        ModelRef("support_subscription_type", SupportSubscriptionType),
     ]
     """The type of the support subscription.
 
@@ -134,16 +108,12 @@ class SupportSubscription(record_base.RecordBase):
     """
 
 
-class SupportSubscriptionManager(
-    record_manager_base.RecordManagerBase[SupportSubscription],
-):
+class SupportSubscriptionManager(RecordManagerBase[SupportSubscription]):
     env_name = "openstack.support_subscription"
     record_class = SupportSubscription
 
 
 # NOTE(callumdickinson): Import here to avoid circular imports.
-from . import (  # noqa: E402
-    partner as partner_module,
-    project as project_module,
-    support_subscription_type as support_subscription_type_module,
-)
+from .partner import Partner  # noqa: E402
+from .project import Project  # noqa: E402
+from .support_subscription_type import SupportSubscriptionType  # noqa: E402

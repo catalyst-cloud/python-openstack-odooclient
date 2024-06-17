@@ -19,20 +19,15 @@ from typing import List
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_name_base
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager_named import NamedRecordManagerBase
 
 
-class GrantType(record_base.RecordBase):
-    grant_ids: Annotated[
-        List[int],
-        record_base.ModelRef("grants", grant.Grant),
-    ]
+class GrantType(RecordBase):
+    grant_ids: Annotated[List[int], ModelRef("grants", Grant)]
     """A list of IDs for the grants which are of this grant type."""
 
-    grants: Annotated[
-        List[grant.Grant],
-        record_base.ModelRef("grants", grant.Grant),
-    ]
+    grants: Annotated[List[Grant], ModelRef("grants", Grant)]
     """A list of grants which are of this grant type.
 
     This fetches the full records from Odoo once,
@@ -44,7 +39,7 @@ class GrantType(record_base.RecordBase):
 
     only_for_product_ids: Annotated[
         List[int],
-        record_base.ModelRef("only_for_products", product_module.Product),
+        ModelRef("only_for_products", Product),
     ]
     """A list of IDs for the products this grant applies to.
 
@@ -53,8 +48,8 @@ class GrantType(record_base.RecordBase):
     """
 
     only_for_products: Annotated[
-        List[product_module.Product],
-        record_base.ModelRef("only_for_products", product_module.Product),
+        List[Product],
+        ModelRef("only_for_products", Product),
     ]
     """A list of products which this grant applies to.
 
@@ -67,9 +62,9 @@ class GrantType(record_base.RecordBase):
 
     only_for_product_category_ids: Annotated[
         List[int],
-        record_base.ModelRef(
+        ModelRef(
             "only_for_product_categories",
-            product_category.ProductCategory,
+            ProductCategory,
         ),
     ]
     """A list of IDs for the product categories this grant applies to.
@@ -80,10 +75,10 @@ class GrantType(record_base.RecordBase):
     """
 
     only_for_product_categories: Annotated[
-        List[product_category.ProductCategory],
-        record_base.ModelRef(
+        List[ProductCategory],
+        ModelRef(
             "only_for_product_categories",
-            product_category.ProductCategory,
+            ProductCategory,
         ),
     ]
     """A list of product categories which this grant applies to.
@@ -101,26 +96,17 @@ class GrantType(record_base.RecordBase):
     part of an invoice grouping if it is on the group root project.
     """
 
-    product_id: Annotated[
-        int,
-        record_base.ModelRef("product", product_module.Product),
-    ]
+    product_id: Annotated[int, ModelRef("product", Product)]
     """The ID of the product to use when applying
     the grant to invoices.
     """
 
-    product_name: Annotated[
-        str,
-        record_base.ModelRef("product", product_module.Product),
-    ]
+    product_name: Annotated[str, ModelRef("product", Product)]
     """The name of the product to use when applying
     the grant to invoices.
     """
 
-    product: Annotated[
-        product_module.Product,
-        record_base.ModelRef("product", product_module.Product),
-    ]
+    product: Annotated[Product, ModelRef("product", Product)]
     """The product to use when applying the grant to invoices.
 
     This fetches the full record from Odoo once,
@@ -128,16 +114,12 @@ class GrantType(record_base.RecordBase):
     """
 
 
-class GrantTypeManager(
-    record_manager_name_base.NamedRecordManagerBase[GrantType],
-):
+class GrantTypeManager(NamedRecordManagerBase[GrantType]):
     env_name = "openstack.grant.type"
     record_class = GrantType
 
 
 # NOTE(callumdickinson): Import here to make sure circular imports work.
-from . import (  # noqa: E402
-    grant,
-    product as product_module,
-    product_category,
-)
+from .grant import Grant  # noqa: E402
+from .product import Product  # noqa: E402
+from .product_category import ProductCategory  # noqa: E402

@@ -19,10 +19,11 @@ from typing import List
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_code_base
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager_coded import CodedRecordManagerBase
 
 
-class ReferralCode(record_base.RecordBase):
+class ReferralCode(RecordBase):
     allowed_uses: int
     """The number of allowed uses of this referral code.
 
@@ -40,18 +41,12 @@ class ReferralCode(record_base.RecordBase):
     name: str
     """Automatically generated name for the referral code."""
 
-    referral_ids: Annotated[
-        List[int],
-        record_base.ModelRef("referrals", partner.Partner),
-    ]
+    referral_ids: Annotated[List[int], ModelRef("referrals", Partner)]
     """A list of IDs for the partners that signed up
     using this referral code.
     """
 
-    referrals: Annotated[
-        List[partner.Partner],
-        record_base.ModelRef("referrals", partner.Partner),
-    ]
+    referrals: Annotated[List[Partner], ModelRef("referrals", Partner)]
     """The partners that signed up using this referral code.
 
     This fetches the full records from Odoo once,
@@ -66,19 +61,19 @@ class ReferralCode(record_base.RecordBase):
 
     referral_credit_type_id: Annotated[
         int,
-        record_base.ModelRef("referral_credit_type", credit_type.CreditType),
+        ModelRef("referral_credit_type", CreditType),
     ]
     """The ID of the credit type to use for the referral credit."""
 
     referral_credit_type_name: Annotated[
         str,
-        record_base.ModelRef("referral_credit_type", credit_type.CreditType),
+        ModelRef("referral_credit_type", CreditType),
     ]
     """The name of the credit type to use for the referral credit."""
 
     referral_credit_type: Annotated[
-        credit_type.CreditType,
-        record_base.ModelRef("referral_credit_type", credit_type.CreditType),
+        CreditType,
+        ModelRef("referral_credit_type", CreditType),
     ]
     """The credit type to use for the referral credit.
 
@@ -94,19 +89,19 @@ class ReferralCode(record_base.RecordBase):
 
     reward_credit_type_id: Annotated[
         int,
-        record_base.ModelRef("reward_credit_type", credit_type.CreditType),
+        ModelRef("reward_credit_type", CreditType),
     ]
     """The ID of the credit type to use for the reward credit."""
 
     reward_credit_type_name: Annotated[
         str,
-        record_base.ModelRef("reward_credit_type", credit_type.CreditType),
+        ModelRef("reward_credit_type", CreditType),
     ]
     """The name of the credit type to use for the reward credit."""
 
     reward_credit_type: Annotated[
-        credit_type.CreditType,
-        record_base.ModelRef("reward_credit_type", credit_type.CreditType),
+        CreditType,
+        ModelRef("reward_credit_type", CreditType),
     ]
     """The credit type to use for the reward credit.
 
@@ -115,12 +110,11 @@ class ReferralCode(record_base.RecordBase):
     """
 
 
-class ReferralCodeManager(
-    record_manager_code_base.CodedRecordManagerBase[ReferralCode],
-):
+class ReferralCodeManager(CodedRecordManagerBase[ReferralCode]):
     env_name = "openstack.referral_code"
     record_class = ReferralCode
 
 
 # NOTE(callumdickinson): Import here to avoid circular imports.
-from . import credit_type, partner  # noqa: E402
+from .credit_type import CreditType  # noqa: E402
+from .partner import Partner  # noqa: E402

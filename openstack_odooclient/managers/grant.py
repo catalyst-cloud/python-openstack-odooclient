@@ -20,29 +20,21 @@ from typing import Optional
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_base
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager import RecordManagerBase
 
 
-class Grant(record_base.RecordBase):
+class Grant(RecordBase):
     expiry_date: date
     """The date the grant expires."""
 
-    grant_type_id: Annotated[
-        int,
-        record_base.ModelRef("grant_type", grant_type_module.GrantType),
-    ]
+    grant_type_id: Annotated[int, ModelRef("grant_type", GrantType)]
     """The ID of the type of this grant."""
 
-    grant_type_name: Annotated[
-        str,
-        record_base.ModelRef("grant_type", grant_type_module.GrantType),
-    ]
+    grant_type_name: Annotated[str, ModelRef("grant_type", GrantType)]
     """The name of the type of this grant."""
 
-    grant_type: Annotated[
-        grant_type_module.GrantType,
-        record_base.ModelRef("grant_type", grant_type_module.GrantType),
-    ]
+    grant_type: Annotated[GrantType, ModelRef("grant_type", GrantType)]
     """The type of this grant.
 
     This fetches the full record from Odoo once,
@@ -60,7 +52,7 @@ class Grant(record_base.RecordBase):
 
     voucher_code_id: Annotated[
         Optional[int],
-        record_base.ModelRef("voucher_code", voucher_code_module.VoucherCode),
+        ModelRef("voucher_code", VoucherCode),
     ]
     """The ID of the voucher code used when applying for the grant,
     if one was supplied.
@@ -68,15 +60,15 @@ class Grant(record_base.RecordBase):
 
     voucher_code_name: Annotated[
         Optional[str],
-        record_base.ModelRef("voucher_code", voucher_code_module.VoucherCode),
+        ModelRef("voucher_code", VoucherCode),
     ]
     """The name of the voucher code used when applying for the grant,
     if one was supplied.
     """
 
     voucher_code: Annotated[
-        Optional[voucher_code_module.VoucherCode],
-        record_base.ModelRef("voucher_code", voucher_code_module.VoucherCode),
+        Optional[VoucherCode],
+        ModelRef("voucher_code", VoucherCode),
     ]
     """The voucher code used when applying for the grant,
     if one was supplied.
@@ -86,13 +78,11 @@ class Grant(record_base.RecordBase):
     """
 
 
-class GrantManager(record_manager_base.RecordManagerBase[Grant]):
+class GrantManager(RecordManagerBase[Grant]):
     env_name = "openstack.grant"
     record_class = Grant
 
 
 # NOTE(callumdickinson): Import here to make sure circular imports work.
-from . import (  # noqa: E402
-    grant_type as grant_type_module,
-    voucher_code as voucher_code_module,
-)
+from .grant_type import GrantType  # noqa: E402
+from .voucher_code import VoucherCode  # noqa: E402

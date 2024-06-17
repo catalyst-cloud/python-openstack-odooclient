@@ -19,50 +19,39 @@ from typing import List, Optional
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_name_base
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager_named import NamedRecordManagerBase
 
 
-class CustomerGroup(record_base.RecordBase):
+class CustomerGroup(RecordBase):
     name: str
     """The name of the customer group."""
 
-    partner_ids: Annotated[
-        List[int],
-        record_base.ModelRef("partners", partner.Partner),
-    ]
+    partner_ids: Annotated[List[int], ModelRef("partners", Partner)]
     """A list of IDs for the partners that are part
     of this customer group.
     """
 
-    partners: Annotated[
-        List[partner.Partner],
-        record_base.ModelRef("partners", partner.Partner),
-    ]
+    partners: Annotated[List[Partner], ModelRef("partners", Partner)]
     """The partners that are part of this customer group.
 
     This fetches the full records from Odoo once,
     and caches them for subsequent accesses.
     """
 
-    pricelist_id: Annotated[
-        Optional[int],
-        record_base.ModelRef("pricelist", pricelist_module.Pricelist),
-    ]
+    pricelist_id: Annotated[Optional[int], ModelRef("pricelist", Pricelist)]
     """The ID for the pricelist this customer group uses,
     if not the default one.
     """
 
-    pricelist_name: Annotated[
-        Optional[str],
-        record_base.ModelRef("pricelist", pricelist_module.Pricelist),
-    ]
+    pricelist_name: Annotated[Optional[str], ModelRef("pricelist", Pricelist)]
     """The name of the pricelist this customer group uses,
     if not the default one.
     """
 
     pricelist: Annotated[
-        Optional[pricelist_module.Pricelist],
-        record_base.ModelRef("pricelist", pricelist_module.Pricelist),
+        Optional[Pricelist],
+        ModelRef("pricelist", Pricelist),
     ]
     """The pricelist this customer group uses, if not the default one.
 
@@ -71,12 +60,11 @@ class CustomerGroup(record_base.RecordBase):
     """
 
 
-class CustomerGroupManager(
-    record_manager_name_base.NamedRecordManagerBase[CustomerGroup],
-):
+class CustomerGroupManager(NamedRecordManagerBase[CustomerGroup]):
     env_name = "openstack.customer_group"
     record_class = CustomerGroup
 
 
 # NOTE(callumdickinson): Import here to make sure circular imports work.
-from . import partner, pricelist as pricelist_module  # noqa: E402
+from .partner import Partner  # noqa: E402
+from .pricelist import Pricelist  # noqa: E402

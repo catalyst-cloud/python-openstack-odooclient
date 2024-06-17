@@ -17,26 +17,18 @@ from __future__ import annotations
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_base
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager import RecordManagerBase
 
 
-class CreditTransaction(record_base.RecordBase):
-    credit_id: Annotated[
-        int,
-        record_base.ModelRef("credit", credit_module.Credit),
-    ]
+class CreditTransaction(RecordBase):
+    credit_id: Annotated[int, ModelRef("credit", Credit)]
     """The ID of the credit this transaction was made against."""
 
-    credit_name: Annotated[
-        str,
-        record_base.ModelRef("credit", credit_module.Credit),
-    ]
+    credit_name: Annotated[str, ModelRef("credit", Credit)]
     """The name of the credit this transaction was made against."""
 
-    credit: Annotated[
-        credit_module.Credit,
-        record_base.ModelRef("credit", credit_module.Credit),
-    ]
+    credit: Annotated[Credit, ModelRef("credit", Credit)]
     """The credit this transaction was made against.
 
     This fetches the full record from Odoo once,
@@ -50,12 +42,10 @@ class CreditTransaction(record_base.RecordBase):
     """The value of the credit transaction."""
 
 
-class CreditTransactionManager(
-    record_manager_base.RecordManagerBase[CreditTransaction],
-):
+class CreditTransactionManager(RecordManagerBase[CreditTransaction]):
     env_name = "openstack.credit.transaction"
     record_class = CreditTransaction
 
 
 # NOTE(callumdickinson): Import here to make sure circular imports work.
-from . import credit as credit_module  # noqa: E402
+from .credit import Credit  # noqa: E402

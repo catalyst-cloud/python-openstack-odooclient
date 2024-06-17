@@ -20,26 +20,18 @@ from typing import List, Optional
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_base
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager import RecordManagerBase
 
 
-class Credit(record_base.RecordBase):
-    credit_type_id: Annotated[
-        int,
-        record_base.ModelRef("credit_type", credit_type_module.CreditType),
-    ]
+class Credit(RecordBase):
+    credit_type_id: Annotated[int, ModelRef("credit_type", CreditType)]
     """The ID of the type of this credit."""
 
-    credit_type_name: Annotated[
-        str,
-        record_base.ModelRef("credit_type", credit_type_module.CreditType),
-    ]
+    credit_type_name: Annotated[str, ModelRef("credit_type", CreditType)]
     """The name of the type of this credit."""
 
-    credit_type: Annotated[
-        credit_type_module.CreditType,
-        record_base.ModelRef("credit_type", credit_type_module.CreditType),
-    ]
+    credit_type: Annotated[CreditType, ModelRef("credit_type", CreditType)]
     """The type of this credit.
 
     This fetches the full record from Odoo once,
@@ -63,21 +55,15 @@ class Credit(record_base.RecordBase):
 
     transaction_ids: Annotated[
         List[int],
-        record_base.ModelRef(
-            "transactions",
-            credit_transaction.CreditTransaction,
-        ),
+        ModelRef("transactions", CreditTransaction),
     ]
     """A list of IDs for the transactions that have been made
     using this credit.
     """
 
     transactions: Annotated[
-        List[credit_transaction.CreditTransaction],
-        record_base.ModelRef(
-            "transactions",
-            credit_transaction.CreditTransaction,
-        ),
+        List[CreditTransaction],
+        ModelRef("transactions", CreditTransaction),
     ]
     """The transactions that have been made using this credit.
 
@@ -87,7 +73,7 @@ class Credit(record_base.RecordBase):
 
     voucher_code_id: Annotated[
         Optional[int],
-        record_base.ModelRef("voucher_code", voucher_code_module.VoucherCode),
+        ModelRef("voucher_code", VoucherCode),
     ]
     """The ID of the voucher code used when applying for the credit,
     if one was supplied.
@@ -95,15 +81,15 @@ class Credit(record_base.RecordBase):
 
     voucher_code_name: Annotated[
         Optional[str],
-        record_base.ModelRef("voucher_code", voucher_code_module.VoucherCode),
+        ModelRef("voucher_code", VoucherCode),
     ]
     """The name of the voucher code used when applying for the credit,
     if one was supplied.
     """
 
     voucher_code: Annotated[
-        Optional[voucher_code_module.VoucherCode],
-        record_base.ModelRef("voucher_code", voucher_code_module.VoucherCode),
+        Optional[VoucherCode],
+        ModelRef("voucher_code", VoucherCode),
     ]
     """The voucher code used when applying for the credit,
     if one was supplied.
@@ -113,14 +99,12 @@ class Credit(record_base.RecordBase):
     """
 
 
-class CreditManager(record_manager_base.RecordManagerBase[Credit]):
+class CreditManager(RecordManagerBase[Credit]):
     env_name = "openstack.credit"
     record_class = Credit
 
 
 # NOTE(callumdickinson): Import here to make sure circular imports work.
-from . import (  # noqa: E402
-    credit_transaction,
-    credit_type as credit_type_module,
-    voucher_code as voucher_code_module,
-)
+from .credit_transaction import CreditTransaction  # noqa: E402
+from .credit_type import CreditType  # noqa: E402
+from .voucher_code import VoucherCode  # noqa: E402

@@ -24,6 +24,7 @@ from typing import TYPE_CHECKING, overload
 from odoorpc import ODOO  # type: ignore[import]
 from packaging.version import Version
 
+from .base import record
 from .managers import (
     account_move,
     account_move_line,
@@ -67,7 +68,7 @@ if TYPE_CHECKING:
     from odoorpc.env import Environment  # type: ignore[import]
     from odoorpc.report import Report  # type: ignore[import]
 
-    from .managers import record_base, record_manager_base
+    from .managers import record_manager_base
 
 
 class Client:
@@ -197,7 +198,7 @@ class Client:
         # and used when converting model references on record objects into
         # # new record objects.
         self._record_manager_mapping: Dict[
-            Type[record_base.RecordBase],
+            Type[record.RecordBase],
             record_manager_base.RecordManagerBase,
         ] = {}
         # Create record managers.

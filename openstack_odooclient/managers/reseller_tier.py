@@ -17,28 +17,29 @@ from __future__ import annotations
 
 from typing_extensions import Annotated
 
-from . import record_base, record_manager_name_base
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager_named import NamedRecordManagerBase
 
 
-class ResellerTier(record_base.RecordBase):
+class ResellerTier(RecordBase):
     discount_percent: float
     """The maximum discount percentage for this reseller tier (0-100)."""
 
     discount_product_id: Annotated[
         int,
-        record_base.ModelRef("discount_product", product.Product),
+        ModelRef("discount_product", Product),
     ]
     """The ID of the discount product for the reseller tier."""
 
     discount_product_name: Annotated[
         str,
-        record_base.ModelRef("discount_product", product.Product),
+        ModelRef("discount_product", Product),
     ]
     """The name of the discount product for the reseller tier."""
 
     discount_product: Annotated[
-        product.Product,
-        record_base.ModelRef("discount_product", product.Product),
+        Product,
+        ModelRef("discount_product", Product),
     ]
     """The discount product for the reseller tier.
 
@@ -51,7 +52,7 @@ class ResellerTier(record_base.RecordBase):
 
     free_monthly_credit_product_id: Annotated[
         int,
-        record_base.ModelRef("free_monthly_credit_product", product.Product),
+        ModelRef("free_monthly_credit_product", Product),
     ]
     """The ID of the product to use when adding the free monthly credit
     to demo project invoices.
@@ -59,15 +60,15 @@ class ResellerTier(record_base.RecordBase):
 
     free_monthly_credit_product_name: Annotated[
         str,
-        record_base.ModelRef("free_monthly_credit_product", product.Product),
+        ModelRef("free_monthly_credit_product", Product),
     ]
     """The name of the product to use when adding the free monthly credit
     to demo project invoices.
     """
 
     free_monthly_credit_product: Annotated[
-        product.Product,
-        record_base.ModelRef("free_monthly_credit_product", product.Product),
+        Product,
+        ModelRef("free_monthly_credit_product", Product),
     ]
     """The product to use when adding the free monthly credit
     to demo project invoices.
@@ -88,12 +89,10 @@ class ResellerTier(record_base.RecordBase):
     """The minimum required usage amount for the reseller tier."""
 
 
-class ResellerTierManager(
-    record_manager_name_base.NamedRecordManagerBase[ResellerTier],
-):
+class ResellerTierManager(NamedRecordManagerBase[ResellerTier]):
     env_name = "openstack.reseller.tier"
     record_class = ResellerTier
 
 
 # NOTE(callumdickinson): Import here to avoid circular imports.
-from . import product  # noqa: E402
+from .product import Product  # noqa: E402

@@ -20,37 +20,26 @@ from typing import Any, List, Literal, Mapping, Optional, Union
 
 from typing_extensions import Annotated
 
-from . import (
-    currency as currency_module,
-    project,
-    record_base,
-    record_manager_name_base,
-)
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager_named import NamedRecordManagerBase
+from .currency import Currency
+from .project import Project
 
 
-class AccountMove(record_base.RecordBase):
+class AccountMove(RecordBase):
     amount_total: float
     """Total (taxed) amount charged on the account move (invoice)."""
 
     amount_untaxed: float
     """Total (untaxed) amount charged on the account move (invoice)."""
 
-    currency_id: Annotated[
-        int,
-        record_base.ModelRef("currency_id", currency_module.Currency),
-    ]
+    currency_id: Annotated[int, ModelRef("currency_id", Currency)]
     """The ID for the currency used in this account move (invoice)."""
 
-    currency_name: Annotated[
-        str,
-        record_base.ModelRef("currency_id", currency_module.Currency),
-    ]
+    currency_name: Annotated[str, ModelRef("currency_id", Currency)]
     """The name of the currency used in this account move (invoice)."""
 
-    currency: Annotated[
-        currency_module.Currency,
-        record_base.ModelRef("currency_id", currency_module.Currency),
-    ]
+    currency: Annotated[Currency, ModelRef("currency_id", Currency)]
     """The currency used in this account move (invoice).
 
     This fetches the full record from Odoo once,
@@ -62,21 +51,15 @@ class AccountMove(record_base.RecordBase):
 
     invoice_line_ids: Annotated[
         List[int],
-        record_base.ModelRef(
-            "invoice_line_ids",
-            account_move_line.AccountMoveLine,
-        ),
+        ModelRef("invoice_line_ids", AccountMoveLine),
     ]
     """The list of the IDs for the account move (invoice) lines
     that comprise this account move (invoice).
     """
 
     invoice_lines: Annotated[
-        List[account_move_line.AccountMoveLine],
-        record_base.ModelRef(
-            "invoice_line_ids",
-            account_move_line.AccountMoveLine,
-        ),
+        List[AccountMoveLine],
+        ModelRef("invoice_line_ids", AccountMoveLine),
     ]
     """A list of account move (invoice) lines
     that comprise this account move (invoice).
@@ -113,26 +96,17 @@ class AccountMove(record_base.RecordBase):
     name: Union[str, Literal[False]]
     """Name assigned to the account move (invoice), if posted."""
 
-    os_project_id: Annotated[
-        Optional[int],
-        record_base.ModelRef("os_project", project.Project),
-    ]
+    os_project_id: Annotated[Optional[int], ModelRef("os_project", Project)]
     """The ID of the OpenStack project this account move (invoice)
     was generated for, if this is an invoice for OpenStack project usage.
     """
 
-    os_project_name: Annotated[
-        Optional[str],
-        record_base.ModelRef("os_project", project.Project),
-    ]
+    os_project_name: Annotated[Optional[str], ModelRef("os_project", Project)]
     """The name of the OpenStack project this account move (invoice)
     was generated for, if this is an invoice for OpenStack project usage.
     """
 
-    os_project: Annotated[
-        Optional[project.Project],
-        record_base.ModelRef("os_project", project.Project),
-    ]
+    os_project: Annotated[Optional[Project], ModelRef("os_project", Project)]
     """The OpenStack project this account move (invoice)
     was generated for, if this is an invoice for OpenStack project usage.
 
@@ -200,12 +174,10 @@ class AccountMove(record_base.RecordBase):
         )
 
 
-class AccountMoveManager(
-    record_manager_name_base.NamedRecordManagerBase[AccountMove],
-):
+class AccountMoveManager(NamedRecordManagerBase[AccountMove]):
     env_name = "account.move"
     record_class = AccountMove
 
 
 # NOTE(callumdickinson): Import here to make sure circular imports work.
-from . import account_move_line  # noqa: E402
+from .account_move_line import AccountMoveLine  # noqa: E402

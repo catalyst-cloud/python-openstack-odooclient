@@ -28,10 +28,13 @@ from typing import (
 
 from typing_extensions import Annotated, Self
 
-from . import record_base, record_manager_unique_field_base
+from ..base.record import ModelRef, RecordBase
+from ..base.record_manager_with_unique_field import (
+    RecordManagerWithUniqueFieldBase,
+)
 
 
-class Project(record_base.RecordBase):
+class Project(RecordBase):
     billing_type: Literal["customer", "internal"]
     """Billing type for this project.
 
@@ -61,42 +64,30 @@ class Project(record_base.RecordBase):
     set on this Project.
     """
 
-    owner_id: Annotated[
-        int,
-        record_base.ModelRef("owner", partner_module.Partner),
-    ]
+    owner_id: Annotated[int, ModelRef("owner", Partner)]
     """The ID for the partner that owns this project."""
 
-    owner_name: Annotated[
-        str,
-        record_base.ModelRef("owner", partner_module.Partner),
-    ]
+    owner_name: Annotated[str, ModelRef("owner", Partner)]
     """The name of the partner that owns this project."""
 
-    owner: Annotated[
-        partner_module.Partner,
-        record_base.ModelRef("owner", partner_module.Partner),
-    ]
+    owner: Annotated[Partner, ModelRef("owner", Partner)]
     """The partner that owns this project.
 
     This fetches the full record from Odoo once,
     and caches it for subsequent accesses.
     """
 
-    parent_id: Annotated[Optional[int], record_base.ModelRef("parent", Self)]
+    parent_id: Annotated[Optional[int], ModelRef("parent", Self)]
     """The ID for the parent project, if this project
     is the child of another project.
     """
 
-    parent_name: Annotated[
-        Optional[str],
-        record_base.ModelRef("parent", Self),
-    ]
+    parent_name: Annotated[Optional[str], ModelRef("parent", Self)]
     """The name of the parent project, if this project
     is the child of another project.
     """
 
-    parent: Annotated[Optional[Self], record_base.ModelRef("parent", Self)]
+    parent: Annotated[Optional[Self], ModelRef("parent", Self)]
     """The parent project, if this project
     is the child of another project.
 
@@ -118,19 +109,13 @@ class Project(record_base.RecordBase):
 
     project_contact_ids: Annotated[
         List[int],
-        record_base.ModelRef(
-            "project_contacts",
-            project_contact.ProjectContact,
-        ),
+        ModelRef("project_contacts", ProjectContact),
     ]
     """A list of IDs for the contacts for this project."""
 
     project_contacts: Annotated[
-        List[project_contact.ProjectContact],
-        record_base.ModelRef(
-            "project_contacts",
-            project_contact.ProjectContact,
-        ),
+        List[ProjectContact],
+        ModelRef("project_contacts", ProjectContact),
     ]
     """The contacts for this project.
 
@@ -140,13 +125,13 @@ class Project(record_base.RecordBase):
 
     project_credit_ids: Annotated[
         List[int],
-        record_base.ModelRef("project_credits", credit.Credit),
+        ModelRef("project_credits", Credit),
     ]
     """A list of IDs for the credits that apply to this project."""
 
     project_credits: Annotated[
-        List[credit.Credit],
-        record_base.ModelRef("project_credits", credit.Credit),
+        List[Credit],
+        ModelRef("project_credits", Credit),
     ]
     """The credits that apply to this project.
 
@@ -154,16 +139,10 @@ class Project(record_base.RecordBase):
     and caches them for subsequent accesses.
     """
 
-    project_grant_ids: Annotated[
-        List[int],
-        record_base.ModelRef("project_grants", grant.Grant),
-    ]
+    project_grant_ids: Annotated[List[int], ModelRef("project_grants", Grant)]
     """A list of IDs for the grants that apply to this project."""
 
-    project_grants: Annotated[
-        List[grant.Grant],
-        record_base.ModelRef("project_grants", grant.Grant),
-    ]
+    project_grants: Annotated[List[Grant], ModelRef("project_grants", Grant)]
     """The grants that apply to this project.
 
     This fetches the full records from Odoo once,
@@ -180,10 +159,7 @@ class Project(record_base.RecordBase):
 
     support_subscription_id: Annotated[
         Optional[int],
-        record_base.ModelRef(
-            "support_subscription",
-            support_subscription_module.SupportSubscription,
-        ),
+        ModelRef("support_subscription", SupportSubscription),
     ]
     """The ID for the support subscription for this project,
     if the project has one.
@@ -191,21 +167,15 @@ class Project(record_base.RecordBase):
 
     support_subscription_name: Annotated[
         Optional[str],
-        record_base.ModelRef(
-            "support_subscription",
-            support_subscription_module.SupportSubscription,
-        ),
+        ModelRef("support_subscription", SupportSubscription),
     ]
     """The name of the support subscription for this project,
     if the project has one.
     """
 
     support_subscription: Annotated[
-        Optional[support_subscription_module.SupportSubscription],
-        record_base.ModelRef(
-            "support_subscription",
-            support_subscription_module.SupportSubscription,
-        ),
+        Optional[SupportSubscription],
+        ModelRef("support_subscription", SupportSubscription),
     ]
     """The support subscription for this project,
     if the project has one.
@@ -216,13 +186,13 @@ class Project(record_base.RecordBase):
 
     term_discount_ids: Annotated[
         List[int],
-        record_base.ModelRef("term_discounts", term_discount.TermDiscount),
+        ModelRef("term_discounts", TermDiscount),
     ]
     """A list of IDs for the term discounts that apply to this project."""
 
     term_discounts: Annotated[
-        List[term_discount.TermDiscount],
-        record_base.ModelRef("term_discounts", term_discount.TermDiscount),
+        List[TermDiscount],
+        ModelRef("term_discounts", TermDiscount),
     ]
     """The term discounts that apply to this project.
 
@@ -231,12 +201,7 @@ class Project(record_base.RecordBase):
     """
 
 
-class ProjectManager(
-    record_manager_unique_field_base.RecordManagerWithUniqueFieldBase[
-        Project,
-        str,
-    ],
-):
+class ProjectManager(RecordManagerWithUniqueFieldBase[Project, str]):
     env_name = "openstack.project"
     record_class = Project
 
@@ -378,11 +343,9 @@ class ProjectManager(
 
 
 # NOTE(callumdickinson): Import here to make sure circular imports work.
-from . import (  # noqa: E402
-    credit,
-    grant,
-    partner as partner_module,
-    project_contact,
-    support_subscription as support_subscription_module,
-    term_discount,
-)
+from .credit import Credit  # noqa: E402
+from .grant import Grant  # noqa: E402
+from .partner import Partner  # noqa: E402
+from .project_contact import ProjectContact  # noqa: E402
+from .support_subscription import SupportSubscription  # noqa: E402
+from .term_discount import TermDiscount  # noqa: E402
