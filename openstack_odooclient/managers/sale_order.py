@@ -102,7 +102,7 @@ class SaleOrder(record_base.RecordBase):
 
     order_lines: Annotated[
         List[sale_order_line.SaleOrderLine],
-        record_base.FieldAlias("order_line", sale_order_line.SaleOrderLine),
+        record_base.FieldAlias("order_line"),
     ]
     """An alias for ``order_line``."""
 
