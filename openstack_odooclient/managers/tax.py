@@ -31,7 +31,8 @@ class Tax(RecordBase):
     """The amount of tax to apply."""
 
     amount_type: Literal["group", "fixed", "percent", "division"]
-    """
+    """The method that should be used to tax invoices.
+
     Values:
 
     * ``group`` - Group of Taxes
@@ -70,7 +71,7 @@ class Tax(RecordBase):
     """
 
     name: str
-    """Tax name."""
+    """Name of the tax."""
 
     price_include: bool
     """Whether or not prices included in invoices should include this tax."""

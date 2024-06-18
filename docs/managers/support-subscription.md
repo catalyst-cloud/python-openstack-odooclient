@@ -14,7 +14,7 @@ for support subscriptions.
 
 ## Manager
 
-The support subscription manager is available as the `support_subscription`
+The support subscription manager is available as the `support_subscriptions`
 attribute on the Odoo client object.
 
 ```python
@@ -79,7 +79,6 @@ if it is linked to a partner.
 Support subscriptions linked to a partner
 cover all projects the partner owns.
 
-
 ### `partner_name`
 
 ```python
@@ -91,7 +90,6 @@ if it is linked to a partner.
 
 Support subscriptions linked to a partner
 cover all projects the partner owns.
-
 
 ### `partner`
 
@@ -117,7 +115,6 @@ project_id: int | None
 The ID of the [project](project.md) this support subscription is for,
 if it is linked to a specific project.
 
-
 ### `project_name`
 
 ```python
@@ -138,7 +135,6 @@ if it is linked to a specific project.
 
 This fetches the full record from Odoo once,
 and caches it for subsequent accesses.
-
 
 ### `start_date`
 
