@@ -21,7 +21,7 @@ from ..base.record_manager_named import NamedRecordManagerBase
 
 class TaxGroup(RecordBase):
     name: str
-    """Tax group name."""
+    """Name of the tax group."""
 
 
 class TaxGroupManager(NamedRecordManagerBase[TaxGroup]):
