@@ -46,7 +46,7 @@ class SupportSubscription(RecordBase):
     """
 
     partner_name: Annotated[Optional[str], ModelRef("partner", Partner)]
-    """The name of thepartner linked to this support subscription,
+    """The name of the partner linked to this support subscription,
     if it is linked to a partner.
 
     Support subscriptions linked to a partner
