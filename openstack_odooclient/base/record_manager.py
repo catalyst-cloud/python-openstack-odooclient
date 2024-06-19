@@ -494,7 +494,15 @@ class RecordManagerBase(Generic[Record]):
         if as_id:
             return ids
         if ids:
-            return self.list(ids, fields=fields, as_dict=as_dict)
+            return self.list(
+                ids,
+                fields=fields,
+                as_dict=as_dict,
+                # A race condition might occur where a record is eleted
+                # after finding the ID but before querying the contents of it.
+                # If this happens, silently drop the record ID from the result.
+                optional=True,
+            )
         return []  # type: ignore[return-value]
 
     def _encode_filters(
@@ -718,7 +726,6 @@ class RecordManagerBase(Generic[Record]):
                     ],
                 ] = []
                 for v in value:
-                    # TODO(callumdickinson): Check if this works.
                     if isinstance(v, int):
                         remote_values.append((4, v))
                     elif isinstance(v, RecordBase):

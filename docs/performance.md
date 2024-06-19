@@ -39,6 +39,21 @@ query method to limit the selected field to only the fields required for the tas
 0.4 seconds
 ```
 
+You can also query only the record IDs using the `as_id` parameter on
+the query method. This eliminates the step where the record contents are fetched,
+improving performance further, but means that you will need to make another query
+to fetch the contents of records when required.
+
+```python
+>>> from datetime import datetime
+>>> from openstack_odooclient import Client
+>>> odoo_client = Client(...)
+>>> before_dt = datetime.now()
+>>> odoo_client.products.get_sellable_company_products(1234, as_id=True)
+>>> print(f"{(datetime.now() - before_dt).total_seconds():.1f} seconds")
+0.2 seconds
+```
+
 ## Clustering Queries
 
 The Odoo Client library provides nested model references on record objects,
