@@ -147,7 +147,7 @@ class RecordManagerBase(Generic[Record]):
         objects, instead of record objects.
 
         By default, the method checks that all provided IDs
-        were returned (and will raise an error if any are missing),
+        were found and returned (and will raise an error if any are missing),
         at the cost of a small performance hit.
         To instead return the list of records that were found
         without raising an error, set ``optional`` to ``True``.
@@ -301,7 +301,12 @@ class RecordManagerBase(Generic[Record]):
         :rtype: Union[Record, List[str, Any]]
         """
         try:
-            return self.list(id, fields=fields, as_dict=as_dict)[0]
+            return self.list(
+                id,
+                fields=fields,
+                as_dict=as_dict,
+                optional=True,
+            )[0]
         except IndexError:
             if optional:
                 return None

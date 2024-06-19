@@ -98,42 +98,6 @@ Get one or more specific records by ID.
 [User(record={'id': 1234, ...}, fields=None), User(record={'id': 5678, ...}, fields=None)]
 ```
 
-By default, the method checks that all provided IDs
-were returned (and will raise an error if any are missing),
-at the cost of a small performance hit.
-
-```python
->>> from openstack_odooclient import Client as OdooClient
->>> odoo_client = OdooClient(
-...     hostname="localhost",
-...     port=8069,
-...     protocol="jsonrpc",
-...     database="odoodb",
-...     user="test-user",
-...     password="<password>",
-... )
->>> odoo_client.users.list(999999)
-...
-openstack_odooclient.exceptions.RecordNotFoundError: User records with IDs not found: 999999
-```
-
-To instead return the list of records that were found
-without raising an error, set `optional` to `True`.
-
-```python
->>> from openstack_odooclient import Client as OdooClient
->>> odoo_client = OdooClient(
-...     hostname="localhost",
-...     port=8069,
-...     protocol="jsonrpc",
-...     database="odoodb",
-...     user="test-user",
-...     password="<password>",
-... )
->>> odoo_client.users.list(999999, optional=True)
-[]
-```
-
 By default all fields available on the record model
 will be selected, but this can be filtered using the
 `fields` parameter.
@@ -169,6 +133,42 @@ objects, instead of record objects.
 [{'id': 1234, ...}]
 ```
 
+By default, the method checks that all provided IDs
+were found and returned (and will raise an error if any are missing),
+at the cost of a small performance hit.
+
+```python
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> odoo_client.users.list(999999)
+...
+openstack_odooclient.exceptions.RecordNotFoundError: User records with IDs not found: 999999
+```
+
+To instead return the list of records that were found
+without raising an error, set `optional` to `True`.
+
+```python
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> odoo_client.users.list(999999, optional=True)
+[]
+```
+
 If `ids` is given an empty iterator, this method
 returns an empty list.
 
@@ -188,18 +188,18 @@ returns an empty list.
 
 #### Parameters
 
-| Name       | Type                   | Description                                       | Default    |
-|------------|------------------------|---------------------------------------------------|------------|
-| `ids`      | `int | Iterable[int]`  | Record ID, or list of record IDs                  | (required) |
-| `fields`   | `Iterable[str] | None` | Fields to select (or `None` to select all fields) | `None`     |
-| `as_dict`  | `bool`                 | Return records as dictionaries                    | `False`    |
-| `required` | `bool`                 | Check if all provided records IDs were found      | `False`    |
+| Name       | Type                   | Description                                         | Default    |
+|------------|------------------------|-----------------------------------------------------|------------|
+| `ids`      | `int | Iterable[int]`  | Record ID, or list of record IDs                    | (required) |
+| `fields`   | `Iterable[str] | None` | Fields to select (or `None` to select all fields)   | `None`     |
+| `as_dict`  | `bool`                 | Return records as dictionaries                      | `False`    |
+| `optional` | `bool`                 | Do not raise an error if not all records were found | `False`    |
 
 #### Raises
 
-| Type                  | Description                                                               |
-|-----------------------|---------------------------------------------------------------------------|
-| `RecordNotFoundError` | If any of the given record IDs were not found (when `required` is `True`) |
+| Type                  | Description                                                                |
+|-----------------------|----------------------------------------------------------------------------|
+| `RecordNotFoundError` | If any of the given record IDs were not found (when `optional` is `False`) |
 
 #### Returns
 
