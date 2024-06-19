@@ -92,35 +92,42 @@ class RecordManagerBase(Generic[Record]):
 
     @property
     def _odoo(self) -> ODOO:
+        """The OdooRPC connection object this record manager uses."""
         return self._client._odoo
 
     @property
     def _env(self) -> Environment:
+        """The OdooRPC environment object this record manager uses."""
         return self._odoo.env[self.env_name]
 
     @overload
     def list(
         self,
         ids: Union[int, Iterable[int]],
+        *,
         fields: Optional[Iterable[str]] = ...,
         as_dict: Literal[False] = ...,
+        optional: bool = ...,
     ) -> List[Record]: ...
 
     @overload
     def list(
         self,
         ids: Union[int, Iterable[int]],
-        fields: Optional[Iterable[str]] = ...,
         *,
+        fields: Optional[Iterable[str]] = ...,
         as_dict: Literal[True],
+        optional: bool = ...,
     ) -> List[Dict[str, Any]]: ...
 
     @overload
     def list(
         self,
         ids: Union[int, Iterable[int]],
+        *,
         fields: Optional[Iterable[str]] = ...,
         as_dict: bool = ...,
+        optional: bool = ...,
     ) -> Union[List[Record], List[Dict[str, Any]]]: ...
 
     def list(
@@ -128,6 +135,7 @@ class RecordManagerBase(Generic[Record]):
         ids: Union[int, Iterable[int]],
         fields: Optional[Iterable[str]] = None,
         as_dict: bool = False,
+        optional: bool = False,
     ) -> Union[List[Record], List[Dict[str, Any]]]:
         """Get one or more specific records by ID.
 
@@ -138,6 +146,12 @@ class RecordManagerBase(Generic[Record]):
         Use the ``as_dict`` parameter to return records as ``dict``
         objects, instead of record objects.
 
+        By default, the method checks that all provided IDs
+        were returned (and will raise an error if any are missing),
+        at the cost of a small performance hit.
+        To instead return the list of records that were found
+        without raising an error, set ``optional`` to ``True``.
+
         If ``ids`` is given an empty iterator, this method
         returns an empty list.
 
@@ -147,6 +161,9 @@ class RecordManagerBase(Generic[Record]):
         :type fields: Optional[Iterable[str]], optional
         :param as_dict: Return records as dictionaries, defaults to ``False``
         :type as_dict: bool, optional
+        :param optional: Disable missing record errors, defaults to ``False``
+        :type optional: bool, optional
+        :raises RecordNotFoundError: If IDs are required but some are missing
         :return: List of records
         :rtype: list[Record] or list[dict[str, Any]]
         """
@@ -171,22 +188,40 @@ class RecordManagerBase(Generic[Record]):
             fields=_fields,
         )
         if as_dict:
-            return [
+            res_dicts = [
                 {
                     self._get_local_field(field): value
                     for field, value in record_dict.items()
                 }
                 for record_dict in records
             ]
-        return [
-            self.record_class(
-                client=self._client,
-                manager=self,
-                record=record,
-                fields=_fields,
+        else:
+            res_objs = [
+                self.record_class(
+                    client=self._client,
+                    manager=self,
+                    record=record,
+                    fields=_fields,
+                )
+                for record in records
+            ]
+        if not optional:
+            required_ids = {_ids} if isinstance(_ids, int) else set(_ids)
+            found_ids: Set[int] = (
+                set(record["id"] for record in res_dicts)
+                if as_dict
+                else set(record.id for record in res_objs)
             )
-            for record in records
-        ]
+            missing_ids = required_ids - found_ids
+            if missing_ids:
+                raise RecordNotFoundError(
+                    (
+                        f"{self.record_class.__name__} records "
+                        "with IDs not found: "
+                        f"{', '.join(str(i) for i in sorted(missing_ids))}"
+                    ),
+                )
+        return res_dicts if as_dict else res_objs
 
     @overload
     def get(
@@ -379,6 +414,13 @@ class RecordManagerBase(Generic[Record]):
 
         When specifying a range of possible values, lists, tuples
         and sets are supported.
+
+        Search criteria using nested field references can be defined
+        by using the dot-notation (``.``) to specify what field on what
+        record reference to check.
+        Field names and values for nested field references are
+        validated and encoded just like criteria for standard
+        field references.
 
         To search *all* records, leave ``filters`` unset
         (or set it to ``None``).

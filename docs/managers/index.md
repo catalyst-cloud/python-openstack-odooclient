@@ -67,6 +67,7 @@ list(
     ids: int | Iterable[int],
     fields: Iterable[str] | None = None,
     as_dict: bool = False,
+    optional: bool = False,
 ) -> list[Record]
 ```
 
@@ -75,6 +76,7 @@ list(
     ids: int | Iterable[int],
     fields: Iterable[str] | None = None,
     as_dict: bool = True,
+    optional: bool = False,
 ) -> list[dict[str, Any]]
 ```
 
@@ -94,6 +96,42 @@ Get one or more specific records by ID.
 [User(record={'id': 1234, ...}, fields=None)]
 >>> odoo_client.users.list([1234, 5678])
 [User(record={'id': 1234, ...}, fields=None), User(record={'id': 5678, ...}, fields=None)]
+```
+
+By default, the method checks that all provided IDs
+were returned (and will raise an error if any are missing),
+at the cost of a small performance hit.
+
+```python
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> odoo_client.users.list(999999)
+...
+openstack_odooclient.exceptions.RecordNotFoundError: User records with IDs not found: 999999
+```
+
+To instead return the list of records that were found
+without raising an error, set `optional` to `True`.
+
+```python
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> odoo_client.users.list(999999, optional=True)
+[]
 ```
 
 By default all fields available on the record model
@@ -150,11 +188,18 @@ returns an empty list.
 
 #### Parameters
 
-| Name      | Type                    | Description                                       | Default    |
-|-----------|-------------------------|---------------------------------------------------|------------|
-| `ids`     | `int | Iterable[int]`  | Record ID, or list of record IDs                  | (required) |
-| `fields`  | `Iterable[str] | None` | Fields to select (or `None` to select all fields) | `None`     |
-| `as_dict` | `bool`                  | Return records as dictionaries                    | `False`    |
+| Name       | Type                   | Description                                       | Default    |
+|------------|------------------------|---------------------------------------------------|------------|
+| `ids`      | `int | Iterable[int]`  | Record ID, or list of record IDs                  | (required) |
+| `fields`   | `Iterable[str] | None` | Fields to select (or `None` to select all fields) | `None`     |
+| `as_dict`  | `bool`                 | Return records as dictionaries                    | `False`    |
+| `required` | `bool`                 | Check if all provided records IDs were found      | `False`    |
+
+#### Raises
+
+| Type                  | Description                                                               |
+|-----------------------|---------------------------------------------------------------------------|
+| `RecordNotFoundError` | If any of the given record IDs were not found (when `required` is `True`) |
 
 #### Returns
 
@@ -450,6 +495,32 @@ and sets are supported.
 ... )
 >>> user = odoo_client.users.get(1234)
 >>> odoo_client.users.search([("create_user", "in", {user})])
+[User(record={'id': 5678, ...}, fields=None), ...]
+```
+
+Search criteria using nested field references can be defined
+by using the dot-notation (`.`) to specify what field on what
+record reference to check.
+Field names and values for nested field references are
+validated and encoded just like criteria for standard
+field references.
+
+```python
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> odoo_client.users.search(
+...     [
+...         # Check that the "name" field inside "create_user" matches
+...         ("create_user.name", "=", "Lorem Ipsum"),
+...     ],
+... )
 [User(record={'id': 5678, ...}, fields=None), ...]
 ```
 

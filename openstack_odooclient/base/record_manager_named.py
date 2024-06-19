@@ -34,6 +34,17 @@ if TYPE_CHECKING:
 
 
 class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
+    """A record manager base class for record types with a name field.
+
+    This name field is reasonably expected to be unique, which allows
+    for methods for getting records by name to be defined.
+
+    The record class should be type hinted with the field to use as the name,
+    just like any other field.
+    Configure the name of the name field on the manager class by defining
+    the ``name_field`` attribute (set to ``name`` by default).
+    """
+
     name_field: str = "name"
     """The field name to use when querying by name in
     the ``get_by_name`` method.

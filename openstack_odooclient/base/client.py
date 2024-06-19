@@ -38,7 +38,7 @@ if TYPE_CHECKING:
 
 
 class ClientBase:
-    """A client base class for managing the OpenStack Odoo ERP.
+    """The client base class for managing the OpenStack Odoo ERP.
 
     No managers are included on this base class.
     This class should be inherited, and manager classes defined
@@ -181,6 +181,13 @@ class ClientBase:
         for attr_name, attr_type in get_type_hints(type(self)).items():
             if is_subclass(attr_type, RecordManagerBase):
                 setattr(self, attr_name, attr_type(self))
+
+    @property
+    def odoo(self) -> ODOO:
+        """The OdooRPC connection object currently being used
+        by this client.
+        """
+        return self._odoo
 
     @property
     def db(self) -> DB:

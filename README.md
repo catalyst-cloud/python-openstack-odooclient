@@ -7,7 +7,7 @@ intended to be used by OpenStack projects such as
 
 This library provides a higher level interface than [OdooRPC](https://pythonhosted.org/OdooRPC)
 (which is used internally), and is intended to make it possible to develop applications against
-a common API, without having to take into account considerations such as backward-incompatible
+a well-defined API, without having to take into account considerations such as backward-incompatible
 changes between Odoo versions.
 
 ## Installation

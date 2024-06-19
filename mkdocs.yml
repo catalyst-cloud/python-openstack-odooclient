@@ -61,6 +61,7 @@ nav:
     - managers/volume-discount-range.md
     - managers/voucher-code.md
     - managers/custom.md
+  - changelog.md
 
 theme:
   name: material

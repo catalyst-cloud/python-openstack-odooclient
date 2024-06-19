@@ -34,6 +34,17 @@ if TYPE_CHECKING:
 
 
 class CodedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
+    """A record manager base class for record types with a code field.
+
+    This code field is reasonably expected to be unique, which allows
+    for methos for getting records by name to be defined.
+
+    The record class should be type hinted with the field to use as the code,
+    just like any other field.
+    Configure the name of the code field on the manager class by defining
+    the ``code_field`` attribute (set to ``code`` by default).
+    """
+
     code_field: str = "code"
     """The field code to use when querying by code in
     the ``get_by_code`` method.

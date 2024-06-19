@@ -52,7 +52,7 @@ from .managers.voucher_code import VoucherCodeManager
 
 
 class Client(ClientBase):
-    """The client for managing the OpenStack Odoo ERP.
+    """A client for managing the OpenStack Odoo ERP.
 
     Connect to an Odoo server by either passing the required
     connection and authentication information,

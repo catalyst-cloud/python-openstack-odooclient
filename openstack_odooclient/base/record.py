@@ -87,8 +87,18 @@ class AnnotationBase:
 
 @dataclass(frozen=True)
 class FieldAlias(AnnotationBase):
-    """An annotation for alias attributes to define the Odoo field name
-    the attribute is an alias for.
+    """An annotation for defining field aliases
+    (fields that point to other fields).
+
+    Aliases are automatically resolved to the target field
+    when searching or creating records, or referencing field values
+    on record objects.
+
+    >>> from typing_extensions import Annotated
+    >>> from openstack_odooclient import FieldAlias, RecordBase
+    >>> class CustomRecord(RecordBase):
+    ...     name: str
+    ...     name_alias: Annotated[str, FieldAlias("name")]
     """
 
     field: str
@@ -96,8 +106,23 @@ class FieldAlias(AnnotationBase):
 
 @dataclass(frozen=True)
 class ModelRef(AnnotationBase):
-    """An annotation for attributes that decode an Odoo model reference,
-    to define the Odoo field name to be decoded.
+    """An annotation for defining model refs
+    (fields that provide an interface to a model reference on a record).
+
+    Model refs are used to express relationships between record types.
+    The first argument is the name of the relationship field in Odoo,
+    the second argument is the record class that type is represented by
+    in the OpenStack Odoo Client library.
+
+    >>> from typing_extensions import Annotated
+    >>> from openstack_odooclient import ModelRef, RecordBase, User
+    >>> class CustomRecord(RecordBase):
+    ...     user_id: Annotated[int, ModelRef("user_id", User)]
+    ...     user_name: Annotated[str, ModelRef("user_id", User)]
+    ...     user: Annotated[User, ModelRef("user_id", User)]
+
+    For more information, check the OpenStack Odoo Client
+    library documentation.
     """
 
     field: str
@@ -105,6 +130,11 @@ class ModelRef(AnnotationBase):
 
 
 class RecordBase:
+    """The base class for records.
+
+    Subclass this class to implement the record class for custom record types.
+    """
+
     id: int
     """The record's ID in Odoo."""
 
@@ -168,10 +198,12 @@ class RecordBase:
 
     @property
     def _odoo(self) -> ODOO:
+        """The OdooRPC connection object this record was created from."""
         return self._client._odoo
 
     @property
     def _env(self) -> Environment:
+        """The OdooRPC environment object this record was created from."""
         return self._manager._env
 
     @classmethod

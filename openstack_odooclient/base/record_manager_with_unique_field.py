@@ -39,6 +39,31 @@ class RecordManagerWithUniqueFieldBase(
     RecordManagerBase[Record],
     Generic[Record, T],
 ):
+    """A generic record manager base class for defining a record class
+    with a searchable unique field.
+
+    In addition to the usual generic type arg, a second type arg
+    should be provided when subclassing ``RecordManagerWithUniqueFieldBase``.
+    This becomes the expected type of the searchable unique field.
+
+    >>> from openstack_odooclient import (
+    ...     RecordBase,
+    ...     RecordManagerWithUniqueFieldBase,
+    ... )
+    >>> class CustomRecord(RecordBase):
+    ...     name: str
+    >>> class CustomRecordManager(
+    ...     RecordManagerWithUniqueFieldBase[Record, str],
+    ... ):
+    ...     env_name = "custom.record"
+    ...     record_class = CustomRecord
+
+
+    Once you have your manager class, you can define methods
+    that use the provided ``_get_by_unique_field`` method to implement
+    custom search functionality according to your needs.
+    """
+
     @overload
     def _get_by_unique_field(
         self,
