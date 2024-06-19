@@ -107,10 +107,10 @@ test-instance - m1.small - 744.0 hour - 8.928
 In many cases multiple records need to be created that have a relationship
 with each other.
 
-In the below example an empty sale order is created, with a sale order line
-then being created and linked to that sale order. Since a sale order
-can have multiple sale order lines, creating sale orders this way can be
-inefficient.
+In the below example an empty [sale order](managers/sale-order.md) is created,
+with a [sale order line](managers/sale-order-line.md) then being created and
+linked to that sale order. Since a sale order can have multiple sale order
+lines, creating sale orders this way can be inefficient.
 
 ```python
 >>> from datetime import date
