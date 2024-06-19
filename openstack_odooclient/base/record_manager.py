@@ -79,6 +79,15 @@ class RecordManagerBase(Generic[Record]):
 
     def __init__(self, client: client.Client) -> None:
         self._client = client
+        """Odoo Client object."""
+        # Assign this record manager object as the manager
+        # responsible for the configured record class in the client.
+        self._client._record_manager_mapping[self.record_class] = self
+        self._record_type_hints = get_type_hints(
+            self.record_class,
+            include_extras=True,
+        )
+        """The type hints for the fields defined in the record class."""
         self._field_mapping_reverse = {
             odoo_version: {
                 remote_field: local_field
@@ -88,7 +97,32 @@ class RecordManagerBase(Generic[Record]):
                 self.record_class._field_mapping.items()
             )
         }
-        self._client._record_manager_mapping[self.record_class] = self
+        """Dynamically generated "reverse" field mapping for the
+        record class, mapping Odoo version-specific remote field names
+        to their representations on the record class.
+        """
+        self._model_ref_mapping: Dict[str, str] = {}
+        """Mapping of the remote field name for a model ref
+        to the local field name representing the model ref's IDs.
+
+        Examples:
+
+        * (remote) ``product_id`` -> ``product_id`` (local)
+        * (remote) ``child_id`` -> ``child_ids`` (local)
+        * (remote) ``os_project`` -> ``os_project_id`` (local)
+        """
+        for local_field, type_hint in self._record_type_hints.items():
+            model_ref = ModelRef.get(type_hint)
+            if model_ref:
+                field_type = get_type_args(type_hint)[0]
+                try:
+                    if field_type is int or (
+                        get_type_origin(field_type) is list
+                        and get_type_args(field_type)[0] is int
+                    ):
+                        self._model_ref_mapping[model_ref.field] = local_field
+                except IndexError:
+                    pass
 
     @property
     def _odoo(self) -> ODOO:
@@ -468,15 +502,11 @@ class RecordManagerBase(Generic[Record]):
         filters: Sequence[FilterCriteria],
     ) -> List[Union[str, Tuple[str, str, Any]]]:
         _filters: List[Union[str, Tuple[str, str, Any]]] = []
-        type_hints = get_type_hints(self.record_class, include_extras=True)
         for f in filters:
             if isinstance(f, str):
                 _filters.append(f)
             else:
-                field_type, field_name = self._encode_filter_field(
-                    type_hints=type_hints,
-                    field=f[0],
-                )
+                field_type, field_name = self._encode_filter_field(field=f[0])
                 operator: str = f[1]
                 # NOTE(callumdickinson): ORM API search domains.
                 # https://www.odoo.com/documentation/14.0/developer/reference/addons/orm.html#search-domains
@@ -505,11 +535,7 @@ class RecordManagerBase(Generic[Record]):
                 _filters.append((field_name, operator, value))
         return _filters
 
-    def _encode_filter_field(
-        self,
-        type_hints: Mapping[str, Any],
-        field: str,
-    ) -> Tuple[Any, str]:
+    def _encode_filter_field(self, field: str) -> Tuple[Any, str]:
         # The field reference in a filter may be nested.
         # Split the reference by the delimiter (.),
         # so we can perform a recursive lookup of the correct field
@@ -524,9 +550,9 @@ class RecordManagerBase(Generic[Record]):
         if len(field_refs) > 1:
             local_field = self._decode_field(field_refs[0])
             remote_field = self._encode_field(field_refs[0])
-            if local_field not in type_hints:
+            if local_field not in self._record_type_hints:
                 return (Any, f"{remote_field}.{'.'.join(field_refs[1:])}")
-            type_hint: Any = type_hints[local_field]
+            type_hint: Any = self._record_type_hints[local_field]
             model_ref = ModelRef.get(type_hint)
             if model_ref:
                 record_class: Type[RecordBase] = (
@@ -538,10 +564,6 @@ class RecordManagerBase(Generic[Record]):
                     self._client._record_manager_mapping[
                         record_class  # type: ignore[index]
                     ]._encode_filter_field(
-                        type_hints=get_type_hints(
-                            record_class,
-                            include_extras=True,
-                        ),
                         field=".".join(field_refs[1:]),
                     )
                 )
@@ -550,14 +572,15 @@ class RecordManagerBase(Generic[Record]):
         # Base base: The field reference is not nested
         # (references a local field on this manager's record class.)
         # Fetch the local and remote representations of the given field.
-        # Field aliases are resolved at this point.
+        # Field aliases and model ref target fields are resolved
+        # at this point.
         local_field = self._decode_field(field)
         remote_field = self._encode_field(field)
         # If there is no type hint defined for the given field,
         # return the Any type to denote that no processing should be done.
-        if local_field not in type_hints:
+        if local_field not in self._record_type_hints:
             return (Any, remote_field)
-        type_hint = type_hints[local_field]
+        type_hint = self._record_type_hints[local_field]
         # If the type hint is annotated, get the original data type.
         if get_type_origin(type_hint) is Annotated:
             return (get_type_args(type_hint)[0], remote_field)
@@ -622,10 +645,8 @@ class RecordManagerBase(Generic[Record]):
     ) -> Dict[str, Any]:
         create_fields: Dict[str, Any] = {}
         field_remote_mapping: Dict[str, str] = {}
-        type_hints = get_type_hints(self.record_class, include_extras=True)
         for field, value in fields.items():
             remote_field, remote_value = self._encode_create_field(
-                type_hints=type_hints,
                 field=field,
                 value=value,
             )
@@ -644,26 +665,25 @@ class RecordManagerBase(Generic[Record]):
 
     def _encode_create_field(
         self,
-        type_hints: Mapping[str, Any],
         field: str,
         value: Any,
     ) -> Tuple[str, Any]:
         # Fetch the local and remote representations of the given field.
-        # Field aliases are resolved at this point.
+        # Field aliases and model ref target fields are resolved
+        # at this point.
         local_field = self._decode_field(field)
         remote_field = self._encode_field(field)
         # If there is no type hint for the given field, map the value
         # to the field unchanged.
-        if local_field not in type_hints:
+        if local_field not in self._record_type_hints:
             return (remote_field, value)
         # Fetch the type hint for parsing.
-        type_hint = type_hints[local_field]
+        type_hint = self._record_type_hints[local_field]
         # If this field is a model ref, encode the model ref
         # according to the given value's type, and map the result
         # to the Odoo model's ref field name.
         model_ref = ModelRef.get(type_hint)
         if model_ref:
-            attr_type: Any = get_type_args(type_hint)[0]
             # NOTE(callumdickinson): JSON RPC API model link reference.
             # https://www.odoo.com/documentation/14.0/developer/reference/addons/orm.html#odoo.models.Model.write
             #  * (0, 0, {values}) - Link to a new record that needs to
@@ -683,14 +703,14 @@ class RecordManagerBase(Generic[Record]):
             #  * (6, 0, [ids]) - Replace the list of linked IDs
             #    with *ids*. Functions like using (5), then (4, id)
             #    for each ID in the list of IDs.
-            model_ref_field = self._get_remote_field(model_ref.field)
+            attr_type: Any = get_type_args(type_hint)[0]
             # If the field is a list of multiple model refs,
             # iterate over the given value and decode the elements
             # appropriately.
             if get_type_origin(attr_type) is list:
                 value_type = get_type_args(attr_type)[0]
                 if not value:
-                    return (model_ref_field, [])
+                    return (remote_field, [])
                 remote_values: List[
                     Union[
                         Tuple[int, int],
@@ -722,16 +742,16 @@ class RecordManagerBase(Generic[Record]):
                                 f"when creating record: {v}"
                             ),
                         )
-                return (model_ref_field, remote_values)
+                return (remote_field, remote_values)
             # If the value type is an integer, treat it as a record ID
             # and assign i to the field.
             if isinstance(value, int):
-                return (model_ref_field, value)
+                return (remote_field, value)
             # If the value type is a record object, then treat it as if
             # it already exists on Odoo, and return the record ID to assign
             # to the field.
             if isinstance(value, RecordBase):
-                return (model_ref_field, value.id)
+                return (remote_field, value.id)
             # If the value type is a dictionary, then treat it as a nested
             # record to be created alongside the parent record.
             # Encode the contents of the dict recursively using the
@@ -745,7 +765,7 @@ class RecordManagerBase(Generic[Record]):
                     else self._client._record_manager_mapping[value_type]
                 )
                 return (
-                    model_ref_field,
+                    remote_field,
                     [
                         (
                             0,
@@ -809,6 +829,14 @@ class RecordManagerBase(Generic[Record]):
         self.unlink(*records)
 
     def _get_remote_field(self, field: str) -> str:
+        # If the field is a model ref, use the reference field name
+        # as the remote field.
+        if field in self._record_type_hints:
+            model_ref = ModelRef.get(self._record_type_hints[field])
+            if model_ref:
+                field = model_ref.field
+        # Map the local field to the correct remote field name
+        # based on the version of the Odoo server.
         return get_mapped_field(
             field_mapping=self.record_class._field_mapping,
             odoo_version=self._odoo.version,
@@ -816,11 +844,18 @@ class RecordManagerBase(Generic[Record]):
         )
 
     def _get_local_field(self, field: str) -> str:
-        return get_mapped_field(
+        # Map the remote field to the correct local field name
+        # based on the version of the Odoo server.
+        local_field = get_mapped_field(
             field_mapping=self._field_mapping_reverse,
             odoo_version=self._odoo.version,
             field=field,
         )
+        # If the field is a model ref, find the local field
+        # presenting the model ref's record IDs.
+        if local_field in self._model_ref_mapping:
+            return self._model_ref_mapping[local_field]
+        return local_field
 
     def _resolve_alias(self, alias: str) -> str:
         return self.record_class._resolve_alias(alias)
