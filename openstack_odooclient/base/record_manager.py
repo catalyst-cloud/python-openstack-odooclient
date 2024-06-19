@@ -728,7 +728,7 @@ class RecordManagerBase(Generic[Record]):
                             self
                             if value_type is Self
                             else self._client._record_manager_mapping[
-                                value_type
+                                model_ref.record_class
                             ]
                         )
                         remote_values.append(
