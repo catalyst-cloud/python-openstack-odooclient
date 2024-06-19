@@ -1,4 +1,4 @@
-# OpenStack Odoo Client library for Python
+# OpenStack Odoo Client Library
 
 This is an Odoo client library for Python with support for the
 [OpenStack Integration add-on](https://github.com/catalyst-cloud/odoo-openstack-integration),
@@ -102,8 +102,7 @@ For example, performing a simple search query would look something like this:
 [1234]
 ```
 
-For more information on the available managers and their functions,
-check the [Managers](docs/managers/index.md) page in the documentation.
+For more information on the available managers and their functions, see [Managers](managers/index.md).
 
 ## Records
 
@@ -133,5 +132,4 @@ User(record={'id': 1234, ...}, fields=None)
 1234
 ```
 
-For more information on the available managers and their functions,
-check the [Records](docs/managers/index.md#records) section in the documentation.
+For more information on record objects, see [Records](managers/index.md#records).

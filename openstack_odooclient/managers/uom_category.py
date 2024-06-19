@@ -43,7 +43,7 @@ class UomCategory(RecordBase):
     """
 
     name: str
-    """Unit of Measure (UoM) category name."""
+    """The name of the Unit of Measure (UoM) category."""
 
 
 class UomCategoryManager(RecordManagerBase[UomCategory]):

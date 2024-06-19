@@ -23,7 +23,7 @@ from ..base.record_manager import RecordManagerBase
 
 class User(RecordBase):
     active: bool
-    """Whether or not this user is active."""
+    """Whether or not this user is active (enabled)."""
 
     active_partner: bool
     """Whether or not the partner this user is associated with is active."""

@@ -68,11 +68,11 @@ and quantity.
 
 #### Parameters
 
-| Name        | Type               | Description                                 | Default    |
-|-------------|--------------------|---------------------------------------------|------------|
-| `pricelist` | `int \| Pricelist` | Pricelist to reference (ID or object)       | (required) |
-| `product`   | `int \| Product`   | Product to get the price for (ID or object) | (required) |
-| `qty`       | `float`            | Quantity to charge for                      | (required) |
+| Name        | Type              | Description                                 | Default    |
+|-------------|-------------------|---------------------------------------------|------------|
+| `pricelist` | `int | Pricelist` | Pricelist to reference (ID or object)       | (required) |
+| `product`   | `int | Product`   | Product to get the price for (ID or object) | (required) |
+| `qty`       | `float`           | Quantity to charge for                      | (required) |
 
 #### Returns
 
@@ -208,7 +208,7 @@ Get the price to charge for a given product and quantity.
 
 | Name        | Type               | Description                                 | Default    |
 |-------------|--------------------|---------------------------------------------|------------|
-| `product`   | `int \| Product`   | Product to get the price for (ID or object) | (required) |
+| `product`   | `int | Product`   | Product to get the price for (ID or object) | (required) |
 | `qty`       | `float`            | Quantity to charge for                      | (required) |
 
 #### Returns

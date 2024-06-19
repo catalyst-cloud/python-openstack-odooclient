@@ -51,7 +51,7 @@ For example, performing a simple search query would look something like this:
 * [OpenStack Trials](trial.md)
 * [Units of Measure (UoM)](uom.md)
 * [Unit of Measure (UoM) Categories](uom-category.md)
-* [Users](users.md)
+* [Users](user.md)
 * [OpenStack Volume Discount Ranges](volume-discount-range.md)
 * [OpenStack Voucher Codes](voucher-code.md)
 
@@ -152,8 +152,8 @@ returns an empty list.
 
 | Name      | Type                    | Description                                       | Default    |
 |-----------|-------------------------|---------------------------------------------------|------------|
-| `ids`     | `int \| Iterable[int]`  | Record ID, or list of record IDs                  | (required) |
-| `fields`  | `Iterable[str] \| None` | Fields to select (or `None` to select all fields) | `None`     |
+| `ids`     | `int | Iterable[int]`  | Record ID, or list of record IDs                  | (required) |
+| `fields`  | `Iterable[str] | None` | Fields to select (or `None` to select all fields) | `None`     |
 | `as_dict` | `bool`                  | Return records as dictionaries                    | `False`    |
 
 #### Returns
@@ -257,7 +257,7 @@ a ``dict`` object, instead of a record object.
 | Name       | Type                    | Description                                       | Default    |
 |------------|-------------------------|---------------------------------------------------|------------|
 | `id`       | `int`                   | Record ID                                         | (required) |
-| `fields`   | `Iterable[str] \| None` | Fields to select (or `None` to select all fields) | `None`     |
+| `fields`   | `Iterable[str] | None` | Fields to select (or `None` to select all fields) | `None`     |
 | `as_dict`  | `bool`                  | Return record as a dictionary                     | `False`    |
 | `optional` | `bool`                  | Return `None` if not found                        | `False`    |
 
@@ -445,9 +445,9 @@ a list of `dict` objects, instead of record objects.
 
 | Name      | Type                    | Description                                       | Default |
 |-----------|-------------------------|---------------------------------------------------|---------|
-| `filters` | `Sequence[Any] \| None` | Filters to query by (or `None` for no filters)    | `None`  |
-| `fields`  | `Iterable[str] \| None` | Fields to select (or `None` to select all fields) | `None`  |
-| `order`   | `str \| None`           | Field to order results by, if ordering results    | `None`  |
+| `filters` | `Sequence[Any] | None` | Filters to query by (or `None` for no filters)    | `None`  |
+| `fields`  | `Iterable[str] | None` | Fields to select (or `None` to select all fields) | `None`  |
+| `order`   | `str | None`           | Field to order results by, if ordering results    | `None`  |
 | `as_id`   | `bool`                  | Return the record IDs only                        | `False` |
 | `as_dict` | `bool`                  | Return records as dictionaries                    | `False` |
 
@@ -617,11 +617,11 @@ All specified records will be deleted in a single request.
 
 | Name       | Type                                       | Description                                                                  | Default    |
 |------------|--------------------------------------------|------------------------------------------------------------------------------|------------|
-| `*records` | `Record \| int \| Iterable[Record \| int]` | The records to delete (object, ID, or record/ID list) (positional arguments) | (required) |
+| `*records` | `Record | int | Iterable[Record | int]` | The records to delete (object, ID, or record/ID list) (positional arguments) | (required) |
 
 ## Named Record Managers
 
-Some record types have a name field that is generally expected to be unique.
+Some record types have a `name` field that is generally expected to be unique.
 The managers for these record types have additional methods for querying records by name.
 
 * [Account Moves (Invoices)](account-move.md)
@@ -792,13 +792,13 @@ None
 
 #### Parameters
 
-| Name       | Type                    | Description                                       | Default    |
-|------------|-------------------------|---------------------------------------------------|------------|
-| `name`     | `str`                   | The record name                                   | (required) |
-| `fields`   | `Iterable[str] \| None` | Fields to select (or `None` to select all fields) | `None`     |
-| `as_id`    | `bool`                  | Return the record IDs only                        | `False`    |
-| `as_dict`  | `bool`                  | Return records as dictionaries                    | `False`    |
-| `optional` | `bool`                  | Return `None` if not found                        | `False`    |
+| Name       | Type                   | Description                                       | Default    |
+|------------|------------------------|---------------------------------------------------|------------|
+| `name`     | `str`                  | The record name                                   | (required) |
+| `fields`   | `Iterable[str] | None` | Fields to select (or `None` to select all fields) | `None`     |
+| `as_id`    | `bool`                 | Return the record IDs only                        | `False`    |
+| `as_dict`  | `bool`                 | Return records as dictionaries                    | `False`    |
+| `optional` | `bool`                 | Return `None` if not found                        | `False`    |
 
 #### Raises
 
@@ -815,6 +815,190 @@ None
 | `int`            | Record ID (when `as_id` is `True`)                                         |
 | `dict[str, Any]` | Record dictionary (when `as_dict` is `True`)                               |
 | `None`           | If a record with the given name does not exist (when `optional` is `True`) |
+
+## Coded Record Managers
+
+Some record types have a `code` field that is guaranteed to be unique.
+The managers for these record types have additional methods for querying records by code.
+
+* [OpenStack Referral Codes](referral-code.md)
+* [OpenStack Voucher Codes](voucher-code.md)
+
+### `get_by_code`
+
+```python
+get_by_code(
+    code: str,
+    fields: Iterable[str] | None = None,
+    as_id: bool = False,
+    as_dict: bool = False,
+    optional: bool = False,
+) -> Record
+```
+
+```python
+get_by_code(
+    code: str,
+    fields: Iterable[str] | None = None,
+    as_id: bool = False,
+    as_dict: bool = False,
+    optional: bool = True,
+) -> Record | None
+```
+
+```python
+get_by_code(
+    code: str,
+    fields: Iterable[str] | None = None,
+    as_id: bool = True,
+    as_dict: bool = False,
+    optional: bool = False,
+) -> int
+```
+
+```python
+get_by_code(
+    code: str,
+    fields: Iterable[str] | None = None,
+    as_id: bool = True,
+    as_dict: bool = False,
+    optional: bool = True,
+) -> int | None
+```
+
+```python
+get_by_code(
+    code: str,
+    fields: Iterable[str] | None = None,
+    as_id: bool = False,
+    as_dict: bool = True,
+    optional: bool = False,
+) -> dict[str, Any]
+```
+
+```python
+get_by_code(
+    code: str,
+    fields: Iterable[str] | None = None,
+    as_id: bool = False,
+    as_dict: bool = True,
+    optional: bool = True,
+) -> dict[str, Any] | None
+```
+
+Query a unique record by code.
+
+```python
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> odoo_client.voucher_codes.get_by_code("OSCODE123")
+VoucherCode(record={'id': 1234, 'code': 'OSCODE123', ...}, fields=None)
+```
+
+A number of parameters are available to configure the return type,
+and what happens when a result is not found.
+
+By default all fields available on the record model
+will be selected, but this can be filtered using the
+`fields` parameter.
+
+```python
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> odoo_client.voucher_codes.get_by_code("OSCODE123", fields={"code", "multi_use"})
+VoucherCode(record={'id': 1234, 'code': 'OSCODE123', 'multi_use': True, ...}, fields=['code', 'multi_use'])
+```
+
+Use the `as_id` parameter to return the ID of the record,
+instead of the record object.
+
+```python
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> odoo_client.voucher_codes.get_by_code("OSCODE123", as_id=True)
+1234
+```
+
+Use the `as_dict` parameter to return the record as
+a `dict` object, instead of a record object.
+
+```python
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> odoo_client.voucher_codes.get_by_code("OSCODE123", as_dict=True)
+{'id': 1234, ...}
+```
+
+When `optional` is `True`, `None` is returned if a record
+with the given code does not exist, instead of raising an error.
+
+```python
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> odoo_client.voucher+codes.get_by_code("non-existent", optional=True)
+None
+```
+
+#### Parameters
+
+| Name       | Type                   | Description                                       | Default    |
+|------------|------------------------|---------------------------------------------------|------------|
+| `code`     | `str`                  | The record code                                   | (required) |
+| `fields`   | `Iterable[str] | None` | Fields to select (or `None` to select all fields) | `None`     |
+| `as_id`    | `bool`                 | Return the record IDs only                        | `False`    |
+| `as_dict`  | `bool`                 | Return records as dictionaries                    | `False`    |
+| `optional` | `bool`                 | Return `None` if not found                        | `False`    |
+
+#### Raises
+
+| Type                        | Description                                                             |
+|-----------------------------|-------------------------------------------------------------------------|
+| `RecordNotFoundError`       | If no record with the given code was found (when `optional` is `False`) |
+| `MultipleRecordsFoundError` | If multiple records were found with the same code                       |
+
+#### Returns
+
+| Type             | Description                                                                |
+|------------------|----------------------------------------------------------------------------|
+| `Record`         | Record object (default)                                                    |
+| `int`            | Record ID (when `as_id` is `True`)                                         |
+| `dict[str, Any]` | Record dictionary (when `as_dict` is `True`)                               |
+| `None`           | If a record with the given code does not exist (when `optional` is `True`) |
 
 ## Records
 
@@ -842,39 +1026,6 @@ correctly.
 User(record={'id': 1234, ...}, fields=None)
 >>> user.id
 1234
-```
-
-### Custom Attributes
-
-Most of the model fields commonly used by applications have been defined
-in the record classes, but if your installation of Odoo has add-ons
-installed that define custom fields that the Odoo client library
-does not know about, these can still be used (just without type hinting).
-
-Access these fields as object attributes, the same way as you would any
-other field.
-
-```python
->>> user.custom_field_name
-'custom-field-value'
-```
-
-If the custom field is a reference to another model record,
-it will be available on the record object as 2-member list.
-The first value is the record ID, and the second value
-is the display name of the record.
-
-```python
->>> user.custom_model_ref
-[5678, 'custom-record-name']
-```
-
-If the custom field is a list of model records,
-the record IDs will be made available as type `list[int]`.
-
-```python
->>> user.custom_model_refs
-[5678, 9012, ...]
 ```
 
 ### Attributes and Methods
@@ -1046,3 +1197,10 @@ User(record={'id': 1234, 'name': 'Old Name', ...}, fields=None)
 ...
 openstack_odooclient.exceptions.RecordNotFoundError: User record not found with ID: 1234
 ```
+
+## Custom Managers and Record Types
+
+The OpenStack Odoo Client library supports defining new record types and adding
+managers for them to the Odoo client object, allowing for adding support for custom Odoo add-ons.
+
+For more information, see [Custom Managers and Record Types](custom.md).

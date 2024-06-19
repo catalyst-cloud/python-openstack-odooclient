@@ -51,7 +51,7 @@ The record class currently implements the following fields and methods.
 credit_type_id: int
 ```
 
-The ID of the [type of this credit](#credit-type.md).
+The ID of the [type of this credit](credit-type.md).
 
 ### `credit_type_name`
 
@@ -59,7 +59,7 @@ The ID of the [type of this credit](#credit-type.md).
 credit_type_name: str
 ```
 
-The name of the [type of this credit](#credit-type.md).
+The name of the [type of this credit](credit-type.md).
 
 ### `credit_type`
 
@@ -67,7 +67,7 @@ The name of the [type of this credit](#credit-type.md).
 credit_type: CreditType
 ```
 
-The [type of this credit](#credit-type.md).
+The [type of this credit](credit-type.md).
 
 This fetches the full record from Odoo once,
 and caches it for subsequent accesses.

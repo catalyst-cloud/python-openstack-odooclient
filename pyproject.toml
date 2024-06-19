@@ -46,6 +46,9 @@ lint = [
     "mypy==1.10.0",
     "ruff==0.4.8",
 ]
+docs = [
+    "mkdocs-material>=9.5.27",
+]
 
 [tool.pdm.scripts]
 lint = {cmd = "ruff check"}

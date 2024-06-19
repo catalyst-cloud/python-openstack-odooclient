@@ -87,13 +87,13 @@ Fetch a list of active and saleable products for the given company.
 
 #### Parameters
 
-| Name      | Type                    | Description                                       | Default    |
-|-----------|-------------------------|---------------------------------------------------|------------|
-| `company` | `int \| Company`        | The company to search for products (ID or object) | (required) |
-| `fields`  | `Iterable[str] \| None` | Fields to select, defaults to `None` (select all) | `None`     |
-| `order`   | `str \| None`           | Order results by a specific field                 | `None`     |
-| `as_id`   | `bool`                  | Return the record IDs only                        | `False`    |
-| `as_dict` | `bool`                  | Return records as dictionaries                    | `False`    |
+| Name      | Type                   | Description                                       | Default    |
+|-----------|------------------------|---------------------------------------------------|------------|
+| `company` | `int | Company`        | The company to search for products (ID or object) | (required) |
+| `fields`  | `Iterable[str] | None` | Fields to select, defaults to `None` (select all) | `None`     |
+| `order`   | `str | None`           | Order results by a specific field                 | `None`     |
+| `as_id`   | `bool`                 | Return the record IDs only                        | `False`    |
+| `as_dict` | `bool`                 | Return records as dictionaries                    | `False`    |
 
 #### Returns
 
@@ -215,9 +215,9 @@ with the given name does not exist, instead of raising an error.
 
 | Name       | Type                    | Description                                       | Default    |
 |------------|-------------------------|---------------------------------------------------|------------|
-| `company`  | `int \| Company`        | The company to search for products (ID or object) | (required) |
+| `company`  | `int | Company`        | The company to search for products (ID or object) | (required) |
 | `name`     | `str`                   | The product name                                  | (required) |
-| `fields`   | `Iterable[str] \| None` | Fields to select, defaults to `None` (select all) | `None`     |
+| `fields`   | `Iterable[str] | None` | Fields to select, defaults to `None` (select all) | `None`     |
 | `as_id`    | `bool`                  | Return a record ID                                | `False`    |
 | `as_dict`  | `bool`                  | Return the record as a dictionary                 | `False`    |
 | `optional` | `bool`                  | Return `None` if not found                        | `False`    |

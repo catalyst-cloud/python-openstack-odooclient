@@ -167,12 +167,12 @@ class RecordBase:
         self._values: Dict[str, Any] = {}
 
     @property
-    def _env(self) -> Environment:
-        return self._manager._env
-
-    @property
     def _odoo(self) -> ODOO:
         return self._client._odoo
+
+    @property
+    def _env(self) -> Environment:
+        return self._manager._env
 
     @classmethod
     def from_record_obj(cls, record_obj: RecordBase) -> Self:

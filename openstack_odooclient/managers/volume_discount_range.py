@@ -30,6 +30,9 @@ class VolumeDiscountRange(RecordBase):
     ]
     """The ID for the customer group this volume discount range
     applies to, if a specific customer group is set.
+
+    If no customer group is set, this volume discount range
+    applies to all customers.
     """
 
     customer_group_name: Annotated[
@@ -38,6 +41,9 @@ class VolumeDiscountRange(RecordBase):
     ]
     """The name of the customer group this volume discount range
     applies to, if a specific customer group is set.
+
+    If no customer group is set, this volume discount range
+    applies to all customers.
     """
 
     customer_group: Annotated[
@@ -46,6 +52,9 @@ class VolumeDiscountRange(RecordBase):
     ]
     """The customer group this volume discount range
     applies to, if a specific customer group is set.
+
+    If no customer group is set, this volume discount range
+    applies to all customers.
 
     This fetches the full record from Odoo once,
     and caches it for subsequent accesses.
@@ -84,7 +93,7 @@ class VolumeDiscountRangeManager(RecordManagerBase[VolumeDiscountRange]):
         """Return the volume discount range to apply to a given charge.
 
         If ``customer_group`` is supplied, volume discount ranges for
-        a specific customer group are returned. When set to ``False``
+        a specific customer group are returned. When set to ``None``
         (the default), volume discount ranges for all customers are returned.
 
         If multiple volume discount ranges can be applied, the range with
@@ -92,7 +101,7 @@ class VolumeDiscountRangeManager(RecordManagerBase[VolumeDiscountRange]):
         If no applicable volume discount ranges were found,
         ``None`` is returned.
 
-        :param charge: The charge for to find the applicable discount range
+        :param charge: The charge to find the applicable discount range for
         :type charge: float
         :param customer_group: Get discount for a specific customer group
         :type customer_group: Optional[Union[int, CustomerGroup]], optional

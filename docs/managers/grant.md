@@ -59,7 +59,7 @@ The date the grant expires.
 grant_type_id: int
 ```
 
-The ID of the [type of this grant](#grant-type.md).
+The ID of the [type of this grant](grant-type.md).
 
 ### `grant_type_name`
 
@@ -67,7 +67,7 @@ The ID of the [type of this grant](#grant-type.md).
 grant_type_name: str
 ```
 
-The name of the [type of this grant](#grant-type.md).
+The name of the [type of this grant](grant-type.md).
 
 ### `grant_type`
 
@@ -75,7 +75,7 @@ The name of the [type of this grant](#grant-type.md).
 grant_type: GrantType
 ```
 
-The [type of this grant](#grant-type.md).
+The [type of this grant](grant-type.md).
 
 This fetches the full record from Odoo once,
 and caches it for subsequent accesses.

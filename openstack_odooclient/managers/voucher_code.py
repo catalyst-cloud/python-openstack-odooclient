@@ -31,7 +31,7 @@ class VoucherCode(RecordBase):
     code: str
     """The code string for this voucher code."""
 
-    credit_amount: float
+    credit_amount: Union[float, Literal[False]]
     """The initial credit balance for the voucher code, if a credit is to be
     created by the voucher code.
     """
@@ -63,7 +63,7 @@ class VoucherCode(RecordBase):
     and caches it for subsequent accesses.
     """
 
-    credit_duration: int
+    credit_duration: Union[int, Literal[False]]
     """The duration of the credit, in days, if a credit is to be
     created by the voucher code.
     """
@@ -72,37 +72,29 @@ class VoucherCode(RecordBase):
         Optional[int],
         ModelRef("customer_group", CustomerGroup),
     ]
-    """The ID of the customer group this voucher code is available to.
-
-    If not set, the voucher code is available to all customers.
-    """
+    """The ID of the customer group to add the customer to, if set."""
 
     customer_group_name: Annotated[
         Optional[str],
         ModelRef("customer_group", CustomerGroup),
     ]
-    """The name of the customer group this voucher code is available to.
-
-    If not set, the voucher code is available to all customers.
-    """
+    """The name of the customer group to add the customer to, if set."""
 
     customer_group: Annotated[
         Optional[CustomerGroup],
         ModelRef("customer_group", CustomerGroup),
     ]
-    """The customer group this voucher code is available to.
-
-    If not set, the voucher code is available to all customers.
+    """The customer group to add the customer to, if set.
 
     This fetches the full record from Odoo once,
     and caches it for subsequent accesses.
     """
 
-    expiry_date: date
+    expiry_date: Union[date, Literal[False]]
     """The date the voucher code expires."""
 
-    grant_amount: float
-    """The value of the grant, if a grant is to be
+    grant_duration: Union[int, Literal[False]]
+    """The duration of the grant, in days, if a grant is to be
     created by the voucher code.
     """
 
@@ -130,8 +122,8 @@ class VoucherCode(RecordBase):
     and caches it for subsequent accesses.
     """
 
-    grant_duration: int
-    """The duration of the grant, in days, if a grant is to be
+    grant_value: Union[float, Literal[False]]
+    """The value of the grant, if a grant is to be
     created by the voucher code.
     """
 
@@ -148,8 +140,8 @@ class VoucherCode(RecordBase):
     This uses the code specified in the record as-is.
     """
 
-    quota: Union[str, Literal[False]]
-    """The quota size to set for new projects signed up
+    quota_size: Union[str, Literal[False]]
+    """The default quota size for new projects signed up
     using this voucher code.
 
     If unset, use the default quota size.

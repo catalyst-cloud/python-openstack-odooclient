@@ -5,12 +5,12 @@ for Units of Measure (UoM).
 
 ## Details
 
-| Name            | Value                  |
-|-----------------|------------------------|
-| Odoo Modules    | Units of Measure (UoM) |
-| Odoo Model Name | `uom.uom`              |
-| Manager         | `uoms`                 |
-| Record Type     | `Uom`                  |
+| Name            | Value                           |
+|-----------------|---------------------------------|
+| Odoo Modules    | Units of Measure (UoM), Product |
+| Odoo Model Name | `uom.uom`                       |
+| Manager         | `uoms`                          |
+| Record Type     | `Uom`                           |
 
 ## Manager
 
