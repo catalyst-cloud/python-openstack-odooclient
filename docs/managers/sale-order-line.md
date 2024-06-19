@@ -33,6 +33,21 @@ SaleOrderLine(record={'id': 1234, ...}, fields=None)
 
 For more information on how to use managers, refer to [Managers](index.md).
 
+## Record
+
+The sale order line manager returns `SaleOrderLine` record objects.
+
+To import the record class for type hinting purposes:
+
+```python
+from openstack_odooclient import SaleOrderLine
+```
+
+The record class currently implements the following fields and methods.
+
+For more information on attributes and methods common to all record types,
+see [Record Attributes and Methods](index.md#attributes-and-methods).
+
 ### `company_id`
 
 ```python

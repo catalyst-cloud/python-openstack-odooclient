@@ -45,6 +45,9 @@ from openstack_odooclient import Partner
 
 The record class currently implements the following fields and methods.
 
+For more information on attributes and methods common to all record types,
+see [Record Attributes and Methods](index.md#attributes-and-methods).
+
 ### `active`
 
 ```python

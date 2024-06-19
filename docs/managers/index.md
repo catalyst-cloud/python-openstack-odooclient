@@ -279,7 +279,7 @@ a ``dict`` object, instead of a record object.
 
 ```python
 search(
-    filters: Sequence[Any] | None = None,
+    filters: Sequence[Tuple[str, str, Any] | Sequence[Any] | str] | None = None,
     fields: Iterable[str] | None = None,
     order: str | None = None,
     as_id: bool = False,
@@ -290,7 +290,7 @@ search(
 
 ```python
 search(
-    filters: Sequence[Any] | None = None,
+    filters: Sequence[Tuple[str, str, Any] | Sequence[Any] | str] | None = None,
     fields: Iterable[str] | None = None,
     order: str | None = None,
     as_id: bool = False,
@@ -301,7 +301,7 @@ search(
 
 ```python
 search(
-    filters: Sequence[Any] | None = None,
+    filters: Sequence[Tuple[str, str, Any] | Sequence[Any] | str] | None = None,
     fields: Iterable[str] | None = None,
     order: str | None = None,
     as_id: bool = True,
@@ -312,7 +312,7 @@ search(
 
 ```python
 search(
-    filters: Sequence[Any] | None = None,
+    filters: Sequence[Tuple[str, str, Any] | Sequence[Any] | str] | None = None,
     fields: Iterable[str] | None = None,
     order: str | None = None,
     as_id: bool = True,
@@ -323,7 +323,7 @@ search(
 
 ```python
 search(
-    filters: Sequence[Any] | None = None,
+    filters: Sequence[Tuple[str, str, Any] | Sequence[Any] | str] | None = None,
     fields: Iterable[str] | None = None,
     order: str | None = None,
     as_id: bool = False,
@@ -334,7 +334,7 @@ search(
 
 ```python
 search(
-    filters: Sequence[Any] | None = None,
+    filters: Sequence[Tuple[str, str, Any] | Sequence[Any] | str] | None = None,
     fields: Iterable[str] | None = None,
     order: str | None = None,
     as_id: bool = False,
@@ -361,16 +361,97 @@ and return the results.
 [User(record={'id': 1234, ...}, fields=None)]
 ```
 
-Query filters should be defined using the same format as OdooRPC,
-but some additional features are supported:
+Query filters should be defined using the
+[ORM API search domain](https://www.odoo.com/documentation/14.0/developer/reference/addons/orm.html#search-domains)
+format, which is a sequence of criteria, where each criterion
+is one of the following types of values:
 
-* Odoo client field aliases can be specified as the field name,
-  in additional to the original field name on the Odoo model
-  (e.g. `create_user` instead of `create_uid`).
-* Record objects can be directly passed as the value
-  on a filter, where a record ID would normally be expected.
-* Sets and tuples are supported when specifying a range of values,
-  in addition to lists.
+* A 3-tuple or 3-element sequence in `(field_name, operator, value)`
+  format, where:
+
+    * `field_name` (`str`) is the the name of the field to filter by.
+    * `operator` (`str`) is the comparison operator to use (for more
+      information on the available operators, check the ORM API
+      search domain documentation).
+    * `value` (`Any`) is the value to compare records against.
+
+* A logical operator which prefixes the following filter criteria
+  to form a **criteria combination**:
+
+    * `&` is a logical AND. Records only match if **both** of the
+      following **two** criteria match.
+    * `|` is a logical OR. Records match if **either** of the
+      following **two** criteria match.
+    * `!` is a logical NOT (negation). Records match if the
+      following **one** criterion does **NOT** match.
+
+Every criteria combination is implicitly combined using a logical AND
+to form the overall filter to use to query records.
+
+```python
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> odoo_client.users.search(
+...     [
+...         # Both user AND connected partner are active
+...         ("active", "=", True),
+...         ("active_partner", "=", True),
+...         # Name is either Lorem Ipsum or Alice Bob
+...         "|",
+...         ("name", "=", "Lorem Ipsum"),
+...         ("name", "=", "Alice Bob"),
+...     ],
+... )
+[User(record={'id': 1234, 'name': 'Lorem Ipsum', ...}, fields=None), User(record={'id': 5678, 'name': 'Alice Bob', ...}, fields=None)]
+```
+
+For the field value, this method accepts the same types as defined
+on the record objects.
+
+In addition to the native Odoo field names, field aliases
+and model ref field names can be specified as the field name
+in the search filter. Record objects can also be directly
+passed as the value on a filter, not just record IDs.
+
+```python
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> user = odoo_client.users.get(1234)
+>>> odoo_client.users.search([("create_user", "=", user)])
+[User(record={'id': 5678, ...}, fields=None), ...]
+```
+
+When specifying a range of possible values, lists, tuples
+and sets are supported.
+
+```python
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> user = odoo_client.users.get(1234)
+>>> odoo_client.users.search([("create_user", "in", {user})])
+[User(record={'id': 5678, ...}, fields=None), ...]
+```
 
 To search *all* records, leave ``filters`` unset
 (or set it to ``None``).
@@ -443,13 +524,13 @@ a list of `dict` objects, instead of record objects.
 
 #### Parameters
 
-| Name      | Type                   | Description                                       | Default |
-|-----------|------------------------|---------------------------------------------------|---------|
-| `filters` | `Sequence[Any] | None` | Filters to query by (or `None` for no filters)    | `None`  |
-| `fields`  | `Iterable[str] | None` | Fields to select (or `None` to select all fields) | `None`  |
-| `order`   | `str | None`           | Field to order results by, if ordering results    | `None`  |
-| `as_id`   | `bool`                 | Return the record IDs only                        | `False` |
-| `as_dict` | `bool`                 | Return records as dictionaries                    | `False` |
+| Name      | Type                                                          | Description                                       | Default |
+|-----------|---------------------------------------------------------------|---------------------------------------------------|---------|
+| `filters` | `Sequence[Tuple[str, str, Any] | Sequence[Any] | str] | None` | Filters to query by (or `None` for no filters)    | `None`  |
+| `fields`  | `Iterable[str] | None`                                        | Fields to select (or `None` to select all fields) | `None`  |
+| `order`   | `str | None`                                                  | Field to order results by, if ordering results    | `None`  |
+| `as_id`   | `bool`                                                        | Return the record IDs only                        | `False` |
+| `as_dict` | `bool`                                                        | Return records as dictionaries                    | `False` |
 
 #### Returns
 
@@ -520,10 +601,11 @@ Field aliases are also resolved to their target field names.
 1234
 ```
 
-By **nesting** a record mapping where an ID or object would normally go,
-a new record will be created for that mapping, and linked to the outer record.
-This nested record mapping is recursively validated and processed in the same way
-as the outer record.
+By **nesting** a record mapping where an ID or object would
+normally go, a new record will be created for that mapping,
+and linked to the outer record.
+This nested record mapping is recursively validated and
+processed in the same way as the outer record.
 
 ```python
 >>> from datetime import date
@@ -1113,6 +1195,9 @@ User(record={'id': 1234, ...}, fields=None)
 ### Attributes and Methods
 
 The following attributes and methods are available on all record types.
+
+To find the available attributes and methods on specific record classes,
+check the manager page for the record type.
 
 #### `id`
 

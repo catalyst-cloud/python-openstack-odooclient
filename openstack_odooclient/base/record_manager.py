@@ -60,6 +60,7 @@ if TYPE_CHECKING:
     from .. import client
 
 Record = TypeVar("Record", bound=RecordBase)
+FilterCriteria = Union[Tuple[str, str, Any], Sequence[Any], str]
 
 
 class RecordManagerBase(Generic[Record]):
@@ -280,7 +281,7 @@ class RecordManagerBase(Generic[Record]):
     @overload
     def search(
         self,
-        filters: Optional[Sequence[Any]] = ...,
+        filters: Optional[Sequence[FilterCriteria]] = ...,
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
         as_id: Literal[False] = ...,
@@ -290,7 +291,7 @@ class RecordManagerBase(Generic[Record]):
     @overload
     def search(
         self,
-        filters: Optional[Sequence[Any]] = ...,
+        filters: Optional[Sequence[FilterCriteria]] = ...,
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
         *,
@@ -301,7 +302,7 @@ class RecordManagerBase(Generic[Record]):
     @overload
     def search(
         self,
-        filters: Optional[Sequence[Any]] = ...,
+        filters: Optional[Sequence[FilterCriteria]] = ...,
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
         as_id: Literal[False] = ...,
@@ -312,7 +313,7 @@ class RecordManagerBase(Generic[Record]):
     @overload
     def search(
         self,
-        filters: Optional[Sequence[Any]] = ...,
+        filters: Optional[Sequence[FilterCriteria]] = ...,
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
         *,
@@ -323,7 +324,7 @@ class RecordManagerBase(Generic[Record]):
     @overload
     def search(
         self,
-        filters: Optional[Sequence[Any]] = ...,
+        filters: Optional[Sequence[FilterCriteria]] = ...,
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
         as_id: bool = ...,
@@ -332,7 +333,7 @@ class RecordManagerBase(Generic[Record]):
 
     def search(
         self,
-        filters: Optional[Sequence[Any]] = None,
+        filters: Optional[Sequence[FilterCriteria]] = None,
         fields: Optional[Iterable[str]] = None,
         order: Optional[str] = None,
         as_id: bool = False,
@@ -342,16 +343,42 @@ class RecordManagerBase(Generic[Record]):
         filters to constrain the search and other parameters,
         and return the results.
 
-        Query filters should be defined using the same format as OdooRPC,
-        but some additional features are supported:
+        Query filters should be defined using the ORM API search domain
+        format, which is a sequence of criteria, where each criterion
+        is one of the following types of values:
 
-        * Odoo client field aliases can be specified as the field name,
-          in additional to the original field name on the Odoo model
-          (e.g. ``create_user`` instead of ``create_uid``).
-        * Record objects can be directly passed as the value
-          on a filter, where a record ID would normally be expected.
-        * Sets and tuples are supported when specifying a range of values,
-          in addition to lists.
+        * A 3-tuple or 3-element sequence in ``(field_name, operator, value)``
+        format, where:
+
+          * ``field_name`` (``str``) is the the name of the field to filter by.
+          * ``operator`` (`str`) is the comparison operator to use (for more
+            information on the available operators, check the ORM API
+            search domain documentation).
+          * ``value`` (`Any`) is the value to compare records against.
+
+        * A logical operator which prefixes the following filter criteria
+        to form a **criteria combination**:
+
+          * ``&`` is a logical AND. Records only match if **both** of the
+            following **two** criteria match.
+          * ``|`` is a logical OR. Records match if **either** of the
+            following **two** criteria match.
+          * ``!`` is a logical NOT (negation). Records match if the
+            following **one** criterion does **NOT** match.
+
+        Every criteria combination is implicitly combined using a logical AND
+        to form the overall filter to use to query records.
+
+        For the field value, this method accepts the same types as defined
+        on the record objects.
+
+        In addition to the native Odoo field names, field aliases
+        and model ref field names can be specified as the field name
+        in the search filter. Record objects can also be directly
+        passed as the value on a filter, not just record IDs.
+
+        When specifying a range of possible values, lists, tuples
+        and sets are supported.
 
         To search *all* records, leave ``filters`` unset
         (or set it to ``None``).
@@ -367,7 +394,7 @@ class RecordManagerBase(Generic[Record]):
         a list of ``dict`` objects, instead of record objects.
 
         :param filters: Filters to query by, defaults to ``None`` (no filters)
-        :type filters: Sequence[Any] or None, optional
+        :type filters: Union[Tuple[str, str, Any], Sequence[Any], str] | None
         :param fields: Fields to select, defaults to ``None`` (select all)
         :type fields: Iterable[int] or None, optional
         :param order: Order results by field name, defaults to ``None``
@@ -389,16 +416,21 @@ class RecordManagerBase(Generic[Record]):
             return self.list(ids, fields=fields, as_dict=as_dict)
         return []  # type: ignore[return-value]
 
-    def _encode_filters(self, filters: Sequence[Any]) -> List[Any]:
-        _filters: List[Any] = []
+    def _encode_filters(
+        self,
+        filters: Sequence[FilterCriteria],
+    ) -> List[Union[str, Tuple[str, str, Any]]]:
+        _filters: List[Union[str, Tuple[str, str, Any]]] = []
         type_hints = get_type_hints(self.record_class, include_extras=True)
         for f in filters:
-            if isinstance(f, tuple):
+            if isinstance(f, str):
+                _filters.append(f)
+            else:
                 field_type, field_name = self._encode_filter_field(
                     type_hints=type_hints,
                     field=f[0],
                 )
-                operator = f[1]
+                operator: str = f[1]
                 # NOTE(callumdickinson): ORM API search domains.
                 # https://www.odoo.com/documentation/14.0/developer/reference/addons/orm.html#search-domains
                 if operator in ("in", "not in"):
@@ -423,10 +455,7 @@ class RecordManagerBase(Generic[Record]):
                         type_hint=field_type,
                         value=f[2],
                     )
-                _filter = (field_name, operator, value)
-            else:
-                _filter = f
-            _filters.append(_filter)
+                _filters.append((field_name, operator, value))
         return _filters
 
     def _encode_filter_field(
@@ -490,6 +519,26 @@ class RecordManagerBase(Generic[Record]):
     def create(self, **fields) -> int:
         """Create a new record, using the specified keyword arguments
         as input fields.
+
+        This method allows a lot of flexibility in how input fields
+        should be defined.
+
+        The fields passed to this method should use the same field names
+        and value types that are defined on the record classes.
+        The Odoo Client library will convert the values to the formats
+        that the Odoo API expects.
+
+        For example, when defining references to another record,
+        you can either pass the record ID, or the record object.
+        The field name can also either be for the ID or the object.
+
+        Field aliases are also resolved to their target field names.
+
+        By nesting a record mapping where an ID or object would
+        normally go, a new record will be created for that mapping,
+        and linked to the outer record.
+        This nested record mapping is recursively validated and
+        processed in the same way as the outer record.
 
         To fetch the newly created record object,
         pass the returned ID to the ``get`` method.
