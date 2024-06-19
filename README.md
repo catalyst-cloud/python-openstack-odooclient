@@ -12,7 +12,7 @@ changes between Odoo versions.
 
 ## Installation
 
-The Odoo Client library supports Python 3.8 and later.
+The OpenStack Odoo Client library supports Python 3.8 and later.
 
 To install the library package, simply install the `openstack-odooclient` package using `pip`.
 
@@ -34,7 +34,7 @@ openstack_odooclient.Client(
     password: str,
     protocol: str = "jsonrpc",
     port: int = 8069,
-    verify: bool | Path | str = True,
+    verify: bool | str | Path = True,
     version: str | None = None,
 ) -> Client
 ```

@@ -535,6 +535,62 @@ class Child(RecordBase):
 from .parent import Parent  # noqa: E402
 ```
 
+### Odoo Version Compatibility
+
+Major releases of Odoo may change the database models to introduce
+new functionality.
+
+The way models usually change in a backwards-incompatible way is
+that fields are renamed so that they are referenced using another name,
+without providing an alias for the old one.
+
+In the OpenStack Odoo Client library, this is handled by defining
+the `_field_mapping` attribute on the record class.
+
+```python
+_field_mapping: dict[str | None, dict[str, str]]
+```
+
+The `_field_mapping` attribute is a nested dictionary structure used
+to define local-to-remote field name mappings.
+
+```python
+from __future__ import annotations
+
+from openstack_odooclient import RecordBase
+
+class CustomRecord(RecordBase):
+    custom_field: str
+    """Description of the field."""
+
+    custom_field_2: int
+    """Description of the second field."""
+
+    custom_field_3: float
+    """Description of the third field."""
+
+    _field_mapping = {
+        # The Odoo version for which to generate the mapping.
+        "13.0": {
+            # Key is local field name. Value is the field name in Odoo 13.
+            "custom_field": "old_custom_field",
+        }
+        # Use None to provide a mapping to use for all Odoo versions.
+        None: {
+            "custom_field_2": "old_custom_field_2",
+        },
+        # custom_field_3 is not defined here.
+        # The field name will be used as-is on all Odoo versions.
+    }
+```
+
+Mappings can be added for specific Odoo versions, or by using `None`,
+mappings that apply to all Odoo versions can be defined.
+
+When the Odoo Client library interfaces with Odoo, it will automatically find
+and use the correct field name to present based on the server version
+and the record class's field mapping.
+
 ### Record Methods
 
 Methods can be defined on record types to provide additional functionality.
@@ -581,8 +637,13 @@ Manager classes are subclasses of the generic `ManagerBase` class,
 specifying the record class the generic type argument,
 and defining the following class attributes:
 
-* `env_name` - The name of the Odoo environment (database model) for the record class
-* `record_class` - The record class object
+* `env_name: str` - The name of the Odoo environment (database model) for the record class
+* `record_class: Type[RecordBase]` - The record class to use to create record objects
+
+The following optional class attributes are also available:
+
+* `default_fields: Set[str] | None` - A set of fields to select by default in queries
+  if a field list is not supplied (default is `None` to select all fields)
 
 Below is a simple example of a custom record type and its manager class.
 

@@ -504,6 +504,9 @@ class RecordManagerBase(Generic[Record]):
         passing in the mappings containing the record's input fields
         as positional arguments.
 
+        The record mappings should be in the same format as with
+        the ``create`` method.
+
         To fetch the newly created record objects,
         pass the returned IDs to the ``list`` method.
 

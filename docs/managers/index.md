@@ -443,13 +443,13 @@ a list of `dict` objects, instead of record objects.
 
 #### Parameters
 
-| Name      | Type                    | Description                                       | Default |
-|-----------|-------------------------|---------------------------------------------------|---------|
+| Name      | Type                   | Description                                       | Default |
+|-----------|------------------------|---------------------------------------------------|---------|
 | `filters` | `Sequence[Any] | None` | Filters to query by (or `None` for no filters)    | `None`  |
 | `fields`  | `Iterable[str] | None` | Fields to select (or `None` to select all fields) | `None`  |
 | `order`   | `str | None`           | Field to order results by, if ordering results    | `None`  |
-| `as_id`   | `bool`                  | Return the record IDs only                        | `False` |
-| `as_dict` | `bool`                  | Return records as dictionaries                    | `False` |
+| `as_id`   | `bool`                 | Return the record IDs only                        | `False` |
+| `as_dict` | `bool`                 | Return records as dictionaries                    | `False` |
 
 #### Returns
 
@@ -478,7 +478,86 @@ as input fields.
 ...     user="test-user",
 ...     password="<password>",
 ... )
->>> odoo_client.sales_order_lines.create(...)
+>>> odoo_client.sales_orders.create(...)
+1234
+```
+
+This method allows a lot of flexibility in how input fields
+should be defined.
+
+The fields passed to this method should use the same field names
+and value types that are defined on the record classes.
+The Odoo Client library will convert the values to the formats
+that the Odoo API expects.
+
+For example, when defining references to another record,
+you can either pass the record ID, or the record object.
+The field name can also either be for the ID or the object.
+
+Field aliases are also resolved to their target field names.
+
+```python
+>>> from datetime import date
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> user = odoo_client.users.get(5678)
+>>> odoo_client.sales_orders.create(
+...     user=user,  # User object
+...     partner_id=9012,  # Partner ID
+...     os_invoice_date=date(2024, 6, 30),
+...     os_invoice_due_date=date(2024, 7, 20),
+...     os_project=3456,  # Field name is for the object, value is the ID
+...     order_lines=[7890],  # Field alias used.
+... )
+)
+1234
+```
+
+By **nesting** a record mapping where an ID or object would normally go,
+a new record will be created for that mapping, and linked to the outer record.
+This nested record mapping is recursively validated and processed in the same way
+as the outer record.
+
+```python
+>>> from datetime import date
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> user = odoo_client.users.get(5678)
+>>> odoo_client.sales_orders.create(
+...     user=user,  # User object
+...     partner_id=9012,  # Partner ID
+...     os_invoice_date=date(2024, 6, 30),
+...     os_invoice_due_date=date(2024, 7, 20),
+...     os_project=3456,  # Field name for object, value is ID
+...     order_lines=[  # Create the sale order lines.
+...         {
+...             "name": "test-instance",
+...             "product": odoo_client.products.get(7890),  # Product object
+...             "product_uom": 123456,  # Field name for object, value is ID
+...             "product_uom_qty": 1.0,
+...             "price_unit": 0.05,
+...             "os_project_id": 3456,  # Project ID
+...             "os_resource_id": "1a2b3c4d5e1a2b3c4d5e1a2b3c4d5e1a",
+...             "os_region": "RegionOne",
+...             "os_resource_type": "Virtual Machine",
+...             "os_resource_name": "m1.small",
+...         },
+...     ],
+... )
 1234
 ```
 
@@ -523,6 +602,9 @@ Create one or more new records in a single request,
 passing in the mappings containing the record's input fields
 as positional arguments.
 
+The record mappings should be in the same format as with
+the [``create``](#create) method.
+
 ```python
 >>> from openstack_odooclient import Client as OdooClient
 >>> odoo_client = OdooClient(
@@ -533,7 +615,7 @@ as positional arguments.
 ...     user="test-user",
 ...     password="<password>",
 ... )
->>> odoo_client.sales_order_lines.create_multi({...}, {...})
+>>> odoo_client.sales_orders.create_multi({...}, {...})
 [1234, 1235]
 ```
 
@@ -550,10 +632,10 @@ pass the returned IDs to the [``list``](#list) method.
 ...     user="test-user",
 ...     password="<password>",
 ... )
->>> odoo_client.sale_order_lines.list(
-...     odoo_client.sales_order_lines.create_multi({...}, {...}),
+>>> odoo_client.sale_orders.list(
+...     odoo_client.sales_orders.create_multi({...}, {...}),
 ... )
-[SaleOrderLine(record={'id': 1234, ...}, fields=None), SaleOrderLine(record={'id': 1235, ...}, fields=None)]
+[SaleOrder(record={'id': 1234, ...}, fields=None), SaleOrder(record={'id': 1235, ...}, fields=None)]
 ```
 
 #### Parameters
@@ -970,7 +1052,7 @@ with the given code does not exist, instead of raising an error.
 ...     user="test-user",
 ...     password="<password>",
 ... )
->>> odoo_client.voucher+codes.get_by_code("non-existent", optional=True)
+>>> odoo_client.voucher_codes.get_by_code("non-existent", optional=True)
 None
 ```
 

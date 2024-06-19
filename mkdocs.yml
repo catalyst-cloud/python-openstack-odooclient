@@ -1,7 +1,10 @@
 ---
 
 site_name: OpenStack Odoo Client for Python
+site_description: The documentation for the OpenStack Odoo Client library for Python.
+site_author: Callum Dickinson <callum.dickinson@catalystcloud.nz>
 repo_url: https://github.com/catalyst-cloud/python-openstack-odooclient
+copyright: Copyright © 2024 Catalyst Cloud Limited
 
 markdown_extensions:
   - admonition
@@ -19,6 +22,45 @@ markdown_extensions:
 plugins:
   - offline
   - search
+
+nav:
+  - Getting Started: index.md
+  - Managers:
+    - managers/index.md
+    - managers/account-move.md
+    - managers/account-move-line.md
+    - managers/company.md
+    - managers/credit.md
+    - managers/credit-type.md
+    - managers/credit-transaction.md
+    - managers/currency.md
+    - managers/customer-group.md
+    - managers/grant.md
+    - managers/grant-type.md
+    - managers/partner.md
+    - managers/partner-category.md
+    - managers/pricelist.md
+    - managers/product.md
+    - managers/product-category.md
+    - managers/project.md
+    - managers/project-contact.md
+    - managers/referral-code.md
+    - managers/reseller.md
+    - managers/reseller-tier.md
+    - managers/sale-order.md
+    - managers/sale-order-line.md
+    - managers/support-subscription.md
+    - managers/support-subscription-type.md
+    - managers/tax.md
+    - managers/tax-group.md
+    - managers/term-discount.md
+    - managers/trial.md
+    - managers/uom.md
+    - managers/uom-category.md
+    - managers/user.md
+    - managers/volume-discount-range.md
+    - managers/voucher-code.md
+    - managers/custom.md
 
 theme:
   name: material
