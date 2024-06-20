@@ -666,7 +666,7 @@ Field aliases are also resolved to their target field names.
 ...     os_invoice_date=date(2024, 6, 30),
 ...     os_invoice_due_date=date(2024, 7, 20),
 ...     os_project=3456,  # Field name is for the object, value is the ID
-...     order_lines=[7890],  # Field alias used.
+...     order_lines=[7890],  # Field alias used
 ... )
 )
 1234
@@ -697,7 +697,7 @@ and processed in the same way as the parent record.
 ...     os_invoice_date=date(2024, 6, 30),
 ...     os_invoice_due_date=date(2024, 7, 20),
 ...     os_project=3456,  # Field name for object, value is ID
-...     order_lines=[  # Create the sale order lines.
+...     order_lines=[  # Create the sale order lines
 ...         {
 ...             "name": "test-instance",
 ...             "product": odoo_client.products.get(7890),  # Product object
