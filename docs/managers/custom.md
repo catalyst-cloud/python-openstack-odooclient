@@ -228,9 +228,9 @@ field in Odoo, and the record class that implements the model in the Odoo Client
 There are two types of model refs that can be expressed on record classes:
 **singular records**, and **record lists**.
 
-#### Singular Record (One2one/Many2one)
+#### Singular Record (Many2one)
 
-Singular record model refs correspond to the `One2one` and `Many2one` relationship types in Odoo.
+Singular record model refs correspond to the `Many2one` relationship type in Odoo.
 With these relationship types, the model class references a single record.
 
 Suppose that we want to add a model ref for a `user_id` field to our record class,

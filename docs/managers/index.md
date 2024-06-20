@@ -672,11 +672,12 @@ Field aliases are also resolved to their target field names.
 1234
 ```
 
-By **nesting** a record mapping where an ID or object would
-normally go, a new record will be created for that mapping,
-and linked to the outer record.
-This nested record mapping is recursively validated and
-processed in the same way as the outer record.
+When creating a record with a list of references to another record
+(a `One2many` or `Many2many` relation), it is possible to **nest**
+record mappings where an ID or object would normally go.
+New records will be created for those mappings, and linked
+to the parent record. Nested record mappings are recursively validated
+and processed in the same way as the parent record.
 
 ```python
 >>> from datetime import date

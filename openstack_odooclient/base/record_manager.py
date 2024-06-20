@@ -612,11 +612,12 @@ class RecordManagerBase(Generic[Record]):
 
         Field aliases are also resolved to their target field names.
 
-        By nesting a record mapping where an ID or object would
-        normally go, a new record will be created for that mapping,
-        and linked to the outer record.
-        This nested record mapping is recursively validated and
-        processed in the same way as the outer record.
+        When creating a record with a list of references to another record
+        (a ``One2many`` or ``Many2many`` relation), it is possible to nest
+        record mappings where an ID or object would normally go.
+        New records will be created for those mappings, and linked
+        to the parent record. Nested record mappings are recursively validated
+        and processed in the same way as the parent record.
 
         To fetch the newly created record object,
         pass the returned ID to the ``get`` method.
@@ -716,7 +717,6 @@ class RecordManagerBase(Generic[Record]):
             # iterate over the given value and decode the elements
             # appropriately.
             if get_type_origin(attr_type) is list:
-                value_type = get_type_args(attr_type)[0]
                 if not value:
                     return (remote_field, [])
                 remote_values: List[
@@ -733,7 +733,7 @@ class RecordManagerBase(Generic[Record]):
                     elif isinstance(v, dict):
                         manager = (
                             self
-                            if value_type is Self
+                            if model_ref.record_class is Self
                             else self._client._record_manager_mapping[
                                 model_ref.record_class
                             ]
@@ -759,28 +759,11 @@ class RecordManagerBase(Generic[Record]):
             # to the field.
             if isinstance(value, RecordBase):
                 return (remote_field, value.id)
-            # If the value type is a dictionary, then treat it as a nested
-            # record to be created alongside the parent record.
-            # Encode the contents of the dict recursively using the
-            # record class's manager object, and assign it to the
-            # parent record so they can both be created.
-            # TODO(callumdickinson): Check that this works.
-            if isinstance(value, dict):
-                manager = (
-                    self
-                    if value_type is Self
-                    else self._client._record_manager_mapping[value_type]
-                )
-                return (
-                    remote_field,
-                    [
-                        (
-                            0,
-                            0,
-                            manager._encode_create_fields(value),
-                        ),
-                    ],
-                )
+            # NOTE(callumdickinson): Nested records cannot be created
+            # for singular record refs (Many2one relations).
+            # The target record must be created separately first,
+            # then linked in this record using either the target record's
+            # object or ID.
             raise ValueError(
                 (
                     f"Unsupported value for model ref field '{field}' "

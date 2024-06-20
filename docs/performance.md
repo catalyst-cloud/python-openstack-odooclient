@@ -190,3 +190,6 @@ in a single request.
 ... )
 1234
 ```
+
+This can be done for any record type with a list of references
+to another record type (a `One2many` or `Many2many` relation).
