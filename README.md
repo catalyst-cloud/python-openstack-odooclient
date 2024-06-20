@@ -1,5 +1,7 @@
 # OpenStack Odoo Client library for Python
 
+[![PyPI](https://img.shields.io/pypi/v/openstack-odooclient)](https://pypi.org/project/openstack-odooclient) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/openstack-odooclient) [![GitHub](https://img.shields.io/github/license/catalyst-cloud/python-openstack-odooclient)](https://github.com/catalyst-cloud/python-openstack-odooclient/blob/main/LICENSE) ![Test Status](https://img.shields.io/github/actions/workflow/status/catalyst-cloud/python-openstack-odooclient/test.yml?label=tests)
+
 This is an Odoo client library for Python with support for the
 [OpenStack Integration add-on](https://github.com/catalyst-cloud/odoo-openstack-integration),
 intended to be used by OpenStack projects such as

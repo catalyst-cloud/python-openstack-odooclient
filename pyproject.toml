@@ -39,6 +39,13 @@ dependencies = [
 ]
 dynamic = ["version"]
 
+[project.urls]
+Homepage = "https://github.com/catalyst-cloud/python-openstack-odooclient"
+Documentation = "https://github.com/catalyst-cloud/python-openstack-odooclient/blob/main/docs/index.md"
+Repository = "https://github.com/catalyst-cloud/python-openstack-odooclient"
+Issues = "https://github.com/catalyst-cloud/python-openstack-odooclient/issues"
+Changelog = "https://github.com/catalyst-cloud/python-openstack-odooclient/blob/main/docs/changelog.md"
+
 [tool.setuptools_scm]
 
 [tool.pdm.dev-dependencies]
