@@ -776,13 +776,13 @@ that manage this record class.
 ```python
 from __future__ import annotations
 
-from openstack_odooclient import Client, RecordManager, User, UserManager
+from openstack_odooclient import Client, RecordManagerBase, User, UserManager
 
 class CustomUser(User):
     custom_field: str
     """Description of the field."""
 
-class CustomUserManager(RecordManager[CustomUser]):
+class CustomUserManager(RecordManagerBase[CustomUser]):
     env_name = UserManager.env_name
     record_class = CustomUser
 
