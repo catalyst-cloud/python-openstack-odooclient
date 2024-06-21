@@ -1,6 +1,6 @@
 # Managers
 
-The Odoo Client object exposes a number of record managers, which contain methods
+The Odoo client object exposes a number of record managers, which contain methods
 used to query specific record types, or create one or more new records of that type.
 
 For example, performing a simple search query would look something like this:

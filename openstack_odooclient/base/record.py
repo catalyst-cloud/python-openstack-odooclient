@@ -19,12 +19,14 @@ import copy
 
 from dataclasses import dataclass
 from datetime import date, datetime, time
+from types import MappingProxyType
 from typing import (
     TYPE_CHECKING,
     Any,
     Dict,
     List,
     Literal,
+    Mapping,
     Optional,
     Sequence,
     Set,
@@ -186,15 +188,22 @@ class RecordBase:
     def __init__(
         self,
         client: Client,
-        manager: RecordManagerBase,
-        record: Dict[str, Any],
+        record: Mapping[str, Any],
         fields: Optional[Sequence[str]],
     ) -> None:
         self._client = client
-        self._manager = manager
-        self._record = record
-        self._fields = fields
+        """The Odoo client that created this record object."""
+        self._record = MappingProxyType(record)
+        """The raw record fields from OdooRPC."""
+        self._fields = tuple(fields) if fields else None
+        """The fields selected in the query that created this record object."""
         self._values: Dict[str, Any] = {}
+        """The cache for the processed record field values."""
+
+    @property
+    def _manager(self) -> RecordManagerBase:
+        """The manager object responsible for this record."""
+        return self._client._record_manager_mapping[type(self)]
 
     @property
     def _odoo(self) -> ODOO:
@@ -222,7 +231,6 @@ class RecordBase:
         """
         return cls(
             client=record_obj._client,
-            manager=record_obj._manager,
             record=record_obj._record,
             fields=record_obj._fields,
         )
@@ -245,7 +253,7 @@ class RecordBase:
         :rtype: Dict[str, Any]
         """
         return (
-            copy.deepcopy(self._record)
+            copy.deepcopy(dict(self._record))
             if raw
             else {
                 self._manager._get_local_field(field): copy.deepcopy(value)
@@ -264,7 +272,6 @@ class RecordBase:
         """
         return type(self)(
             client=self._client,
-            manager=self._manager,
             record=self._env.read(
                 self.id,
                 fields=self._fields,
@@ -514,8 +521,8 @@ class RecordBase:
     def __str__(self) -> str:
         return (
             f"{type(self).__name__}("
-            f"record={self._record}"
-            f", fields={self._fields}"
+            f"record={dict(self._record)}"
+            f", fields={list(self._fields) if self._fields else None}"
             ")"
         )
 

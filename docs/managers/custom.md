@@ -231,7 +231,7 @@ There are two types of model refs that can be expressed on record classes:
 #### Singular Record (Many2one)
 
 Singular record model refs correspond to the `Many2one` relationship type in Odoo.
-With these relationship types, the model class references a single record.
+With this relationship type, the model class references a single record.
 
 Suppose that we want to add a model ref for a `user_id` field to our record class,
 which references the `res.users` model
@@ -314,8 +314,8 @@ class CustomRecord(RecordBase):
 ```
 
 Similar to field aliases, any of these model ref fields can be used
-instead of the actual model ref field name when
-[defining record search filters](index.md#search) and [creating new records](index.md#create).
+instead of the target field name when [defining record search filters](index.md#search)
+and [creating new records](index.md#create).
 The record ID or the record object can be passed directly to those methods
 (the record display name is not guaranteed to be unique, and thus, not accepted).
 
@@ -383,7 +383,7 @@ which references the `product.product` model
 There are two ways to reference fields of this type on the record class.
 All of these should all be defined on your record class.
 
-The first is to expose the record's ID directly as an integer.
+The first is to expose the record IDs directly as a list of integers.
 
 ```python
 from __future__ import annotations
@@ -398,7 +398,7 @@ class CustomRecord(RecordBase):
     """The list of IDs for the products to use."""
 ```
 
-The second and final one is to define the field as a list of record objects.
+The second and final one is to expose the records as a list of record objects.
 
 ```python
 from __future__ import annotations
@@ -447,8 +447,8 @@ class CustomRecord(RecordBase):
 ```
 
 Similar to field aliases, any of these model ref fields can be used
-instead of the actual model ref field name when
-[defining record search filters](index.md#search) and [creating new records](index.md#create).
+instead of the target field name when [defining record search filters](index.md#search)
+and [creating new records](index.md#create).
 The passed values (or lists of values) may consist of either record IDs, record objects,
 or any combination of the two.
 
@@ -480,7 +480,7 @@ class CustomRecord(RecordBase):
 Due to the way type hints are dereferenced by Python, two record classes
 that reference each other are difficult (but not impossible) to support.
 
-Generally two things must be done for circular model refs to work:
+Generally the following must be done for circular model refs to work:
 
 * Postponed evaluation of annotations is enabled using `from __future__ import annotations`
 * Imports of the referenced model classes must be defined *after* the model classes
@@ -611,12 +611,12 @@ class CustomRecord(RecordBase):
 In addition to all of the Odoo fields defined on the record class,
 the following internal attributes are also available for use in object methods:
 
-* `_client` - The Odoo Client object the record was created from
-* `_manager` - The manager object the record was created from
-* `_records` - The raw record fields from OdooRPC (as a dictionary)
-* `_fields` - The fields that were selected during the query (or `None` for all fields)
-* `_odoo` - The OdooRPC connection object
-* `_env` - The OdooRPC environment object for the model
+* `_client` ([`Client`](../index.md#connecting-to-odoo)) - The Odoo client object the record was created from
+* `_manager` (`RecordManagerBase`) - The manager object the record was created from
+* `_records` (`MappingProxyType[str, Any]`) - The raw record fields from OdooRPC
+* `_fields` (`tuple[str, ...] | None`) - The fields that were selected during the query (or `None` for all fields)
+* `_odoo` (`odoorpc.ODOO`) - The OdooRPC connection object
+* `_env` (`odoorpc.env.Environment`) - The OdooRPC environment object for the model
 
 !!! note
 
@@ -626,23 +626,23 @@ the following internal attributes are also available for use in object methods:
 ## Managers
 
 **Manager classes** are used to provide query methods and other functionality
-neccessary for managing record objects in the Odoo Client library.
+necessary for managing record objects in the Odoo Client library.
 
 Once you have defined your record class, a manager class must be created
 for implementing the query methods for the record class.
 
 ### Creating a Manager Class
 
-Manager classes are subclasses of the generic `ManagerBase` class,
+Manager classes are subclasses of the generic `RecordManagerBase` class,
 specifying the record class the generic type argument,
 and defining the following class attributes:
 
-* `env_name: str` - The name of the Odoo environment (database model) for the record class
-* `record_class: Type[RecordBase]` - The record class to use to create record objects
+* `env_name` (`str`) - The name of the Odoo environment (database model) for the record class
+* `record_class` (`Type[RecordBase]`) - The record class to use to create record objects
 
 The following optional class attributes are also available:
 
-* `default_fields: Set[str] | None` - A set of fields to select by default in queries
+* `default_fields` (`set[str] | None`) - A set of fields to select by default in queries
   if a field list is not supplied (default is `None` to select all fields)
 
 Below is a simple example of a custom record type and its manager class.
@@ -652,13 +652,13 @@ from __future__ import annotations
 
 from typing import List, Union
 
-from openstack_odooclient import ManagerBase, RecordBase
+from openstack_odooclient import RecordBase, RecordManagerBase
 
 class CustomRecord(RecordBase):
     custom_field: str
     """Description of the field."""
 
-class CustomRecordManager(ManagerBase[CustomRecord]):
+class CustomRecordManager(RecordManagerBase[CustomRecord]):
     env_name = "custom.record"
     record_class = CustomRecord
 ```
@@ -666,24 +666,23 @@ class CustomRecordManager(ManagerBase[CustomRecord]):
 ### Using a Manager Class
 
 There are two ways of using manager classes. The first is to simply
-instantiate a manager object, passing in the [`Client`](../index.md#connecting-to-odoo)
+create a manager object, passing the [`Client`](../index.md#connecting-to-odoo)
 object as the sole argument.
 
-This will allow manager methods to be used, exactly the same as
-the built-in record managers.
+This will allow manager methods to be used by calling them on the manager object.
 
 ```python
 from __future__ import annotations
 
 from typing import List, Union
 
-from openstack_odooclient import Client, ManagerBase, RecordBase
+from openstack_odooclient import Client, RecordBase, RecordManagerBase
 
 class CustomRecord(RecordBase):
     custom_field: str
     """Description of the field."""
 
-class CustomRecordManager(ManagerBase[CustomRecord]):
+class CustomRecordManager(RecordManagerBase[CustomRecord]):
     env_name = "custom.record"
     record_class = CustomRecord
 
@@ -691,8 +690,8 @@ odoo_client = Client(...)
 custom_records = CustomRecordManager(odoo_client)
 ```
 
-The disadvantage of using this method is that the client and manager objects
-are effectively separate, and must be managed as two separate variables.
+This will work perfectly fine, but the disadvantage of using this method is
+that the client and manager objects are managed as two separate variables.
 
 To create a single object from which you can manage **all** of your custom
 types and managers, subclass the `Client` class, and add a type hint for your
@@ -703,13 +702,13 @@ from __future__ import annotations
 
 from typing import List, Union
 
-from openstack_odooclient import ManagerBase, RecordBase
+from openstack_odooclient import RecordBase, RecordManagerBase
 
 class CustomRecord(RecordBase):
     custom_field: str
     """Description of the field."""
 
-class CustomRecordManager(ManagerBase[CustomRecord]):
+class CustomRecordManager(RecordManagerBase[CustomRecord]):
     env_name = "custom.record"
     record_class = CustomRecord
 
@@ -735,13 +734,13 @@ from __future__ import annotations
 
 from typing import List, Union
 
-from openstack_odooclient import ManagerBase, RecordBase
+from openstack_odooclient import RecordBase, RecordManagerBase
 
 class CustomRecord(RecordBase):
     custom_field: str
     """Description of the field."""
 
-class CustomRecordManager(ManagerBase[CustomRecord]):
+class CustomRecordManager(RecordManagerBase[CustomRecord]):
     env_name = "custom.record"
     record_class = CustomRecord
 
@@ -760,12 +759,12 @@ class CustomRecordManager(ManagerBase[CustomRecord]):
 
 The following internal attributes are also available for use in methods:
 
-* `env_name` - The name of the Odoo environment (database model) for the record class
-* `record_class` - The record class object
-* `default_fields` - The default list of fields to fetch on queries (or `None` to fetch all)
-* `_client` - The Odoo Client object the record was created from
-* `_odoo` - The OdooRPC connection object
-* `_env` - The OdooRPC environment object for the model
+* `env_name` (`str`) - The name of the Odoo environment (database model) for the record class
+* `record_class` (`Type[T]`) - The record class object
+* `default_fields` (`tuple[str, ...] | None`) - The default list of fields to fetch on queries (or `None` to fetch all)
+* `_client` ([`Client`](../index.md#connecting-to-odoo)) - The Odoo client object the record manager uses
+* `_odoo` (`odoorpc.ODOO`) - The OdooRPC connection object
+* `_env` (`odoorpc.env.Environment`) - The OdooRPC environment object for the model
 
 ## Extending Existing Record Types
 
@@ -797,7 +796,7 @@ and Pyright to properly evaluate the source, *existing* references on *existing*
 cannot be automatically updated to use the custom versions.
 
 However, it is possible to **cast** a record object of the base type into the custom type
-using the record class's ``from_record_obj`` class method.
+using the record class's `from_record_obj` class method.
 
 ```python
 >>> odoo_client = CustomClient(...)

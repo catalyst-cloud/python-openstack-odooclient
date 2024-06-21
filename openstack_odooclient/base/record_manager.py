@@ -70,7 +70,7 @@ class RecordManagerBase(Generic[Record]):
     record_class: Type[Record]
     """The record object type to instatiate using this manager."""
 
-    default_fields: Optional[Set[str]] = None
+    default_fields: Optional[Tuple[str, ...]] = None
     """List of fields to fetch by default if a field list is not supplied
     in queries.
 
@@ -79,7 +79,7 @@ class RecordManagerBase(Generic[Record]):
 
     def __init__(self, client: client.Client) -> None:
         self._client = client
-        """Odoo Client object."""
+        """The Odoo client object the manager uses."""
         # Assign this record manager object as the manager
         # responsible for the configured record class in the client.
         self._client._record_manager_mapping[self.record_class] = self
@@ -233,7 +233,6 @@ class RecordManagerBase(Generic[Record]):
             res_objs = [
                 self.record_class(
                     client=self._client,
-                    manager=self,
                     record=record,
                     fields=_fields,
                 )
