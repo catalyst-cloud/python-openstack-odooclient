@@ -638,7 +638,7 @@ specifying the record class the generic type argument,
 and defining the following class attributes:
 
 * `env_name` (`str`) - The name of the Odoo environment (database model) for the record class
-* `record_class` (`Type[RecordBase]`) - The record class to use to create record objects
+* `record_class` (`Type[T]`) - The record class to use to create record objects (**must** be the same class as the one specified in the generic subclass definition)
 
 The following optional class attributes are also available:
 
