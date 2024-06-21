@@ -752,7 +752,7 @@ class CustomRecordManager(RecordManagerBase[CustomRecord]):
             (
                 custom_record.id
                 if isinstance(custom_record, CustomRecord)
-                else custion_record
+                else custom_record
             ),
         )
 ```
