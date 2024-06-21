@@ -1,6 +1,6 @@
 ---
 
-site_name: OpenStack Odoo Client for Python
+site_name: OpenStack Odoo Client Library for Python
 site_description: The documentation for the OpenStack Odoo Client library for Python.
 site_author: Callum Dickinson <callum.dickinson@catalystcloud.nz>
 repo_url: https://github.com/catalyst-cloud/python-openstack-odooclient
