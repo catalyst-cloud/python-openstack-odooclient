@@ -642,7 +642,7 @@ and defining the following class attributes:
 
 The following optional class attributes are also available:
 
-* `default_fields` (`set[str] | None`) - A set of fields to select by default in queries
+* `default_fields` (`tuple[str, ...] | None`) - A set of fields to select by default in queries
   if a field list is not supplied (default is `None` to select all fields)
 
 Below is a simple example of a custom record type and its manager class.
