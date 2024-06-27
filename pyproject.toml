@@ -55,11 +55,13 @@ lint = [
 ]
 docs = [
     "mkdocs-material>=9.5.27",
+    "towncrier>=23.11.0",
 ]
 
 [tool.pdm.scripts]
 lint = {cmd = "ruff check"}
 format = {cmd = "ruff format"}
+update-changelog = {cmd = "scriv collect --keep"}
 
 [tool.ruff]
 fix = true
@@ -128,3 +130,41 @@ required-imports = [
 [tool.mypy]
 python_version = "3.8"
 pretty = true
+
+[tool.towncrier]
+directory = "changelog.d"
+filename = "docs/changelog.md"
+start_string = "<!-- towncrier release notes start -->\n"
+underlines = ["", "", ""]
+title_format = "## [{version}](https://github.com/catalyst-cloud/python-openstack-odooclient/releases/tag/{version}) <small>({project_date})</small>"
+issue_format = "[#{issue}](https://github.com/catalyst-cloud/python-openstack-odooclient/pull/{issue})"
+
+[[tool.towncrier.type]]
+directory = "security"
+name = "Security"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "removed"
+name = "Removed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "deprecated"
+name = "Deprecated"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "added"
+name = "Added"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "changed"
+name = "Changed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "fixed"
+name = "Fixed"
+showcontent = true

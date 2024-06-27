@@ -17,7 +17,7 @@ jobs:
         uses: pdm-project/setup-pdm@v4
         with:
           python-version: "3.12"
-          version: "2.15.4"
+          version: "2.16.1"
       - name: Build source dist and wheels
         run: pdm build --verbose
       - name: Upload source dist and wheels to artifacts
@@ -48,7 +48,7 @@ jobs:
         uses: pdm-project/setup-pdm@v4
         with:
           python-version: "3.12"
-          version: "2.15.4"
+          version: "2.16.1"
       - name: Publish source dist and wheels to PyPI
         run: pdm publish --no-build --verbose
 

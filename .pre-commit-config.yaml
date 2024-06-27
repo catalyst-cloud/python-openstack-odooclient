@@ -28,6 +28,6 @@ repos:
           - packaging
           - typing-extensions>=4.0.0
   - repo: https://github.com/pdm-project/pdm
-    rev: "2.15.4"
+    rev: "2.16.1"
     hooks:
       - id: pdm-lock-check
