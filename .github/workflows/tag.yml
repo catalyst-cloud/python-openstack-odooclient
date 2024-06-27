@@ -93,4 +93,4 @@ jobs:
       - name: Create virtual environment
         run: pdm install
       - name: Publish the latest version of the docs to GitHub Pages
-        run: mike deploy --push --update-aliases ${{ github.ref_name }} latest
+        run: pdm run mike deploy --push --update-aliases ${{ github.ref_name }} latest
