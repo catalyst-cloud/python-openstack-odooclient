@@ -131,22 +131,6 @@ class CustomRecord(RecordBase):
     """Description of the field."""
 ```
 
-#### `time`
-
-Corresponds to the `Time` field type in Odoo.
-
-```python
-from __future__ import annotations
-
-from datetime import time
-
-from openstack_odooclient import RecordBase
-
-class CustomRecord(RecordBase):
-    custom_field: time
-    """Description of the field."""
-```
-
 #### `Literal["value1", ...]`
 
 Corresponds to the `Selection` field type in Odoo.
