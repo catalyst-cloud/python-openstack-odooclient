@@ -1,9 +1,9 @@
-name: release
+name: tag
 
 on:
-  release:
-    types:
-      - published
+  push:
+    tags:
+      - "*.*.*"
 
 jobs:
   build:
@@ -65,11 +65,32 @@ jobs:
         with:
           name: dist
           path: dist/
-      - name: Publish source dist and wheels to GitHub Release
-        uses: xresloader/upload-to-github-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract changelog
+        id: extract-changelog
+        uses: sean0x42/markdown-extract@v2
         with:
-          file: dist/*
-          release_id: ${{ github.event.release.id }}
-          overwrite: true
+          file: docs/changelog.md
+          pattern: ${{ github.ref_name }}
+      - name: Publish the GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body: ${{ steps.extract-changelog.outputs.markdown }}
+          files: dist/*
+          fail_on_unmatched_files: true
+
+  publish-github-pages-latest:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Clone full tree, and checkout branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Python and PDM
+        uses: pdm-project/setup-pdm@v4
+        with:
+          python-version: "3.12"
+          version: "2.16.1"
+      - name: Create virtual environment
+        run: pdm install
+      - name: Publish the latest version of the docs to GitHub Pages
+        run: mike deploy --push --update-aliases ${{ github.ref_name }} latest

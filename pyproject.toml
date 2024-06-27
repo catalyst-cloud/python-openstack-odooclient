@@ -56,6 +56,7 @@ lint = [
 docs = [
     "mkdocs-material>=9.5.27",
     "towncrier>=23.11.0",
+    "mike>=2.1.2",
 ]
 
 [tool.pdm.scripts]
@@ -136,7 +137,7 @@ directory = "changelog.d"
 filename = "docs/changelog.md"
 start_string = "<!-- towncrier release notes start -->\n"
 underlines = ["", "", ""]
-title_format = "## [{version}](https://github.com/catalyst-cloud/python-openstack-odooclient/releases/tag/{version}) <small>({project_date})</small>"
+title_format = "## [{version}](https://github.com/catalyst-cloud/python-openstack-odooclient/releases/tag/{version}) - {project_date}"
 issue_format = "[#{issue}](https://github.com/catalyst-cloud/python-openstack-odooclient/pull/{issue})"
 
 [[tool.towncrier.type]]

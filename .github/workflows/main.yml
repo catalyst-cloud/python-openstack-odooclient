@@ -1,0 +1,26 @@
+---
+
+name: main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish-github-pages-develop:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Clone full tree, and checkout branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Python and PDM
+        uses: pdm-project/setup-pdm@v4
+        with:
+          python-version: "3.12"
+          version: "2.16.1"
+      - name: Create virtual environment
+        run: pdm install
+      - name: Publish the latest version of the docs to GitHub Pages
+        run: pdm run mike deploy --push develop
