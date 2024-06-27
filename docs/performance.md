@@ -27,7 +27,7 @@ than they need to.
 ```
 
 If requests are taking longer than expected, try using the `fields` parameter on the
-query method to limit the selected field to only the fields required for the task.
+query method to limit the selected fields to only the fields required for the task.
 
 ```python
 >>> from datetime import datetime
