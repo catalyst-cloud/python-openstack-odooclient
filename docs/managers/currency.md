@@ -78,7 +78,7 @@ The sub-unit label for this currency, if set.
 date: date
 ```
 
-The current date to which the currency rate is up to date.
+The age of the set currency rate.
 
 ### `decimal_places`
 

@@ -196,14 +196,14 @@ class RecordManagerWithUniqueFieldBase(
         A number of parameters are available to configure the return type,
         and what happens when a result is not found.
 
-        :param value: The unique field name to query by
+        :param name: The unique field name to query by
         :type name: str
         :param value: The unique field value
         :type name: T
         :param filters: Optional additional filters to apply, defaults to None
         :type filters: Optional[Iterable[Any]], optional
         :param fields: Fields to select, defaults to ``None`` (select all)
-        :type fields: Iterable[int] or None, optional
+        :type fields: Iterable[str] or None, optional
         :param as_id: Return a record ID, defaults to False
         :type as_id: bool, optional
         :param as_dict: Return the record as a dictionary, defaults to False

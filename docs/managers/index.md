@@ -299,12 +299,12 @@ a ``dict`` object, instead of a record object.
 
 #### Parameters
 
-| Name       | Type                    | Description                                       | Default    |
-|------------|-------------------------|---------------------------------------------------|------------|
-| `id`       | `int`                   | Record ID                                         | (required) |
+| Name       | Type                   | Description                                       | Default    |
+|------------|------------------------|---------------------------------------------------|------------|
+| `id`       | `int`                  | Record ID                                         | (required) |
 | `fields`   | `Iterable[str] | None` | Fields to select (or `None` to select all fields) | `None`     |
-| `as_dict`  | `bool`                  | Return record as a dictionary                     | `False`    |
-| `optional` | `bool`                  | Return `None` if not found                        | `False`    |
+| `as_dict`  | `bool`                 | Return record as a dictionary                     | `False`    |
+| `optional` | `bool`                 | Return `None` if not found                        | `False`    |
 
 #### Raises
 
@@ -408,7 +408,9 @@ and return the results.
 
 Query filters should be defined using the
 [ORM API search domain](https://www.odoo.com/documentation/14.0/developer/reference/addons/orm.html#search-domains)
-format, which is a sequence of criteria, where each criterion
+format.
+
+Filters are a sequence of criteria, where each criterion
 is one of the following types of values:
 
 * A 3-tuple or 3-element sequence in `(field_name, operator, value)`
@@ -416,8 +418,9 @@ is one of the following types of values:
 
     * `field_name` (`str`) is the the name of the field to filter by.
     * `operator` (`str`) is the comparison operator to use (for more
-      information on the available operators, check the ORM API
-      search domain documentation).
+      information on the available operators, check the
+      [ORM API search domain](https://www.odoo.com/documentation/14.0/developer/reference/addons/orm.html#search-domains)
+      documentation).
     * `value` (`Any`) is the value to compare records against.
 
 * A logical operator which prefixes the following filter criteria

@@ -317,18 +317,31 @@ class ProjectManager(RecordManagerWithUniqueFieldBase[Project, str]):
         A number of parameters are available to configure the return type,
         and what happens when a result is not found.
 
-        :param name: The record name
-        :type name: str
+        By default all fields available on the record model
+        will be selected, but this can be filtered using the
+        ``fields`` parameter.
+
+        Use the ``as_id`` parameter to return the ID of the record,
+        instead of the record object.
+
+        Use the ``as_dict`` parameter to return the record as
+        a ``dict`` object, instead of a record object.
+
+        When ``optional`` is ``True``, ``None`` is returned if a record
+        with the given name does not exist, instead of raising an error.
+
+        :param os_id: The OpenStack project ID to search for
+        :type os_id: str
         :param as_id: Return a record ID, defaults to False
         :type as_id: bool, optional
         :param fields: Fields to select, defaults to ``None`` (select all)
-        :type fields: Iterable[int] or None, optional
+        :type fields: Iterable[str] or None, optional
         :param as_dict: Return the record as a dictionary, defaults to False
         :type as_dict: bool, optional
         :param optional: Return ``None`` if not found, defaults to False
         :type optional: bool, optional
-        :raises MultipleRecordsFoundError: Multiple records with the same name
-        :raises RecordNotFoundError: Record with the given name not found
+        :raises MultipleRecordsFoundError: Multiple with matching project IDs
+        :raises RecordNotFoundError: No record with the given project ID found
         :return: Query result (or ``None`` if record not found and optional)
         :rtype: Optional[Union[Project, int, Dict[str, Any]]]
         """

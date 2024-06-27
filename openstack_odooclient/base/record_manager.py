@@ -417,7 +417,11 @@ class RecordManagerBase(Generic[Record]):
         and return the results.
 
         Query filters should be defined using the ORM API search domain
-        format, which is a sequence of criteria, where each criterion
+        format. For more information on the ORM API search domain format:
+
+        https://www.odoo.com/documentation/14.0/developer/reference/addons/orm.html#search-domains
+
+        Filters are a sequence of criteria, where each criterion
         is one of the following types of values:
 
         * A 3-tuple or 3-element sequence in ``(field_name, operator, value)``
@@ -476,7 +480,7 @@ class RecordManagerBase(Generic[Record]):
         :param filters: Filters to query by, defaults to ``None`` (no filters)
         :type filters: Union[Tuple[str, str, Any], Sequence[Any], str] | None
         :param fields: Fields to select, defaults to ``None`` (select all)
-        :type fields: Iterable[int] or None, optional
+        :type fields: Iterable[str] or None, optional
         :param order: Order results by field name, defaults to ``None``
         :type order: str or None, optional
         :param as_id: Return the record IDs only, defaults to ``False``
@@ -515,8 +519,6 @@ class RecordManagerBase(Generic[Record]):
             else:
                 field_type, field_name = self._encode_filter_field(field=f[0])
                 operator: str = f[1]
-                # NOTE(callumdickinson): ORM API search domains.
-                # https://www.odoo.com/documentation/14.0/developer/reference/addons/orm.html#search-domains
                 if operator in ("in", "not in"):
                     value = [
                         self._encode_value(type_hint=field_type, value=v)

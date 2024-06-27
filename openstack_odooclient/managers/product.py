@@ -169,7 +169,7 @@ class ProductManager(RecordManagerWithUniqueFieldBase[Product, str]):
         :param company: The company to search for products (ID or object)
         :type company: int | Company
         :param fields: Fields to select, defaults to ``None`` (select all)
-        :type fields: Iterable[int] or None, optional
+        :type fields: Iterable[str] or None, optional
         :param order: Order results by a specific field, defaults to None
         :type order: Optional[str], optional
         :param as_id: Return the record IDs only, defaults to False
@@ -331,7 +331,7 @@ class ProductManager(RecordManagerWithUniqueFieldBase[Product, str]):
         :param name: The product name
         :type name: str
         :param fields: Fields to select, defaults to ``None`` (select all)
-        :type fields: Iterable[int] or None, optional
+        :type fields: Iterable[str] or None, optional
         :param as_id: Return a record ID, defaults to False
         :type as_id: bool, optional
         :param as_dict: Return the record as a dictionary, defaults to False

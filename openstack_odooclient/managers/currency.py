@@ -33,7 +33,7 @@ class Currency(RecordBase):
     """The sub-unit label for this currency, if set."""
 
     date: datetime_date
-    """The current date to which the currency rate is up to date."""
+    """The age of the set currency rate."""
 
     decimal_places: int
     """Decimal places taken into account for operations on amounts

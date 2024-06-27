@@ -37,7 +37,7 @@ class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
     """A record manager base class for record types with a name field.
 
     This name field is reasonably expected to be unique, which allows
-    for methods for getting records by name to be defined.
+    methods for getting records by name to be defined.
 
     The record class should be type hinted with the field to use as the name,
     just like any other field.
@@ -180,7 +180,7 @@ class NamedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
         :param as_id: Return a record ID, defaults to False
         :type as_id: bool, optional
         :param fields: Fields to select, defaults to ``None`` (select all)
-        :type fields: Iterable[int] or None, optional
+        :type fields: Iterable[str] or None, optional
         :param as_dict: Return the record as a dictionary, defaults to False
         :type as_dict: bool, optional
         :param optional: Return ``None`` if not found, defaults to False

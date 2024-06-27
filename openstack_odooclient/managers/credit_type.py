@@ -43,8 +43,9 @@ class CreditType(RecordBase):
     ]
     """A list of IDs for the products this credit applies to.
 
-    Mutually exclusive with ``only_for_product_category_ids``.
-    If neither are specified, the credit applies to all products.
+    Mutually exclusive with
+    ``only_for_product_category_ids``/``only_for_product_categories``.
+    If none of these values are specified, the credit applies to all products.
     """
 
     only_for_products: Annotated[
@@ -53,8 +54,9 @@ class CreditType(RecordBase):
     ]
     """A list of products which this credit applies to.
 
-    Mutually exclusive with ``only_for_product_categories``.
-    If neither are specified, the credit applies to all products.
+    Mutually exclusive with
+    ``only_for_product_category_ids``/``only_for_product_categories``.
+    If none of these values are specified, the credit applies to all products.
 
     This fetches the full records from Odoo once,
     and caches them for subsequent accesses.
@@ -66,9 +68,8 @@ class CreditType(RecordBase):
     ]
     """A list of IDs for the product categories this credit applies to.
 
-    Mutually exclusive with ``only_for_product_ids``.
-    If neither are specified, the credit applies to all product
-    categories.
+    Mutually exclusive with ``only_for_product_ids``/``only_for_products``.
+    If none of these values are specified, the credit applies to all products.
     """
 
     only_for_product_categories: Annotated[
@@ -77,9 +78,8 @@ class CreditType(RecordBase):
     ]
     """A list of product categories which this credit applies to.
 
-    Mutually exclusive with ``only_for_products``.
-    If neither are specified, the credit applies to all product
-    categories.
+    Mutually exclusive with ``only_for_product_ids``/``only_for_products``.
+    If none of these values are specified, the credit applies to all products.
 
     This fetches the full records from Odoo once,
     and caches them for subsequent accesses.

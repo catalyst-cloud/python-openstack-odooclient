@@ -176,6 +176,7 @@ get_sellable_company_product_by_name(
     optional: bool = True,
 ) -> dict[str, Any] | None
 ```
+
 Query a unique product for the given company by name.
 
 ```python
@@ -213,14 +214,14 @@ with the given name does not exist, instead of raising an error.
 
 #### Parameters
 
-| Name       | Type                    | Description                                       | Default    |
-|------------|-------------------------|---------------------------------------------------|------------|
+| Name       | Type                   | Description                                       | Default    |
+|------------|------------------------|---------------------------------------------------|------------|
 | `company`  | `int | Company`        | The company to search for products (ID or object) | (required) |
-| `name`     | `str`                   | The product name                                  | (required) |
+| `name`     | `str`                  | The product name                                  | (required) |
 | `fields`   | `Iterable[str] | None` | Fields to select, defaults to `None` (select all) | `None`     |
-| `as_id`    | `bool`                  | Return a record ID                                | `False`    |
-| `as_dict`  | `bool`                  | Return the record as a dictionary                 | `False`    |
-| `optional` | `bool`                  | Return `None` if not found                        | `False`    |
+| `as_id`    | `bool`                 | Return a record ID                                | `False`    |
+| `as_dict`  | `bool`                 | Return the record as a dictionary                 | `False`    |
+| `optional` | `bool`                 | Return `None` if not found                        | `False`    |
 
 #### Raises
 

@@ -33,6 +33,134 @@ Project(record={'id': 1234, ...}, fields=None)
 
 For more information on how to use managers, refer to [Managers](index.md).
 
+The following manager methods are also available, in addition to the standard methods.
+
+### `get_by_os_id`
+
+```python
+get_by_os_id(
+    os_id: str,
+    fields: Iterable[str] | None = None,
+    order: str | None = None,
+    as_id: bool = False,
+    as_dict: bool = False,
+    optional: bool = False,
+) -> Project
+```
+
+```python
+get_by_os_id(
+    os_id: str,
+    fields: Iterable[str] | None = None,
+    order: str | None = None,
+    as_id: bool = False,
+    as_dict: bool = False,
+    optional: bool = True,
+) -> Project | None
+```
+
+```python
+get_by_os_id(
+    os_id: str,
+    fields: Iterable[str] | None = None,
+    order: str | None = None,
+    as_id: bool = True,
+    as_dict: bool = False,
+    optional: bool = False,
+) -> int
+```
+
+```python
+get_by_os_id(
+    os_id: str,
+    fields: Iterable[str] | None = None,
+    order: str | None = None,
+    as_id: bool = True,
+    as_dict: bool = False,
+    optional: bool = True,
+) -> int | None
+```
+
+```python
+get_by_os_id(
+    os_id: str,
+    fields: Iterable[str] | None = None,
+    order: str | None = None,
+    as_id: bool = False,
+    as_dict: bool = True,
+    optional: bool = False,
+) -> dict[str, Any]
+```
+
+```python
+get_by_os_id(
+    os_id: str,
+    fields: Iterable[str] | None = None,
+    order: str | None = None,
+    as_id: bool = False,
+    as_dict: bool = True,
+    optional: bool = True,
+) -> dict[str, Any] | None
+```
+
+Query a unique record by OpenStack project ID.
+
+```python
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> odoo_client.projects.get_by_os_id("1a2b3c4d5e1a2b3c4d5e1a2b3c4d5e1a")
+Project(record={'id': 1234, 'name': 'test-project', 'os_id': '1a2b3c4d5e1a2b3c4d5e1a2b3c4d5e1a', ...}, fields=None)
+```
+
+A number of parameters are available to configure the return type,
+and what happens when a result is not found.
+
+By default all fields available on the record model
+will be selected, but this can be filtered using the
+``fields`` parameter.
+
+Use the ``as_id`` parameter to return the ID of the record,
+instead of the record object.
+
+Use the ``as_dict`` parameter to return the record as
+a ``dict`` object, instead of a record object.
+
+When ``optional`` is ``True``, ``None`` is returned if a record
+with the given name does not exist, instead of raising an error.
+
+#### Parameters
+
+| Name       | Type                   | Description                                       | Default    |
+|------------|------------------------|---------------------------------------------------|------------|
+| `os_id`    | `str`                  | The OpenStack project ID to search for            | (required) |
+| `fields`   | `Iterable[str] | None` | Fields to select, defaults to `None` (select all) | `None`     |
+| `as_id`    | `bool`                 | Return a record ID                                | `False`    |
+| `as_dict`  | `bool`                 | Return the record as a dictionary                 | `False`    |
+| `optional` | `bool`                 | Return `None` if not found                        | `False`    |
+
+#### Raises
+
+| Type                        | Description                                                       |
+|-----------------------------|-------------------------------------------------------------------|
+| `MultipleRecordsFoundError` | Multiple records with the same name were found                    |
+| `RecordNotFoundError`       | Record with the given name not found (when `optional` is `False`) |
+
+#### Returns
+
+| Type             | Description                                                                |
+|------------------|----------------------------------------------------------------------------|
+| `Project`        | Project object (default)                                                   |
+| `int`            | Project ID (when `as_id` is `True`)                                        |
+| `dict[str, Any]` | Project dictionary (when `as_dict` is `True`)                              |
+| `None`           | If a project with the given name was not found (when `optional` is `True`) |
+
 ## Record
 
 The project manager returns `Project` record objects.

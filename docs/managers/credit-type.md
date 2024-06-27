@@ -83,8 +83,9 @@ only_for_product_ids: list[int]
 
 A list of IDs for the [products](product.md) this credit applies to.
 
-Mutually exclusive with [`only_for_product_category_ids`](#only_for_product_category_ids).
-If neither are specified, the credit applies to all products.
+Mutually exclusive with
+[`only_for_product_category_ids`](#only_for_product_category_ids)/[`only_for_product_categories`](#only_for_product_categories).
+If none of these values are specified, the credit applies to all products.
 
 ### `only_for_products`
 
@@ -94,8 +95,9 @@ only_for_products: list[Product]
 
 A list of [products](product.md) which this credit applies to.
 
-Mutually exclusive with [`only_for_product_categories`](#only_for_product_categories).
-If neither are specified, the credit applies to all products.
+Mutually exclusive with
+[`only_for_product_category_ids`](#only_for_product_category_ids)/[`only_for_product_categories`](#only_for_product_categories).
+If none of these values are specified, the credit applies to all products.
 
 This fetches the full records from Odoo once,
 and caches them for subsequent accesses.
@@ -108,9 +110,9 @@ only_for_product_category_ids: list[int]
 
 A list of IDs for the [product categories](product-category.md) this credit applies to.
 
-Mutually exclusive with [`only_for_product_ids`](#only_for_product_ids).
-If neither are specified, the credit applies to all product
-categories.
+Mutually exclusive with
+[`only_for_product_ids`](#only_for_product_ids)/[`only_for_products`](#only_for_products).
+If none of these values are specified, the credit applies to all products.
 
 ### `only_for_product_categories`
 
@@ -120,9 +122,9 @@ only_for_product_categories: list[ProductCategory]
 
 A list of [product categories](product-category.md) which this credit applies to.
 
-Mutually exclusive with [`only_for_products`](#only_for_products).
-If neither are specified, the credit applies to all product
-categories.
+Mutually exclusive with
+[`only_for_product_ids`](#only_for_product_ids)/[`only_for_products`](#only_for_products).
+If none of these values are specified, the credit applies to all products.
 
 This fetches the full records from Odoo once,
 and caches them for subsequent accesses.
