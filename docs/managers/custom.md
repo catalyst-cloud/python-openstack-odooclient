@@ -131,7 +131,7 @@ class CustomRecord(RecordBase):
     """Description of the field."""
 ```
 
-#### `Literal["value1", ...]`
+#### `Literal`
 
 Corresponds to the `Selection` field type in Odoo.
 
