@@ -22,5 +22,5 @@ jobs:
           version: "2.16.1"
       - name: Create virtual environment
         run: pdm install
-      - name: Publish the latest version of the docs to GitHub Pages
+      - name: Publish the docs to GitHub Pages
         run: pdm run mike deploy --push develop
