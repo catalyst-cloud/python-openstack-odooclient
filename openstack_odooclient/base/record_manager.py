@@ -15,7 +15,7 @@
 
 from __future__ import annotations
 
-from datetime import date, datetime, time
+from datetime import date, datetime
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -47,7 +47,6 @@ from ..exceptions import RecordNotFoundError
 from ..util import (
     DEFAULT_SERVER_DATE_FORMAT,
     DEFAULT_SERVER_DATETIME_FORMAT,
-    DEFAULT_SERVER_TIME_FORMAT,
     get_mapped_field,
     is_subclass,
 )
@@ -870,8 +869,6 @@ class RecordManagerBase(Generic[Record]):
                 return value.id
             if value_type is date and isinstance(value, date):
                 return value.strftime(DEFAULT_SERVER_DATE_FORMAT)
-            if value_type is time and isinstance(value, time):
-                return value.strftime(DEFAULT_SERVER_TIME_FORMAT)
             if value_type is datetime and isinstance(value, datetime):
                 return value.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
             if value_type is list and isinstance(value, (list, set, tuple)):

@@ -18,7 +18,7 @@ from __future__ import annotations
 import copy
 
 from dataclasses import dataclass
-from datetime import date, datetime, time
+from datetime import date, datetime
 from types import MappingProxyType
 from typing import (
     TYPE_CHECKING,
@@ -467,8 +467,6 @@ class RecordBase:
             return date.fromisoformat(value)
         if value_type is datetime:
             return datetime.fromisoformat(value)
-        if value_type is time:
-            return time.fromisoformat(value)
         # When a list is expected, decode each value individually
         # and return the result as a new list with the same order.
         if value_type is list:

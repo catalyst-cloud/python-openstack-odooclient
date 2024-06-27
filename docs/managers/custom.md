@@ -73,7 +73,7 @@ class CustomRecord(RecordBase):
 
 #### `str`
 
-Corresponds to the `Char` field type in Odoo.
+Corresponds to the `Char` or `Text` field types in Odoo.
 
 ```python
 from __future__ import annotations
@@ -145,6 +145,31 @@ from openstack_odooclient import RecordBase
 class CustomRecord(RecordBase):
     custom_field: time
     """Description of the field."""
+```
+
+#### `Literal["value1", ...]`
+
+Corresponds to the `Selection` field type in Odoo.
+
+Define all possible values for the field.
+
+```python
+from __future__ import annotations
+
+from typing import Literal
+
+from openstack_odooclient import RecordBase
+
+class CustomRecord(RecordBase):
+    custom_field: Literal["value1", "value2", "value3"]
+    """Description of the field.
+
+    Values:
+
+    * ``value1`` - Value 1
+    * ``value2`` - Value 2
+    * ``value3`` - Value 3
+    """
 ```
 
 ### Optional Fields
