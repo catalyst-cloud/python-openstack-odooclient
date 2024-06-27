@@ -196,6 +196,19 @@ class RecordManagerWithUniqueFieldBase(
         A number of parameters are available to configure the return type,
         and what happens when a result is not found.
 
+        By default all fields available on the record model
+        will be selected, but this can be filtered using the
+        ``fields`` parameter.
+
+        Use the ``as_id`` parameter to return the ID of the record,
+        instead of the record object.
+
+        Use the ``as_dict`` parameter to return the record as
+        a ``dict`` object, instead of a record object.
+
+        When ``optional`` is ``True``, ``None`` is returned if a record
+        with the given name does not exist, instead of raising an error.
+
         :param field: The unique field name to query by
         :type field: str
         :param value: The unique field value
