@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime
+from types import MappingProxyType
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -48,7 +49,7 @@ from ..util import (
     DEFAULT_SERVER_DATETIME_FORMAT,
     get_mapped_field,
 )
-from .record import ModelRef, RecordBase
+from .record import FieldAlias, ModelRef, RecordBase
 
 if TYPE_CHECKING:
     from odoorpc import ODOO  # type: ignore[import]
@@ -61,6 +62,37 @@ FilterCriterion = Union[Tuple[str, str, Any], Sequence[Any], str]
 
 
 class RecordManagerBase(Generic[Record]):
+    """A generic record manager base class.
+
+    This is the class that is subclassed create a record manager
+    for querying, creating and managing record objects.
+
+    To define a record manager for your custom record class:
+
+    1. Set ``RecordManagerBase`` as the superclass, and pass the
+       record class as the type argument to configure type hinting
+       for record manager methods.
+    2. Set the ``env_name`` class attribute on the record manager
+       to the Odoo model name for the record type.
+    3. Set the ``record_class`` class attribute on the record manager
+       to define the record class that will be used to create record objects.
+
+    >>> from openstack_odooclient import Client, RecordBase, RecordManagerBase
+    >>> class CustomRecord(RecordBase):
+    ...     name: str
+    >>> class CustomRecordManager(RecordManager[CustomRecord]):
+    ...     env_name = "custom.record"
+    ...     record_class = CustomRecord
+
+    Once you have your manager class, subclass the ``Client``
+    class and add a type hint for your custom record manager.
+    This will allow you to use custom record managers on your
+    Odoo client objects.
+
+    >>> class CustomClient(Client):
+    ...     custom_records: CustomRecordManager
+    """
+
     env_name: str
     """The Odoo environment (model) name to manage."""
 
@@ -80,9 +112,11 @@ class RecordManagerBase(Generic[Record]):
         # Assign this record manager object as the manager
         # responsible for the configured record class in the client.
         self._client._record_manager_mapping[self.record_class] = self
-        self._record_type_hints = get_type_hints(
-            self.record_class,
-            include_extras=True,
+        self._record_type_hints = MappingProxyType(
+            get_type_hints(
+                self.record_class,
+                include_extras=True,
+            ),
         )
         """The type hints for the fields defined in the record class."""
         self._field_mapping_reverse = {
@@ -498,7 +532,7 @@ class RecordManagerBase(Generic[Record]):
                 ids,
                 fields=fields,
                 as_dict=as_dict,
-                # A race condition might occur where a record is eleted
+                # A race condition might occur where a record is deleted
                 # after finding the ID but before querying the contents of it.
                 # If this happens, silently drop the record ID from the result.
                 optional=True,
@@ -842,8 +876,34 @@ class RecordManagerBase(Generic[Record]):
             return self._model_ref_mapping[local_field]
         return local_field
 
-    def _resolve_alias(self, alias: str) -> str:
-        return self.record_class._resolve_alias(alias)
+    def _resolve_alias(self, field: str) -> str:
+        if field not in self._record_type_hints:
+            return field
+        # NOTE(callumdickinson): Continually resolve field aliases
+        # until we get to a field that is not an alias.
+        resolved_aliases: Set[str] = set()
+        alias_chain: List[str] = []
+        annotation = FieldAlias.get(self._record_type_hints[field])
+        while annotation:
+            # Check if field aliases loop back on each other.
+            if field in resolved_aliases:
+                raise ValueError(
+                    (
+                        "Found recursive field alias definitions "
+                        f"on {self.record_class.__name__}: "
+                        f"{' -> '.join(alias_chain)}"
+                    ),
+                )
+            resolved_aliases.add(field)
+            alias_chain.append(field)
+            # Resolve the target field from the alias annotation,
+            # and try to fetch the target field's annotation to check
+            # if it is also an alias.
+            field = annotation.field
+            if field not in self._record_type_hints:
+                break
+            annotation = FieldAlias.get(self._record_type_hints[field])
+        return field
 
     def _decode_field(self, field: str) -> str:
         return self._get_local_field(self._resolve_alias(field))

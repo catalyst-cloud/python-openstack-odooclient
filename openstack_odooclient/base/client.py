@@ -169,14 +169,16 @@ class ClientBase:
                 opener=opener,
             )
             self._odoo.login(database, username, password)
-        # Create an internal mapping between record classes and their managers.
-        # This is populated by the manager classes themselves when created,
-        # and used when converting model references on record objects into
-        # new record objects.
         self._record_manager_mapping: Dict[
             Type[RecordBase],
             RecordManagerBase,
         ] = {}
+        """An internal mapping between record classes and their managers.
+
+        This is populated by the manager classes themselves when created,
+        and used when converting model references on record objects into
+        new record objects.
+        """
         # Create record managers defined in the type hints.
         for attr_name, attr_type in get_type_hints(type(self)).items():
             if is_subclass(attr_type, RecordManagerBase):

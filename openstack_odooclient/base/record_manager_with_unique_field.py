@@ -53,7 +53,7 @@ class RecordManagerWithUniqueFieldBase(
     >>> class CustomRecord(RecordBase):
     ...     name: str
     >>> class CustomRecordManager(
-    ...     RecordManagerWithUniqueFieldBase[Record, str],
+    ...     RecordManagerWithUniqueFieldBase[CustomRecord, str],
     ... ):
     ...     env_name = "custom.record"
     ...     record_class = CustomRecord

@@ -24,12 +24,10 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Dict,
-    List,
     Literal,
     Mapping,
     Optional,
     Sequence,
-    Set,
     Type,
     Union,
 )
@@ -39,7 +37,6 @@ from typing_extensions import (
     Self,
     get_args as get_type_args,
     get_origin as get_type_origin,
-    get_type_hints,
 )
 
 from ..util import is_subclass
@@ -215,6 +212,10 @@ class RecordBase:
         """The OdooRPC environment object this record was created from."""
         return self._manager._env
 
+    @property
+    def _type_hints(self) -> MappingProxyType[str, Any]:
+        return self._manager._record_type_hints
+
     @classmethod
     def from_record_obj(cls, record_obj: RecordBase) -> Self:
         """Create a record object of this class's type
@@ -299,36 +300,6 @@ class RecordBase:
         except KeyError as err:
             raise AttributeError(str(err)) from None
 
-    @classmethod
-    def _resolve_alias(cls, field: str) -> str:
-        type_hints = get_type_hints(cls, include_extras=True)
-        if field not in type_hints:
-            return field
-        # NOTE(callumdickinson): Continually resolve field aliases
-        # until we get to a field that is not an alias.
-        resolved_aliases: Set[str] = set()
-        alias_chain: List[str] = []
-        annotation = FieldAlias.get(type_hints[field])
-        while annotation:
-            # Check if field aliases loop back on each other.
-            if field in resolved_aliases:
-                raise ValueError(
-                    (
-                        "Found recursive field alias definitions "
-                        f"on {cls.__name__}: {' -> '.join(alias_chain)}"
-                    ),
-                )
-            resolved_aliases.add(field)
-            alias_chain.append(field)
-            # Resolve the target field from the alias annotation,
-            # and try to fetch the target field's annotation to check
-            # if it is also an alias.
-            field = annotation.field
-            if field not in type_hints:
-                break
-            annotation = FieldAlias.get(type_hints[field])
-        return field
-
     def __getattr__(self, name: str) -> Any:
         # If the field value has already been decoded,
         # return the cached value.
@@ -336,42 +307,28 @@ class RecordBase:
             return self._values[name]
         # NOTE(callumdickinson): Use the type hint to coerce
         # the field value returned in the record dict into the expected type.
-        type_hints = get_type_hints(type(self), include_extras=True)
         # First, check if the field has a type hint defined at all.
         # If not, just cache the value as is and return it.
-        if name not in type_hints:
+        if name not in self._type_hints:
             self._values[name] = self._get_field(name)
             return self._values[name]
         # We know we have a type hint to decode for the field.
-        type_hint = type_hints[name]
-        # Check if the field is annotated.
-        # There are special code paths for handling fields
-        # with specific annotations added to them.
-        if get_type_origin(type_hint) is Annotated:
-            type_args = get_type_args(type_hint)
-            attr_type: Type[Any] = type_args[0]
-            annotations = type_args[1:]
-            if len(annotations) == 1:
-                annotation = annotations[0]
-                # If this field is a field alias,
-                # recursively fetch the value for the target field.
-                if isinstance(annotation, FieldAlias):
-                    self._values[name] = getattr(self, annotation.field)
-                    return self._values[name]
-                # If this field is a model ref, resolve the model ref
-                # and return the intended value.
-                if isinstance(annotation, ModelRef):
-                    self._values[name] = self._getattr_model_ref(
-                        attr_type=attr_type,
-                        model_ref=annotation,
-                    )
-                    return self._values[name]
-                raise ValueError(
-                    (
-                        f"Unsupported annotation for field '{name}': "
-                        f"{annotation}"
-                    ),
-                )
+        type_hint = self._type_hints[name]
+        # If this field is a field alias, recursively fetch
+        # the value for the target field.
+        field_alias = FieldAlias.get(type_hint)
+        if field_alias:
+            self._values[name] = getattr(self, field_alias.field)
+            return self._values[name]
+        # If this field is a model ref, resolve the model ref
+        # and return the intended value.
+        model_ref = ModelRef.get(type_hint)
+        if model_ref:
+            self._values[name] = self._getattr_model_ref(
+                attr_type=get_type_args(type_hint)[0],
+                model_ref=model_ref,
+            )
+            return self._values[name]
         # Base case: Decode the value according to the field's type hint,
         # cache the value, and return it.
         self._values[name] = self._decode_value(
