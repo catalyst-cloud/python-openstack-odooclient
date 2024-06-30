@@ -93,8 +93,8 @@ Create invoices from the given sale order.
 
 #### Parameters
 
-| Name         | Type               | Description                            | Default    |
-|--------------|--------------------|----------------------------------------|------------|
+| Name         | Type              | Description                            | Default    |
+|--------------|-------------------|----------------------------------------|------------|
 | `sale_order` | `int | SaleOrder` | The sale order to create invoices from | (required) |
 
 ## Record

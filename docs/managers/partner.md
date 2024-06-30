@@ -178,8 +178,6 @@ os_referral_id: int | None
 The ID for the [referral code](referral-code.md) the partner used on sign-up,
 if one was used.
 
-return self._get_ref_id("os_referral", optional=True)
-
 ### `os_referral_name`
 
 ```python

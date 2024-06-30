@@ -65,7 +65,7 @@ def get_mapped_field(
 
 def is_subclass(
     type_obj: Type[Any],
-    classes: Union[Type[T], Tuple[Type[T]]],
+    classes: Union[Type[T], Tuple[Type[T], ...]],
 ) -> TypeGuard[Type[T]]:
     """Check whether or not the given type is a subclass of
     any of the given classes (single class, or tuple of one or more classes).

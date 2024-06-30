@@ -148,7 +148,7 @@ class SaleOrder(RecordBase["SaleOrderManager"]):
     """
 
     def action_confirm(self) -> None:
-        """Confirm the sale order."""
+        """Confirm this sale order."""
         self._manager.action_confirm(self)
 
     def create_invoices(self) -> None:
