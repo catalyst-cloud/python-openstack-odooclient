@@ -24,11 +24,13 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Dict,
+    Generic,
     Literal,
     Mapping,
     Optional,
     Sequence,
     Type,
+    TypeVar,
     Union,
 )
 
@@ -45,8 +47,9 @@ if TYPE_CHECKING:
     from odoorpc import ODOO  # type: ignore[import]
     from odoorpc.env import Environment  # type: ignore[import]
 
-    from ..client import Client
-    from .record_manager import RecordManagerBase
+    from .client import ClientBase
+
+RecordManager = TypeVar("RecordManager", bound="RecordManagerBase")
 
 
 class AnnotationBase:
@@ -95,7 +98,7 @@ class FieldAlias(AnnotationBase):
 
     >>> from typing_extensions import Annotated
     >>> from openstack_odooclient import FieldAlias, RecordBase
-    >>> class CustomRecord(RecordBase):
+    >>> class CustomRecord(RecordBase["CustomRecordManager"]):
     ...     name: str
     ...     name_alias: Annotated[str, FieldAlias("name")]
     """
@@ -115,7 +118,7 @@ class ModelRef(AnnotationBase):
 
     >>> from typing_extensions import Annotated
     >>> from openstack_odooclient import ModelRef, RecordBase, User
-    >>> class CustomRecord(RecordBase):
+    >>> class CustomRecord(RecordBase["CustomRecordManager"]):
     ...     user_id: Annotated[int, ModelRef("user_id", User)]
     ...     user_name: Annotated[str, ModelRef("user_id", User)]
     ...     user: Annotated[User, ModelRef("user_id", User)]
@@ -128,10 +131,12 @@ class ModelRef(AnnotationBase):
     record_class: Any
 
 
-class RecordBase:
-    """The base class for records.
+class RecordBase(Generic[RecordManager]):
+    """The generic base class for records.
 
-    Subclass this class to implement the record class for custom record types.
+    Subclass this class to implement the record class for custom record types,
+    specifying the name of the manager class (string), as available in the
+    Python source file, as the generic type argument.
     """
 
     id: int
@@ -184,7 +189,7 @@ class RecordBase:
 
     def __init__(
         self,
-        client: Client,
+        client: ClientBase,
         record: Mapping[str, Any],
         fields: Optional[Sequence[str]],
     ) -> None:
@@ -198,9 +203,10 @@ class RecordBase:
         """The cache for the processed record field values."""
 
     @property
-    def _manager(self) -> RecordManagerBase:
+    def _manager(self) -> RecordManager:
         """The manager object responsible for this record."""
-        return self._client._record_manager_mapping[type(self)]
+        mapping = self._client._record_manager_mapping
+        return mapping[type(self)]  # type: ignore[return-value]
 
     @property
     def _odoo(self) -> ODOO:
@@ -364,7 +370,7 @@ class RecordBase:
                 return field_value
             raise ValueError(
                 (
-                    "Unsupported field value typefor model ref list: "
+                    "Unsupported field value type for model ref list: "
                     f"{value_type}"
                 ),
             )
@@ -487,3 +493,4 @@ class RecordBase:
 
 # NOTE(callumdickinson): Import here to avoid circular imports.
 from ..managers.user import User  # noqa: E402
+from .record_manager import RecordManagerBase  # noqa: E402

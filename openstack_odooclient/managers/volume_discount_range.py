@@ -23,7 +23,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
 
 
-class VolumeDiscountRange(RecordBase):
+class VolumeDiscountRange(RecordBase["VolumeDiscountRangeManager"]):
     customer_group_id: Annotated[
         Optional[int],
         ModelRef("customer_group", CustomerGroup),

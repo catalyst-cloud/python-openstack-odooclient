@@ -23,7 +23,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
 
 
-class CreditType(RecordBase):
+class CreditType(RecordBase["CreditTypeManager"]):
     credit_ids: Annotated[List[int], ModelRef("credits", Credit)]
     """A list of IDs for the credits which are of this credit type."""
 

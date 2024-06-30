@@ -23,7 +23,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
 
 
-class Pricelist(RecordBase):
+class Pricelist(RecordBase["PricelistManager"]):
     active: bool
     """Whether or not the pricelist is active."""
 
@@ -75,7 +75,7 @@ class Pricelist(RecordBase):
         :return: Price to charge
         :rtype: float
         """
-        return self._client.pricelists.get_price(
+        return self._manager.get_price(
             pricelist=self,
             product=product,
             qty=qty,

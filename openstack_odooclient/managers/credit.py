@@ -24,7 +24,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
 
 
-class Credit(RecordBase):
+class Credit(RecordBase["CreditManager"]):
     credit_type_id: Annotated[int, ModelRef("credit_type", CreditType)]
     """The ID of the type of this credit."""
 

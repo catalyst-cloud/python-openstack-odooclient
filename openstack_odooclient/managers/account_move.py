@@ -24,7 +24,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
 
 
-class AccountMove(RecordBase):
+class AccountMove(RecordBase["AccountMoveManager"]):
     amount_total: float
     """Total (taxed) amount charged on the account move (invoice)."""
 

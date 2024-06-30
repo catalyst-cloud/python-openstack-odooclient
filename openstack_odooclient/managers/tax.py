@@ -23,7 +23,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
 
 
-class Tax(RecordBase):
+class Tax(RecordBase["TaxManager"]):
     active: bool
     """Whether or not this tax is active (enabled)."""
 

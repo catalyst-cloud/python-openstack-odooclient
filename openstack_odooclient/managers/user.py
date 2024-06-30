@@ -21,7 +21,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
 
 
-class User(RecordBase):
+class User(RecordBase["UserManager"]):
     active: bool
     """Whether or not this user is active (enabled)."""
 

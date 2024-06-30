@@ -23,7 +23,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
 
 
-class Uom(RecordBase):
+class Uom(RecordBase["UomManager"]):
     active: bool
     """Whether or not this Unit of Measure is active (enabled)."""
 

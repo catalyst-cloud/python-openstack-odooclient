@@ -78,7 +78,7 @@ jobs:
           files: dist/*
           fail_on_unmatched_files: true
 
-  publish-github-pages-latest:
+  publish-github-pages:
     runs-on: ubuntu-22.04
     steps:
       - name: Clone full tree, and checkout branch

@@ -21,7 +21,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
 
 
-class CreditTransaction(RecordBase):
+class CreditTransaction(RecordBase["CreditTransactionManager"]):
     credit_id: Annotated[int, ModelRef("credit", Credit)]
     """The ID of the credit this transaction was made against."""
 

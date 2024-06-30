@@ -50,14 +50,13 @@ class RecordManagerWithUniqueFieldBase(
     ...     RecordBase,
     ...     RecordManagerWithUniqueFieldBase,
     ... )
-    >>> class CustomRecord(RecordBase):
+    >>> class CustomRecord(RecordBase["CustomRecordManager"]):
     ...     name: str
     >>> class CustomRecordManager(
     ...     RecordManagerWithUniqueFieldBase[CustomRecord, str],
     ... ):
     ...     env_name = "custom.record"
     ...     record_class = CustomRecord
-
 
     Once you have your manager class, you can define methods
     that use the provided ``_get_by_unique_field`` method to implement
@@ -195,6 +194,11 @@ class RecordManagerWithUniqueFieldBase(
 
         A number of parameters are available to configure the return type,
         and what happens when a result is not found.
+
+        Additional filters can be added to the search query using the
+        ``filters`` parameter. If defined, these filters will be appended
+        to the unique field search filter. Filters should be defined
+        using the same format that ``search`` uses.
 
         By default all fields available on the record model
         will be selected, but this can be filtered using the

@@ -23,7 +23,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
 
 
-class Partner(RecordBase):
+class Partner(RecordBase["PartnerManager"]):
     active: bool
     """Whether or not this partner is active (enabled)."""
 

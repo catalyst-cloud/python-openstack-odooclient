@@ -22,7 +22,7 @@ from ..base.record import RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
 
 
-class Currency(RecordBase):
+class Currency(RecordBase["CurrencyManager"]):
     active: bool
     """Whether or not this currency is active (enabled)."""
 

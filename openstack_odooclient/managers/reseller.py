@@ -23,7 +23,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
 
 
-class Reseller(RecordBase):
+class Reseller(RecordBase["ResellerManager"]):
     alternative_billing_url: Optional[str]
     """The URL to the cloud billing page for the reseller, if available."""
 

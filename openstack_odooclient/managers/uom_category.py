@@ -21,7 +21,7 @@ from ..base.record import RecordBase
 from ..base.record_manager import RecordManagerBase
 
 
-class UomCategory(RecordBase):
+class UomCategory(RecordBase["UomCategoryManager"]):
     measure_type: Literal[
         "unit",
         "weight",

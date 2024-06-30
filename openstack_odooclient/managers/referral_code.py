@@ -23,7 +23,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_coded import CodedRecordManagerBase
 
 
-class ReferralCode(RecordBase):
+class ReferralCode(RecordBase["ReferralCodeManager"]):
     allowed_uses: int
     """The number of allowed uses of this referral code.
 

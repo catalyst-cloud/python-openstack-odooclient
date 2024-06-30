@@ -24,7 +24,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
 
 
-class Trial(RecordBase):
+class Trial(RecordBase["TrialManager"]):
     account_suspended_date: Union[date, Literal[False]]
     """The date the account was suspended, following the end of the trial."""
 

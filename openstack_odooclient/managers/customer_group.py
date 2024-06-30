@@ -23,7 +23,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
 
 
-class CustomerGroup(RecordBase):
+class CustomerGroup(RecordBase["CustomerGroupManager"]):
     name: str
     """The name of the customer group."""
 

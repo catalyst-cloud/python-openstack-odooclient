@@ -24,7 +24,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
 
 
-class TermDiscount(RecordBase):
+class TermDiscount(RecordBase["TermDiscountManager"]):
     discount_percent: float
     """The maximum discount percentage for this term discount (0-100)."""
 

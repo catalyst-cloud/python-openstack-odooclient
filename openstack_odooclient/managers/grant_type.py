@@ -23,7 +23,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
 
 
-class GrantType(RecordBase):
+class GrantType(RecordBase["GrantTypeManager"]):
     grant_ids: Annotated[List[int], ModelRef("grants", Grant)]
     """A list of IDs for the grants which are of this grant type."""
 

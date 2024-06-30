@@ -23,7 +23,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
 
 
-class ProjectContact(RecordBase):
+class ProjectContact(RecordBase["ProjectContactManager"]):
     contact_type: Literal[
         "primary",
         "billing",

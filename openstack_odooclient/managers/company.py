@@ -23,7 +23,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
 
 
-class Company(RecordBase):
+class Company(RecordBase["CompanyManager"]):
     active: bool
     """Whether or not this company is active (enabled)."""
 

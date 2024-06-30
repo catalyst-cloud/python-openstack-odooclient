@@ -24,7 +24,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
 
 
-class Grant(RecordBase):
+class Grant(RecordBase["GrantManager"]):
     expiry_date: date
     """The date the grant expires."""
 

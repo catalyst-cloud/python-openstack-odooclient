@@ -34,7 +34,7 @@ from ..base.record_manager_with_unique_field import (
 )
 
 
-class Project(RecordBase):
+class Project(RecordBase["ProjectManager"]):
     billing_type: Literal["customer", "internal"]
     """Billing type for this project.
 

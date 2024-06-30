@@ -23,7 +23,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
 
 
-class SaleOrderLine(RecordBase):
+class SaleOrderLine(RecordBase["SaleOrderLineManager"]):
     company_id: Annotated[int, ModelRef("company_id", Company)]
     """The ID for the company this sale order line
     was generated for.

@@ -24,7 +24,7 @@ from ..base.record import FieldAlias, ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
 
 
-class SaleOrder(RecordBase):
+class SaleOrder(RecordBase["SaleOrderManager"]):
     amount_untaxed: float
     """The untaxed total cost of the sale order."""
 
@@ -149,11 +149,11 @@ class SaleOrder(RecordBase):
 
     def action_confirm(self) -> None:
         """Confirm the sale order."""
-        self._client.sale_orders.action_confirm(self)
+        self._manager.action_confirm(self)
 
     def create_invoices(self) -> None:
         """Create invoices from this sale order."""
-        self._client.sale_orders.create_invoices(self)
+        self._manager.create_invoices(self)
 
 
 class SaleOrderManager(NamedRecordManagerBase[SaleOrder]):

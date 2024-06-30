@@ -23,7 +23,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
 
 
-class SupportSubscriptionType(RecordBase):
+class SupportSubscriptionType(RecordBase["SupportSubscriptionTypeManager"]):
     billing_type: Literal["paid", "complimentary"]
     """The type of support subscription."""
 

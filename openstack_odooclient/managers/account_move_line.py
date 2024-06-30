@@ -23,7 +23,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
 
 
-class AccountMoveLine(RecordBase):
+class AccountMoveLine(RecordBase["AccountMoveLineManager"]):
     currency_id: Annotated[int, ModelRef("currency_id", Currency)]
     """The ID for the currency used in this
     account move (invoice) line.

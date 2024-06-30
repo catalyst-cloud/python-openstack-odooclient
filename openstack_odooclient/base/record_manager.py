@@ -55,7 +55,7 @@ if TYPE_CHECKING:
     from odoorpc import ODOO  # type: ignore[import]
     from odoorpc.env import Environment  # type: ignore[import]
 
-    from .. import client
+    from .client import ClientBase
 
 Record = TypeVar("Record", bound=RecordBase)
 FilterCriterion = Union[Tuple[str, str, Any], Sequence[Any], str]
@@ -78,7 +78,7 @@ class RecordManagerBase(Generic[Record]):
        to define the record class that will be used to create record objects.
 
     >>> from openstack_odooclient import Client, RecordBase, RecordManagerBase
-    >>> class CustomRecord(RecordBase):
+    >>> class CustomRecord(RecordBase["CustomRecordManager"]):
     ...     name: str
     >>> class CustomRecordManager(RecordManager[CustomRecord]):
     ...     env_name = "custom.record"
@@ -97,7 +97,7 @@ class RecordManagerBase(Generic[Record]):
     """The Odoo environment (model) name to manage."""
 
     record_class: Type[Record]
-    """The record object type to instatiate using this manager."""
+    """The record object type to instantiate using this manager."""
 
     default_fields: Optional[Tuple[str, ...]] = None
     """List of fields to fetch by default if a field list is not supplied
@@ -106,7 +106,7 @@ class RecordManagerBase(Generic[Record]):
     By default, all fields on the model will be fetched.
     """
 
-    def __init__(self, client: client.Client) -> None:
+    def __init__(self, client: ClientBase) -> None:
         self._client = client
         """The Odoo client object the manager uses."""
         # Assign this record manager object as the manager

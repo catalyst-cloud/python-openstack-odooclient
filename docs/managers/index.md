@@ -872,7 +872,6 @@ The managers for these record types have additional methods for querying records
 * [Partner Categories](partner-category.md)
 * [Pricelists](pricelist.md)
 * [Product Categories](product-category.md)
-* [OpenStack Projects](project.md)
 * [OpenStack Reseller Tiers](reseller-tier.md)
 * [Sale Orders](sale-order.md)
 * [OpenStack Support Subscription Types](support-subscription-type.md)

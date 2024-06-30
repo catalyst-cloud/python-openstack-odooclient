@@ -23,7 +23,7 @@ from ..base.record import FieldAlias, ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
 
 
-class ProductCategory(RecordBase):
+class ProductCategory(RecordBase["ProductCategoryManager"]):
     child_id: Annotated[List[int], ModelRef("child_id", Self)]
     """A list of IDs for the child categories."""
 

@@ -145,7 +145,7 @@ product_id: int
 The ID of the [product](product.md) to use when applying
 the grant to invoices.
 
-### `product_nane`
+### `product_name`
 
 ```python
 product_name: str

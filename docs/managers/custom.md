@@ -22,7 +22,9 @@ support for custom Odoo add-ons.
 Odoo records are represented by **record classes** in the Odoo Client library.
 
 Record classes are implementations (subclasses) of the `RecordBase` class,
-which the record manager uses to create immutable objects for the record model.
+which the [record manager](#managers) uses to create immutable objects for the record model.
+The name of the record manager (as defined in the Python source file) should
+be passed as the generic type argument for `RecordBase`, as a string.
 
 Record fields are defined as type hints on the record class.
 These type hints are parsed by the Odoo Client library,
@@ -34,10 +36,19 @@ from __future__ import annotations
 
 from openstack_odooclient import RecordBase
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: str
     """Description of the field."""
 ```
+
+!!! note
+
+    Make sure not to forget passing the name of the record manager class
+    as the generic type argument for `RecordBase`.
+
+    If this is not done there are no issues from a functional perspective,
+    but type hinting for the `_manager` attribute will not work correctly
+    when creating custom [record methods](#record-methods).
 
 ### Field Types
 
@@ -52,7 +63,7 @@ from __future__ import annotations
 
 from openstack_odooclient import RecordBase
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: bool
     """Description of the field."""
 ```
@@ -66,7 +77,7 @@ from __future__ import annotations
 
 from openstack_odooclient import RecordBase
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: int
     """Description of the field."""
 ```
@@ -80,7 +91,7 @@ from __future__ import annotations
 
 from openstack_odooclient import RecordBase
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: str
     """Description of the field."""
 ```
@@ -94,7 +105,7 @@ from __future__ import annotations
 
 from openstack_odooclient import RecordBase
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: int
     """Description of the field."""
 ```
@@ -110,7 +121,7 @@ from datetime import date
 
 from openstack_odooclient import RecordBase
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: date
     """Description of the field."""
 ```
@@ -126,7 +137,7 @@ from datetime import datetime
 
 from openstack_odooclient import RecordBase
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: date
     """Description of the field."""
 ```
@@ -144,7 +155,7 @@ from typing import Literal
 
 from openstack_odooclient import RecordBase
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: Literal["value1", "value2", "value3"]
     """Description of the field.
 
@@ -173,7 +184,7 @@ from typing import Literal, Union
 
 from openstack_odooclient import RecordBase
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: Union[str, Literal[False]]
     """Description of the field."""
 ```
@@ -190,7 +201,7 @@ from typing import Optional
 
 from openstack_odooclient import RecordBase
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: Optional[str]
     """Description of the field."""
 ```
@@ -215,7 +226,7 @@ from __future__ import annotations
 from openstack_odooclient import FieldAlias, RecordBase
 from typing_extensions import Annotated
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: str
     """Description of the field."""
 
@@ -257,7 +268,7 @@ from __future__ import annotations
 from openstack_odooclient import ModelRef, RecordBase, User
 from typing_extensions import Annotated
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     user_id: Annotated[int, ModelRef("user_id", User)]
     """ID for the user that owns this record."""
 ```
@@ -270,7 +281,7 @@ from __future__ import annotations
 from openstack_odooclient import ModelRef, RecordBase, User
 from typing_extensions import Annotated
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     user_name: Annotated[str, ModelRef("user_id", User)]
     """Name of the user that owns this record."""
 ```
@@ -283,7 +294,7 @@ from __future__ import annotations
 from openstack_odooclient import ModelRef, RecordBase, User
 from typing_extensions import Annotated
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     user: Annotated[User, ModelRef("user_id", User)]
     """The user that owns this record.
 
@@ -307,7 +318,7 @@ from __future__ import annotations
 from openstack_odooclient import ModelRef, RecordBase, User
 from typing_extensions import Annotated
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     user_id: Annotated[int, ModelRef("user_id", User)]
     """ID for the user that owns this record."""
 
@@ -339,7 +350,7 @@ from typing import Optional
 from openstack_odooclient import ModelRef, RecordBase, User
 from typing_extensions import Annotated
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     user_id: Annotated[Optional[int], ModelRef("user_id", User)]
     """ID for the user that owns this record."""
 
@@ -365,7 +376,7 @@ from typing import Optional
 from openstack_odooclient import ModelRef, RecordBase
 from typing_extensions import Annotated, Self
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     record_id: Annotated[Optional[int], ModelRef("user_id", Self)]
     """ID for the record related to this one, if set.."""
 
@@ -402,7 +413,7 @@ from typing import List
 from openstack_odooclient import ModelRef, RecordBase, Product
 from typing_extensions import Annotated
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     product_ids: Annotated[List[int], ModelRef("product_id", Product)]
     """The list of IDs for the products to use."""
 ```
@@ -417,7 +428,7 @@ from typing import List
 from openstack_odooclient import ModelRef, RecordBase, Product
 from typing_extensions import Annotated
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     products: Annotated[List[Product], ModelRef("product_id", Product)]
     """The list of products to use.
 
@@ -443,7 +454,7 @@ from typing import List
 from openstack_odooclient import ModelRef, RecordBase, Product
 from typing_extensions import Annotated
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     product_ids: Annotated[List[int], ModelRef("product_id", Product)]
     """The list of IDs for the products to use."""
 
@@ -472,7 +483,7 @@ from typing import List
 from openstack_odooclient import ModelRef, RecordBase
 from typing_extensions import Annotated, Self
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     child_ids: Annotated[List[int], ModelRef("child_id", Self)]
     """The list of IDs for the child records."""
 
@@ -502,10 +513,10 @@ from __future__ import annotations
 
 from typing import List
 
-from openstack_odooclient import ModelRef, RecordBase
+from openstack_odooclient import ModelRef, RecordBase, RecordManagerBase
 from typing_extensions import Annotated
 
-class Parent(RecordBase):
+class Parent(RecordBase["ParentManager"]):
     child_ids: Annotated[List[int], ModelRef("child_id", Child)]
     """The list of IDs for the children records."""
 
@@ -516,6 +527,10 @@ class Parent(RecordBase):
     and caches them for subsequent accesses.
     """
 
+class ParentManager(RecordManagerBase[Parent]):
+    env_name = "custom.parent"
+    record_class = Parent
+
 from .child import Child  # noqa: E402
 ```
 
@@ -524,10 +539,10 @@ from __future__ import annotations
 
 from typing import Optional
 
-from openstack_odooclient import ModelRef, RecordBase
+from openstack_odooclient import ModelRef, RecordBase, RecordManagerBase
 from typing_extensions import Annotated
 
-class Child(RecordBase):
+class Child(RecordBase["ChildManager"]):
     parent_id: Annotated[Optional[int], ModelRef("parent_id", Parent)]
     """ID for the parent record, if it has one."""
 
@@ -540,6 +555,10 @@ class Child(RecordBase):
     This fetches the full record from Odoo once,
     and caches it for subsequent accesses.
     """
+
+class Child(RecordManagerBase[Child]):
+    env_name = "custom.child"
+    record_class = child
 
 from .parent import Parent  # noqa: E402
 ```
@@ -568,7 +587,7 @@ from __future__ import annotations
 
 from openstack_odooclient import RecordBase
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: str
     """Description of the field."""
 
@@ -609,7 +628,7 @@ from __future__ import annotations
 
 from openstack_odooclient import RecordBase
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: str
     """Description of the field."""
 
@@ -621,7 +640,7 @@ In addition to all of the Odoo fields defined on the record class,
 the following internal attributes are also available for use in object methods:
 
 * `_client` ([`Client`](../index.md#connecting-to-odoo)) - The Odoo client object the record was created from
-* `_manager` (`RecordManagerBase`) - The manager object the record was created from
+* `_manager` (`RecordManager`) - The manager object the record was created from (correctly type hinted so methods can be called)
 * `_records` (`MappingProxyType[str, Any]`) - The raw record fields from OdooRPC
 * `_fields` (`tuple[str, ...] | None`) - The fields that were selected during the query (or `None` for all fields)
 * `_odoo` (`odoorpc.ODOO`) - The OdooRPC connection object
@@ -643,11 +662,11 @@ for implementing the query methods for the record class.
 ### Creating a Manager Class
 
 Manager classes are subclasses of the generic `RecordManagerBase` class,
-specifying the record class the generic type argument,
+specifying the record class as the generic type argument,
 and defining the following class attributes:
 
 * `env_name` (`str`) - The name of the Odoo environment (database model) for the record class
-* `record_class` (`Type[T]`) - The record class to use to create record objects (**must** be the same class as the one specified in the generic subclass definition)
+* `record_class` (`Type[Record]`) - The record class to use to create record objects (**must** be the same class as the one specified in the generic subclass definition)
 
 The following optional class attributes are also available:
 
@@ -663,7 +682,7 @@ from typing import List, Union
 
 from openstack_odooclient import RecordBase, RecordManagerBase
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: str
     """Description of the field."""
 
@@ -687,7 +706,7 @@ from typing import List, Union
 
 from openstack_odooclient import Client, RecordBase, RecordManagerBase
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: str
     """Description of the field."""
 
@@ -713,7 +732,7 @@ from typing import List, Union
 
 from openstack_odooclient import RecordBase, RecordManagerBase
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: str
     """Description of the field."""
 
@@ -745,7 +764,7 @@ from typing import List, Union
 
 from openstack_odooclient import RecordBase, RecordManagerBase
 
-class CustomRecord(RecordBase):
+class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: str
     """Description of the field."""
 
@@ -769,7 +788,7 @@ class CustomRecordManager(RecordManagerBase[CustomRecord]):
 The following internal attributes are also available for use in methods:
 
 * `env_name` (`str`) - The name of the Odoo environment (database model) for the record class
-* `record_class` (`Type[T]`) - The record class object
+* `record_class` (`Type[Record]`) - The record class object
 * `default_fields` (`tuple[str, ...] | None`) - The default list of fields to fetch on queries (or `None` to fetch all)
 * `_client` ([`Client`](../index.md#connecting-to-odoo)) - The Odoo client object the record manager uses
 * `_odoo` (`odoorpc.ODOO`) - The OdooRPC connection object

@@ -21,7 +21,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
 
 
-class ResellerTier(RecordBase):
+class ResellerTier(RecordBase["ResellerTierManager"]):
     discount_percent: float
     """The maximum discount percentage for this reseller tier (0-100)."""
 

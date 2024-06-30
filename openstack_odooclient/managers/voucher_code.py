@@ -24,7 +24,7 @@ from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
 
 
-class VoucherCode(RecordBase):
+class VoucherCode(RecordBase["VoucherCodeManager"]):
     claimed: bool
     """Whether or not this voucher code has been claimed."""
 

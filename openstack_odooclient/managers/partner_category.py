@@ -23,7 +23,7 @@ from ..base.record import FieldAlias, ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
 
 
-class PartnerCategory(RecordBase):
+class PartnerCategory(RecordBase["PartnerCategoryManager"]):
     active: bool
     """Whether or not the partner category is active (enabled)."""
 

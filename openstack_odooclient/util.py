@@ -15,7 +15,9 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
+
+from typing_extensions import TypeGuard
 
 if TYPE_CHECKING:
     from typing import Any, Mapping, Optional, Tuple, Type, Union
@@ -26,6 +28,8 @@ DEFAULT_SERVER_TIME_FORMAT = "%H:%M:%S"
 DEFAULT_SERVER_DATETIME_FORMAT = (
     f"{DEFAULT_SERVER_DATE_FORMAT} {DEFAULT_SERVER_TIME_FORMAT}"
 )
+
+T = TypeVar("T")
 
 
 def get_mapped_field(
@@ -61,8 +65,8 @@ def get_mapped_field(
 
 def is_subclass(
     type_obj: Type[Any],
-    classes: Union[Type[Any], Tuple[Type[Any]]],
-) -> bool:
+    classes: Union[Type[T], Tuple[Type[T]]],
+) -> TypeGuard[Type[T]]:
     """Check whether or not the given type is a subclass of
     any of the given classes (single class, or tuple of one or more classes).
 

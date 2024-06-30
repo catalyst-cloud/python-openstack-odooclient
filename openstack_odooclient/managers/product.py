@@ -34,7 +34,7 @@ from ..base.record_manager_with_unique_field import (
 )
 
 
-class Product(RecordBase):
+class Product(RecordBase["ProductManager"]):
     categ_id: Annotated[int, ModelRef("categ_id", ProductCategory)]
     """The ID for the category this product is under."""
 
