@@ -18,7 +18,7 @@ keywords = [
 license = {text = "Apache-2.0"}
 classifiers = [
     "Development Status :: 4 - Beta",
-    "Intended Audience :: System Administrators",
+    "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
     "Natural Language :: English",
     "Operating System :: OS Independent",
@@ -28,7 +28,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "Topic :: System :: Systems Administration",
+    "Topic :: Software Development :: Libraries",
     "Typing :: Typed",
 ]
 requires-python = ">=3.8"
@@ -40,11 +40,11 @@ dependencies = [
 dynamic = ["version"]
 
 [project.urls]
-Homepage = "https://github.com/catalyst-cloud/python-openstack-odooclient"
-Documentation = "https://github.com/catalyst-cloud/python-openstack-odooclient/blob/main/docs/index.md"
+Homepage = "https://catalyst-cloud.github.io/python-openstack-odooclient"
+Documentation = "https://catalyst-cloud.github.io/python-openstack-odooclient"
 Repository = "https://github.com/catalyst-cloud/python-openstack-odooclient"
 Issues = "https://github.com/catalyst-cloud/python-openstack-odooclient/issues"
-Changelog = "https://github.com/catalyst-cloud/python-openstack-odooclient/blob/main/docs/changelog.md"
+Changelog = "https://catalyst-cloud.github.io/python-openstack-odooclient/latest/changelog.html"
 
 [tool.setuptools_scm]
 
@@ -62,7 +62,6 @@ docs = [
 [tool.pdm.scripts]
 lint = {cmd = "ruff check"}
 format = {cmd = "ruff format"}
-update-changelog = {cmd = "scriv collect --keep"}
 
 [tool.ruff]
 fix = true

@@ -45,7 +45,10 @@ class AccountMove(RecordBase):
     """
 
     invoice_date: date
-    """Date associated with the account move (invoice)."""
+    """The invoicing date for the account move (invoice)."""
+
+    invoice_date_due: date
+    """The due date that the account move (invoice) must be paid by."""
 
     invoice_line_ids: Annotated[
         List[int],

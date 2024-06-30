@@ -36,7 +36,6 @@ from typing import (
 )
 
 from typing_extensions import (
-    Annotated,
     Self,
     get_args as get_type_args,
     get_origin as get_type_origin,
@@ -48,7 +47,6 @@ from ..util import (
     DEFAULT_SERVER_DATE_FORMAT,
     DEFAULT_SERVER_DATETIME_FORMAT,
     get_mapped_field,
-    is_subclass,
 )
 from .record import ModelRef, RecordBase
 
@@ -59,7 +57,7 @@ if TYPE_CHECKING:
     from .. import client
 
 Record = TypeVar("Record", bound=RecordBase)
-FilterCriteria = Union[Tuple[str, str, Any], Sequence[Any], str]
+FilterCriterion = Union[Tuple[str, str, Any], Sequence[Any], str]
 
 
 class RecordManagerBase(Generic[Record]):
@@ -353,7 +351,7 @@ class RecordManagerBase(Generic[Record]):
     @overload
     def search(
         self,
-        filters: Optional[Sequence[FilterCriteria]] = ...,
+        filters: Optional[Sequence[FilterCriterion]] = ...,
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
         as_id: Literal[False] = ...,
@@ -363,7 +361,7 @@ class RecordManagerBase(Generic[Record]):
     @overload
     def search(
         self,
-        filters: Optional[Sequence[FilterCriteria]] = ...,
+        filters: Optional[Sequence[FilterCriterion]] = ...,
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
         *,
@@ -374,7 +372,7 @@ class RecordManagerBase(Generic[Record]):
     @overload
     def search(
         self,
-        filters: Optional[Sequence[FilterCriteria]] = ...,
+        filters: Optional[Sequence[FilterCriterion]] = ...,
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
         as_id: Literal[False] = ...,
@@ -385,7 +383,7 @@ class RecordManagerBase(Generic[Record]):
     @overload
     def search(
         self,
-        filters: Optional[Sequence[FilterCriteria]] = ...,
+        filters: Optional[Sequence[FilterCriterion]] = ...,
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
         *,
@@ -396,7 +394,7 @@ class RecordManagerBase(Generic[Record]):
     @overload
     def search(
         self,
-        filters: Optional[Sequence[FilterCriteria]] = ...,
+        filters: Optional[Sequence[FilterCriterion]] = ...,
         fields: Optional[Iterable[str]] = ...,
         order: Optional[str] = ...,
         as_id: bool = ...,
@@ -405,7 +403,7 @@ class RecordManagerBase(Generic[Record]):
 
     def search(
         self,
-        filters: Optional[Sequence[FilterCriteria]] = None,
+        filters: Optional[Sequence[FilterCriterion]] = None,
         fields: Optional[Iterable[str]] = None,
         order: Optional[str] = None,
         as_id: bool = False,
@@ -509,7 +507,7 @@ class RecordManagerBase(Generic[Record]):
 
     def _encode_filters(
         self,
-        filters: Sequence[FilterCriteria],
+        filters: Sequence[FilterCriterion],
     ) -> List[Union[str, Tuple[str, str, Any]]]:
         _filters: List[Union[str, Tuple[str, str, Any]]] = []
         for f in filters:
@@ -589,9 +587,6 @@ class RecordManagerBase(Generic[Record]):
         if local_field not in self._record_type_hints:
             return (Any, remote_field)
         type_hint = self._record_type_hints[local_field]
-        # If the type hint is annotated, get the original data type.
-        if get_type_origin(type_hint) is Annotated:
-            return (get_type_args(type_hint)[0], remote_field)
         return (type_hint, remote_field)
 
     def create(self, **fields) -> int:
@@ -861,11 +856,9 @@ class RecordManagerBase(Generic[Record]):
         value_types = (
             get_type_args(type_hint) if type_origin is Union else [type_origin]
         )
+        is_model_ref = ModelRef.is_annotated(type_hint)
         for value_type in value_types:
-            if is_subclass(value_type, RecordBase) and isinstance(
-                value,
-                RecordBase,
-            ):
+            if is_model_ref and isinstance(value, RecordBase):
                 return value.id
             if value_type is date and isinstance(value, date):
                 return value.strftime(DEFAULT_SERVER_DATE_FORMAT)
