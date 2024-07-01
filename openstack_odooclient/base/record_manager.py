@@ -915,8 +915,7 @@ class RecordManagerBase(Generic[Record]):
     def _encode_value(self, type_hint: Any, value: Any) -> Any:
         # Field aliases should be parsed before we get to this point.
         # Handle model refs specially.
-        is_model_ref = ModelRef.is_annotated(type_hint)
-        if is_model_ref:
+        if ModelRef.is_annotated(type_hint):
             attr_type = get_type_origin(get_type_args(type_hint)[0])
             if attr_type is list:
                 # False, None or empty structures are expected here.
