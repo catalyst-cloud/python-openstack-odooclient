@@ -16,7 +16,9 @@ changes between Odoo versions.
 
 The OpenStack Odoo Client library supports Python 3.8 and later.
 
-To install the library package, simply install the `openstack-odooclient` package using `pip`.
+To install the library package, simply install the
+[`openstack-odooclient`](https://pypi.org/project/openstack-odooclient)
+package using `pip`.
 
 ```bash
 python -m pip install openstack-odooclient
