@@ -3,6 +3,7 @@
 name: main
 
 on:
+  pull_request:
   push:
     branches:
       - main
@@ -10,6 +11,8 @@ on:
 jobs:
   publish-github-pages:
     runs-on: ubuntu-22.04
+    permissions:
+      contents: write
     steps:
       - name: Clone full tree, and checkout branch
         uses: actions/checkout@v4
