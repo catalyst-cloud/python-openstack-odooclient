@@ -145,13 +145,13 @@ class RecordBase(Generic[RecordManager]):
     create_date: datetime
     """The time the record was created."""
 
-    create_uid: Annotated[int, ModelRef("create_uid", User)]
+    create_uid: Annotated[Optional[int], ModelRef("create_uid", User)]
     """The ID of the user that created this record."""
 
-    create_name: Annotated[str, ModelRef("create_uid", User)]
+    create_name: Annotated[Optional[str], ModelRef("create_uid", User)]
     """The name of the user that created this record."""
 
-    create_user: Annotated[User, ModelRef("create_uid", User)]
+    create_user: Annotated[Optional[User], ModelRef("create_uid", User)]
     """The user that created this record.
 
     This fetches the full record from Odoo once,
@@ -161,13 +161,13 @@ class RecordBase(Generic[RecordManager]):
     write_date: datetime
     """The time the record was last modified."""
 
-    write_uid: Annotated[int, ModelRef("write_uid", User)]
+    write_uid: Annotated[Optional[int], ModelRef("write_uid", User)]
     """The ID for the user that last modified this record."""
 
-    write_name: Annotated[str, ModelRef("write_uid", User)]
+    write_name: Annotated[Optional[str], ModelRef("write_uid", User)]
     """The name of the user that last modified this record."""
 
-    write_user: Annotated[User, ModelRef("write_uid", User)]
+    write_user: Annotated[Optional[User], ModelRef("write_uid", User)]
     """The user that last modified this record.
 
     This fetches the full record from Odoo once,

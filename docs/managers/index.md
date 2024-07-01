@@ -1292,7 +1292,7 @@ The time the record was created.
 #### `create_uid`
 
 ```python
-create_uid: int
+create_uid: int | None
 ```
 
 The ID of the [user](user.md) that created this record.
@@ -1300,7 +1300,7 @@ The ID of the [user](user.md) that created this record.
 #### `create_name`
 
 ```python
-create_name: str
+create_name: str | None
 ```
 
 The name of the [user](user.md) that created this record.
@@ -1308,7 +1308,7 @@ The name of the [user](user.md) that created this record.
 #### `create_user`
 
 ```python
-create_user: User
+create_user: User | None
 ```
 
 The [user](user.md) that created this record.
@@ -1319,7 +1319,7 @@ and caches it for subsequent accesses.
 #### `write_date`
 
 ```python
-write_date: datetime
+write_date: datetime | None
 ```
 
 The time the record was last modified.
@@ -1327,7 +1327,7 @@ The time the record was last modified.
 #### `write_uid`
 
 ```python
-write_uid: int
+write_uid: int | None
 ```
 
 The ID of the [user](user.md) that last modified this record.
@@ -1335,7 +1335,7 @@ The ID of the [user](user.md) that last modified this record.
 #### `write_name`
 
 ```python
-write_name: str
+write_name: str | None
 ```
 
 The name of the [user](user.md) that modified this record.
@@ -1343,7 +1343,7 @@ The name of the [user](user.md) that modified this record.
 #### `write_user`
 
 ```python
-write_user: User
+write_user: User | None
 ```
 
 The [user](user.md) that last modified this record.

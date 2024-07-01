@@ -37,6 +37,7 @@ from typing import (
 )
 
 from typing_extensions import (
+    Annotated,
     Self,
     get_args as get_type_args,
     get_origin as get_type_origin,
@@ -912,14 +913,36 @@ class RecordManagerBase(Generic[Record]):
         return self._get_remote_field(self._resolve_alias(field))
 
     def _encode_value(self, type_hint: Any, value: Any) -> Any:
-        type_origin = get_type_origin(type_hint) or type_hint
-        value_types = (
-            get_type_args(type_hint) if type_origin is Union else [type_origin]
-        )
+        # Field aliases should be parsed before we get to this point.
+        # Handle model refs specially.
         is_model_ref = ModelRef.is_annotated(type_hint)
-        for value_type in value_types:
-            if is_model_ref and isinstance(value, RecordBase):
+        if is_model_ref:
+            attr_type = get_type_origin(get_type_args(type_hint)[0])
+            if attr_type is list and isinstance(value, (list, set, tuple)):
+                return [
+                    (record.id if isinstance(record, RecordBase) else record)
+                    for record in value
+                ]
+            if isinstance(value, RecordBase):
                 return value.id
+            # Should be a record ID (int).
+            return value
+        # For every other field type, parse the possible value types
+        # from the type hint.
+        type_hint_origin = get_type_origin(type_hint) or type_hint
+        attr_type = (
+            get_type_args(type_hint)[0]
+            if type_hint_origin is Annotated
+            else type_hint_origin
+        )
+        attr_type_origin = get_type_origin(attr_type) or attr_type
+        value_types = (
+            get_type_args(attr_type)
+            if attr_type_origin is Union
+            else [attr_type_origin]
+        )
+        # Recursively handle the types that need to be serialised.
+        for value_type in value_types:
             if value_type is date and isinstance(value, date):
                 return value.strftime(DEFAULT_SERVER_DATE_FORMAT)
             if value_type is datetime and isinstance(value, datetime):
