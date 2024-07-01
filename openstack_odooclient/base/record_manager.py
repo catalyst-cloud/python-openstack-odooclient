@@ -918,14 +918,26 @@ class RecordManagerBase(Generic[Record]):
         is_model_ref = ModelRef.is_annotated(type_hint)
         if is_model_ref:
             attr_type = get_type_origin(get_type_args(type_hint)[0])
-            if attr_type is list and isinstance(value, (list, set, tuple)):
-                return [
-                    (record.id if isinstance(record, RecordBase) else record)
-                    for record in value
-                ]
+            if attr_type is list:
+                # False, None or empty structures are expected here.
+                if not value:
+                    return []
+                if isinstance(value, (list, set, tuple)):
+                    return [
+                        (
+                            record.id
+                            if isinstance(record, RecordBase)
+                            else record
+                        )
+                        for record in value
+                    ]
             if isinstance(value, RecordBase):
                 return value.id
-            # Should be a record ID (int).
+            # None is our internal representation of "no value".
+            # Odoo generally expects False.
+            if value is None:
+                return False
+            # Should be a record ID (int), or False.
             return value
         # For every other field type, parse the possible value types
         # from the type hint.
