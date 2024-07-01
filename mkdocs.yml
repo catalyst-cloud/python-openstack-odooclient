@@ -1,0 +1,107 @@
+---
+
+site_name: OpenStack Odoo Client Library for Python
+site_description: The documentation for the OpenStack Odoo Client library for Python.
+site_author: Callum Dickinson <callum.dickinson@catalystcloud.nz>
+site_url: https://catalyst-cloud.github.io/python-openstack-odooclient
+repo_url: https://github.com/catalyst-cloud/python-openstack-odooclient
+copyright: Copyright © 2024 Catalyst Cloud Limited
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - toc:
+      permalink: true
+      title: Table of Contents
+
+plugins:
+  - offline
+  - search
+
+extra:
+  version:
+    provider: mike
+
+nav:
+  - Getting Started: index.md
+  - Managers:
+    - managers/index.md
+    - managers/account-move.md
+    - managers/account-move-line.md
+    - managers/company.md
+    - managers/credit.md
+    - managers/credit-type.md
+    - managers/credit-transaction.md
+    - managers/currency.md
+    - managers/customer-group.md
+    - managers/grant.md
+    - managers/grant-type.md
+    - managers/partner.md
+    - managers/partner-category.md
+    - managers/pricelist.md
+    - managers/product.md
+    - managers/product-category.md
+    - managers/project.md
+    - managers/project-contact.md
+    - managers/referral-code.md
+    - managers/reseller.md
+    - managers/reseller-tier.md
+    - managers/sale-order.md
+    - managers/sale-order-line.md
+    - managers/support-subscription.md
+    - managers/support-subscription-type.md
+    - managers/tax.md
+    - managers/tax-group.md
+    - managers/term-discount.md
+    - managers/trial.md
+    - managers/uom.md
+    - managers/uom-category.md
+    - managers/user.md
+    - managers/volume-discount-range.md
+    - managers/voucher-code.md
+    - managers/custom.md
+  - performance.md
+  - changelog.md
+
+theme:
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      primary: purple
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+  features:
+    - navigation.footer
+    - navigation.indexes
+    - navigation.path
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow

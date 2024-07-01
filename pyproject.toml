@@ -1,0 +1,170 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "openstack-odooclient"
+authors = [
+    {name = "Callum Dickinson", email = "callum.dickinson@catalystcloud.nz"},
+]
+description = "Python client library for Odoo and the OpenStack integration add-on."
+readme = "README.md"
+keywords = [
+    "openstack",
+    "odoo",
+    "erp",
+    "billing",
+]
+license = {text = "Apache-2.0"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries",
+    "Typing :: Typed",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "OdooRPC>=0.9.0",
+    "packaging",
+    "typing-extensions>=4.0.0",
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://catalyst-cloud.github.io/python-openstack-odooclient"
+Documentation = "https://catalyst-cloud.github.io/python-openstack-odooclient"
+Repository = "https://github.com/catalyst-cloud/python-openstack-odooclient"
+Issues = "https://github.com/catalyst-cloud/python-openstack-odooclient/issues"
+Changelog = "https://catalyst-cloud.github.io/python-openstack-odooclient/latest/changelog.html"
+
+[tool.setuptools_scm]
+
+[tool.pdm.dev-dependencies]
+lint = [
+    "mypy==1.10.0",
+    "ruff==0.4.8",
+]
+docs = [
+    "mkdocs-material>=9.5.27",
+    "towncrier>=23.11.0",
+    "mike>=2.1.2",
+]
+
+[tool.pdm.scripts]
+lint = {cmd = "ruff check"}
+format = {cmd = "ruff format"}
+
+[tool.ruff]
+fix = true
+indent-width = 4
+line-length = 79
+output-format = "grouped"
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = "dynamic"
+indent-style = "space"
+line-ending = "auto"
+quote-style = "double"
+skip-magic-trailing-comma = false
+
+[tool.ruff.lint]
+select = [
+    "A",
+    "B",
+    "BLE",
+    "E",
+    "F",
+    "G",
+    "I",
+    "INP",
+    "N",
+    "PLC",
+    "PLE",
+    "PLR",
+    "PLW",
+    "PTH",
+    "RUF",
+    "S",
+    "T10",
+    "T20",
+    "W",
+    "YTT",
+]
+extend-select = [
+    # COM812 is currently disabled due to a conflict with the Ruff formatter.
+    # https://github.com/astral-sh/ruff/issues/9216
+    # TODO(callumdickinson): Decide whether to enable or remove.
+    # "COM812",
+    "COM818",
+    "UP009",
+]
+extend-ignore = [
+    "A003",
+    "B023",
+    "N805",
+    "N806",
+    "PLR0911",
+    "PLR0912",
+    "PLR0913",
+    "PLR0915",
+    "RUF012",
+]
+
+[tool.ruff.lint.isort]
+lines-between-types = 1
+combine-as-imports = true
+required-imports = [
+    "from __future__ import annotations",
+]
+
+[tool.mypy]
+python_version = "3.8"
+pretty = true
+
+[tool.towncrier]
+directory = "changelog.d"
+filename = "docs/changelog.md"
+start_string = "<!-- towncrier release notes start -->\n"
+underlines = ["", "", ""]
+title_format = "## [{version}](https://github.com/catalyst-cloud/python-openstack-odooclient/releases/tag/{version}) - {project_date}"
+issue_format = "[#{issue}](https://github.com/catalyst-cloud/python-openstack-odooclient/pull/{issue})"
+
+[[tool.towncrier.type]]
+directory = "security"
+name = "Security"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "removed"
+name = "Removed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "deprecated"
+name = "Deprecated"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "added"
+name = "Added"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "changed"
+name = "Changed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "fixed"
+name = "Fixed"
+showcontent = true

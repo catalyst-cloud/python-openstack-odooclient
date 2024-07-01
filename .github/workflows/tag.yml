@@ -1,0 +1,96 @@
+name: tag
+
+on:
+  push:
+    tags:
+      - "*.*.*"
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Clone full tree, and checkout tag
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Python and PDM
+        uses: pdm-project/setup-pdm@v4
+        with:
+          python-version: "3.12"
+          version: "2.16.1"
+      - name: Build source dist and wheels
+        run: pdm build --verbose
+      - name: Upload source dist and wheels to artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 5
+          if-no-files-found: error
+
+  publish-pypi:
+    needs: build
+    runs-on: ubuntu-22.04
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - name: Clone full tree, and checkout tag
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download source dist and wheels from artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - name: Setup Python and PDM
+        uses: pdm-project/setup-pdm@v4
+        with:
+          python-version: "3.12"
+          version: "2.16.1"
+      - name: Publish source dist and wheels to PyPI
+        run: pdm publish --no-build --verbose
+
+  publish-github-release:
+    needs: build
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - name: Clone and checkout tag
+        uses: actions/checkout@v4
+      - name: Download source dist and wheels from artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - name: Extract changelog
+        id: extract-changelog
+        uses: sean0x42/markdown-extract@v2
+        with:
+          file: docs/changelog.md
+          pattern: ${{ github.ref_name }}
+      - name: Publish the GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body: ${{ steps.extract-changelog.outputs.markdown }}
+          files: dist/*
+          fail_on_unmatched_files: true
+
+  publish-github-pages:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Clone full tree, and checkout branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Python and PDM
+        uses: pdm-project/setup-pdm@v4
+        with:
+          python-version: "3.12"
+          version: "2.16.1"
+      - name: Create virtual environment
+        run: pdm install
+      - name: Publish the docs to GitHub Pages
+        run: pdm run mike deploy --push --update-aliases ${{ github.ref_name }} latest

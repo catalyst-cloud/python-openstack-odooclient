@@ -106,8 +106,7 @@ For example, performing a simple search query would look something like this:
 [1234]
 ```
 
-For more information on the available managers and their functions,
-check the [Managers](https://catalyst-cloud.github.io/python-openstack-odooclient/latest/managers/index.html) page in the documentation.
+For more information on the available managers and their functions, see [Managers](managers/index.md).
 
 ## Records
 
@@ -137,5 +136,4 @@ User(record={'id': 1234, ...}, fields=None)
 1234
 ```
 
-For more information on the available managers and their functions,
-check the [Records](https://catalyst-cloud.github.io/python-openstack-odooclient/latest/managers/index.html#records) section in the documentation.
+For more information on record objects, see [Records](managers/index.md#records).

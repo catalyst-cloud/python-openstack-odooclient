@@ -1,0 +1,37 @@
+---
+# .pre-commit-config.yml
+# Pre-commit hook tasks.
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: "v4.5.0"
+    hooks:
+      - id: trailing-whitespace
+      - id: mixed-line-ending
+      - id: end-of-file-fixer
+      - id: detect-private-key
+      - id: check-added-large-files
+      - id: check-merge-conflict
+  - repo: https://github.com/crate-ci/typos
+    rev: "v1.22.9"
+    hooks:
+      - id: typos
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: "v0.4.8"
+    hooks:
+      - id: ruff
+      - id: ruff-format
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: "v1.10.0"
+    hooks:
+      - id: mypy
+        additional_dependencies:
+          - OdooRPC>=0.9.0
+          - packaging
+          - typing-extensions>=4.0.0
+  - repo: https://github.com/pdm-project/pdm
+    rev: "2.16.1"
+    hooks:
+      - id: pdm-lock-check
