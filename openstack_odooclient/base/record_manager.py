@@ -807,7 +807,7 @@ class RecordManagerBase(Generic[Record]):
 
     def unlink(
         self,
-        *records: Union[Record, int, Iterable[Union[Record, int]]],
+        *records: Union[int, Record, Iterable[Union[int, Record]]],
     ) -> None:
         """Delete one or more records from Odoo.
 

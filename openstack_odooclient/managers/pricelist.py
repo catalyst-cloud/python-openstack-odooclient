@@ -75,7 +75,8 @@ class Pricelist(RecordBase["PricelistManager"]):
         :return: Price to charge
         :rtype: float
         """
-        return self._manager.get_price(
+        return get_price(
+            manager=self._manager,
             pricelist=self,
             product=product,
             qty=qty,
@@ -104,15 +105,29 @@ class PricelistManager(NamedRecordManagerBase[Pricelist]):
         :return: Price to charge
         :rtype: float
         """
-        pricelist_id = (
-            pricelist.id if isinstance(pricelist, Pricelist) else pricelist
+        return get_price(
+            manager=self,
+            pricelist=pricelist,
+            product=product,
+            qty=qty,
         )
-        price = self._env.price_get(
-            pricelist_id,
-            (product.id if isinstance(product, Product) else product),
-            max(qty, 0),
-        )[str(pricelist_id)]
-        return price if qty >= 0 else -price
+
+
+def get_price(
+    manager: PricelistManager,
+    pricelist: Union[int, Pricelist],
+    product: Union[int, Product],
+    qty: float,
+) -> float:
+    pricelist_id = (
+        pricelist.id if isinstance(pricelist, Pricelist) else pricelist
+    )
+    price = manager._env.price_get(
+        pricelist_id,
+        (product.id if isinstance(product, Product) else product),
+        max(qty, 0),
+    )[str(pricelist_id)]
+    return price if qty >= 0 else -price
 
 
 # NOTE(callumdickinson): Import here to make sure circular imports work.

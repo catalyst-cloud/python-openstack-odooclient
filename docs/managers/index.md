@@ -854,9 +854,9 @@ All specified records will be deleted in a single request.
 
 #### Parameters
 
-| Name       | Type                                       | Description                                                                  | Default    |
-|------------|--------------------------------------------|------------------------------------------------------------------------------|------------|
-| `*records` | `Record | int | Iterable[Record | int]` | The records to delete (object, ID, or record/ID list) (positional arguments) | (required) |
+| Name       | Type                                    | Description                                                                  | Default    |
+|------------|-----------------------------------------|------------------------------------------------------------------------------|------------|
+| `*records` | `int | Record | Iterable[int | Record]` | The records to delete (object, ID, or record/ID list) (positional arguments) | (required) |
 
 ## Named Record Managers
 

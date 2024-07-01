@@ -33,6 +33,47 @@ AccountMove(record={'id': 1234, ...}, fields=None)
 
 For more information on how to use managers, refer to [Managers](index.md).
 
+The following manager methods are also available, in addition to the standard methods.
+
+### `action_post`
+
+```python
+action_post(*account_moves: int, | AccountMove | Iterable[int | AccountMove]) -> None
+```
+
+Change one or more draft account moves (invoices)
+into "posted" state.
+
+This method accepts either a record object or ID, or an iterable of
+either of those types. Multiple positional arguments are allowed.
+
+All specified records will be processed in a single request.
+
+#### Parameters
+
+| Name             | Type                                              | Description                                 | Default    |
+|------------------|---------------------------------------------------|---------------------------------------------|------------|
+| `*account_moves` | `int | AccountMove | Iterable[int | AccountMove]` | Record objects, IDs, or record/ID iterables | (required) |
+
+### `send_openstack_invoice_email`
+
+```python
+send_openstack_invoice_email(
+    account_move: int | AccountMove,
+    email_ctx: Optional[Mapping[str, Any]] = None,
+) -> None
+```
+
+Send an OpenStack invoice email for the given
+account move (invoice).
+
+#### Parameters
+
+| Name           | Type                       | Description                                     | Default    |
+|----------------|----------------------------|-------------------------------------------------|------------|
+| `account_move` | `int | AccountMove`        | The account move (invoice) to send an email for | (required) |
+| `email_ctx`    | `Mapping[str, Any] | None` | Optional email context                          | `None`     |
+
 ## Record
 
 The account move (invoice) manager returns `AccountMove` record objects.
@@ -237,3 +278,27 @@ Values:
 * ``draft`` - Draft invoice
 * ``posted`` - Posted (finalised) invoice
 * ``cancel`` - Cancelled invoice
+
+### `action_post`
+
+```python
+action_post() -> None
+```
+
+Change this draft account move (invoice) into "posted" state.
+
+### `send_openstack_invoice_email`
+
+```python
+send_openstack_invoice_email(
+    email_ctx: Optional[Mapping[str, Any]] = None,
+) -> None
+```
+
+Send an OpenStack invoice email for this account move (invoice).
+
+#### Parameters
+
+| Name        | Type                       | Description            | Default |
+|-------------|----------------------------|------------------------|---------|
+| `email_ctx` | `Mapping[str, Any] | None` | Optional email context | `None`  |

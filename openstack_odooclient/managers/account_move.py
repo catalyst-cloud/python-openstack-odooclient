@@ -16,7 +16,7 @@
 from __future__ import annotations
 
 from datetime import date
-from typing import Any, List, Literal, Mapping, Optional, Union
+from typing import Any, Iterable, List, Literal, Mapping, Optional, Union
 
 from typing_extensions import Annotated
 
@@ -157,7 +157,7 @@ class AccountMove(RecordBase["AccountMoveManager"]):
     }
 
     def action_post(self) -> None:
-        """Change a draft account move (invoice) into "posted" state."""
+        """Change this draft account move (invoice) into "posted" state."""
         self._env.action_post(self.id)
 
     def send_openstack_invoice_email(
@@ -178,6 +178,64 @@ class AccountMove(RecordBase["AccountMoveManager"]):
 class AccountMoveManager(NamedRecordManagerBase[AccountMove]):
     env_name = "account.move"
     record_class = AccountMove
+
+    def action_post(
+        self,
+        *account_moves: Union[
+            int,
+            AccountMove,
+            Iterable[Union[int, AccountMove]],
+        ],
+    ) -> None:
+        """Change one or more draft account moves (invoices)
+        into "posted" state.
+
+        This method accepts either a record object or ID, or an iterable of
+        either of those types. Multiple positional arguments are allowed.
+
+        All specified records will be processed in a single request.
+
+        :param account_moves: Record objects, IDs, or record/ID iterables
+        :type account_moves: int | AccountMove | Iterable[int | AccountMove]
+        """
+        _ids: List[int] = []
+        for ids in account_moves:
+            if isinstance(ids, int):
+                _ids.append(ids)
+            elif isinstance(ids, AccountMove):
+                _ids.append(ids.id)
+            else:
+                _ids.extend(
+                    (
+                        (i.id if isinstance(i, AccountMove) else i)
+                        # FIXME(callumdickinson): This should not be
+                        # giving an error. Suspecting there's a bug in mypy.
+                        for i in ids  # type: ignore[union-attr]
+                    ),
+                )
+        self._env.action_post(_ids)
+
+    def send_openstack_invoice_email(
+        self,
+        account_move: Union[int, AccountMove],
+        email_ctx: Optional[Mapping[str, Any]] = None,
+    ) -> None:
+        """Send an OpenStack invoice email for the given
+        account move (invoice).
+
+        :param account_move: The account move (invoice) to send an email for
+        :type account_move: int | AccountMove
+        :param email_ctx: Optional email context, defaults to None
+        :type email_ctx: Optional[Mapping[str, Any]], optional
+        """
+        self._env.send_openstack_invoice_email(
+            (
+                account_move.id
+                if isinstance(account_move, AccountMove)
+                else account_move
+            ),
+            email_ctx=dict(email_ctx) if email_ctx else None,
+        )
 
 
 # NOTE(callumdickinson): Import here to make sure circular imports work.

@@ -648,8 +648,16 @@ the following internal attributes are also available for use in object methods:
 
 !!! note
 
-    Record objects are intended to be immutable. Custom methods should not change
-    the internal state, or the fields, of the record object.
+    It is recommended to follow these guidelines when defining custom
+    record methods:
+
+    * Record objects are intended to be immutable. Custom methods should not
+      change the internal state, or the fields, of the record object.
+    * If you are releasing your custom record types in a publicly available
+      library, **do not** rely on custom manager methods through the `_manager`
+      attribute. If a depending package subclasses your custom record types,
+      **the manager for that record subclass will not have your custom manager
+      methods defined on it.**
 
 ## Managers
 
