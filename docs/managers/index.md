@@ -1319,7 +1319,7 @@ and caches it for subsequent accesses.
 #### `write_date`
 
 ```python
-write_date: datetime | None
+write_date: datetime
 ```
 
 The time the record was last modified.
