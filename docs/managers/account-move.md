@@ -38,7 +38,7 @@ The following manager methods are also available, in addition to the standard me
 ### `action_post`
 
 ```python
-action_post(*account_moves: int, | AccountMove | Iterable[int | AccountMove]) -> None
+action_post(*account_moves: int | AccountMove | Iterable[int | AccountMove]) -> None
 ```
 
 Change one or more draft account moves (invoices)
