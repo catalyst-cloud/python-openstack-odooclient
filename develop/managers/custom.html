@@ -1862,7 +1862,9 @@ issues with undefined type hint objects.</p>
 <h2 id="records">Records<a class="headerlink" href="#records" title="Permanent link">&para;</a></h2>
 <p>Odoo records are represented by <strong>record classes</strong> in the Odoo Client library.</p>
 <p>Record classes are implementations (subclasses) of the <code>RecordBase</code> class,
-which the record manager uses to create immutable objects for the record model.</p>
+which the <a href="#managers">record manager</a> uses to create immutable objects for the record model.
+The name of the record manager (as defined in the Python source file) should
+be passed as the generic type argument for <code>RecordBase</code>, as a string.</p>
 <p>Record fields are defined as type hints on the record class.
 These type hints are parsed by the Odoo Client library,
 and field values from the API are automatically coerced to the
@@ -1871,10 +1873,18 @@ correct types when referenced by applications.</p>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">RecordBase</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">custom_field</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Description of the field.&quot;&quot;&quot;</span>
 </span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Make sure not to forget passing the name of the record manager class
+as the generic type argument for <code>RecordBase</code>.</p>
+<p>If this is not done there are no issues from a functional perspective,
+but type hinting for the <code>_manager</code> attribute will not work correctly
+when creating custom <a href="#record-methods">record methods</a>.</p>
+</div>
 <h3 id="field-types">Field Types<a class="headerlink" href="#field-types" title="Permanent link">&para;</a></h3>
 <p>The following basic field types from Odoo are supported.</p>
 <h4 id="bool"><code>bool</code><a class="headerlink" href="#bool" title="Permanent link">&para;</a></h4>
@@ -1883,7 +1893,7 @@ correct types when referenced by applications.</p>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">RecordBase</span>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">custom_field</span><span class="p">:</span> <span class="nb">bool</span>
 </span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Description of the field.&quot;&quot;&quot;</span>
 </span></code></pre></div>
@@ -1893,7 +1903,7 @@ correct types when referenced by applications.</p>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">RecordBase</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">custom_field</span><span class="p">:</span> <span class="nb">int</span>
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Description of the field.&quot;&quot;&quot;</span>
 </span></code></pre></div>
@@ -1903,7 +1913,7 @@ correct types when referenced by applications.</p>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">RecordBase</span>
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="n">custom_field</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Description of the field.&quot;&quot;&quot;</span>
 </span></code></pre></div>
@@ -1913,7 +1923,7 @@ correct types when referenced by applications.</p>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">RecordBase</span>
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="n">custom_field</span><span class="p">:</span> <span class="nb">int</span>
 </span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Description of the field.&quot;&quot;&quot;</span>
 </span></code></pre></div>
@@ -1925,7 +1935,7 @@ correct types when referenced by applications.</p>
 </span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
 </span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">RecordBase</span>
 </span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="n">custom_field</span><span class="p">:</span> <span class="n">date</span>
 </span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Description of the field.&quot;&quot;&quot;</span>
 </span></code></pre></div>
@@ -1937,7 +1947,7 @@ correct types when referenced by applications.</p>
 </span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
 </span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">RecordBase</span>
 </span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    <span class="n">custom_field</span><span class="p">:</span> <span class="n">date</span>
 </span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Description of the field.&quot;&quot;&quot;</span>
 </span></code></pre></div>
@@ -1950,7 +1960,7 @@ correct types when referenced by applications.</p>
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
 </span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">RecordBase</span>
 </span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>    <span class="n">custom_field</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;value1&quot;</span><span class="p">,</span> <span class="s2">&quot;value2&quot;</span><span class="p">,</span> <span class="s2">&quot;value3&quot;</span><span class="p">]</span>
 </span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Description of the field.</span>
 </span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>
@@ -1973,7 +1983,7 @@ the type hint should be defined as shown below.</p>
 </span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
 </span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">RecordBase</span>
 </span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>    <span class="n">custom_field</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]]</span>
 </span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Description of the field.&quot;&quot;&quot;</span>
 </span></code></pre></div>
@@ -1986,7 +1996,7 @@ the type hint should be defined as shown below instead.</p>
 </span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
 </span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">RecordBase</span>
 </span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>
-</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>    <span class="n">custom_field</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 </span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Description of the field.&quot;&quot;&quot;</span>
 </span></code></pre></div>
@@ -2005,7 +2015,7 @@ The type of the alias <strong>must</strong> match the type of the target field.<
 </span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">FieldAlias</span><span class="p">,</span> <span class="n">RecordBase</span>
 </span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span>
 </span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>
-</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>    <span class="n">custom_field</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Description of the field.&quot;&quot;&quot;</span>
 </span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>
@@ -2035,7 +2045,7 @@ All of these should all be defined on your record class.</p>
 </span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">ModelRef</span><span class="p">,</span> <span class="n">RecordBase</span><span class="p">,</span> <span class="n">User</span>
 </span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span>
 </span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>
-</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>    <span class="n">user_id</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ModelRef</span><span class="p">(</span><span class="s2">&quot;user_id&quot;</span><span class="p">,</span> <span class="n">User</span><span class="p">)]</span>
 </span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ID for the user that owns this record.&quot;&quot;&quot;</span>
 </span></code></pre></div>
@@ -2045,7 +2055,7 @@ All of these should all be defined on your record class.</p>
 </span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">ModelRef</span><span class="p">,</span> <span class="n">RecordBase</span><span class="p">,</span> <span class="n">User</span>
 </span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span>
 </span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>
-</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>    <span class="n">user_name</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModelRef</span><span class="p">(</span><span class="s2">&quot;user_id&quot;</span><span class="p">,</span> <span class="n">User</span><span class="p">)]</span>
 </span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Name of the user that owns this record.&quot;&quot;&quot;</span>
 </span></code></pre></div>
@@ -2055,7 +2065,7 @@ All of these should all be defined on your record class.</p>
 </span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">ModelRef</span><span class="p">,</span> <span class="n">RecordBase</span><span class="p">,</span> <span class="n">User</span>
 </span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span>
 </span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>
-</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>    <span class="n">user</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">User</span><span class="p">,</span> <span class="n">ModelRef</span><span class="p">(</span><span class="s2">&quot;user_id&quot;</span><span class="p">,</span> <span class="n">User</span><span class="p">)]</span>
 </span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The user that owns this record.</span>
 </span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>
@@ -2074,7 +2084,7 @@ The resulting record object is then cached to ensure the same object is returned
 </span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">ModelRef</span><span class="p">,</span> <span class="n">RecordBase</span><span class="p">,</span> <span class="n">User</span>
 </span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span>
 </span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>
-</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>    <span class="n">user_id</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ModelRef</span><span class="p">(</span><span class="s2">&quot;user_id&quot;</span><span class="p">,</span> <span class="n">User</span><span class="p">)]</span>
 </span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ID for the user that owns this record.&quot;&quot;&quot;</span>
 </span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>
@@ -2102,7 +2112,7 @@ If the record reference is not set, <code>None</code> will be returned.</p>
 </span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">ModelRef</span><span class="p">,</span> <span class="n">RecordBase</span><span class="p">,</span> <span class="n">User</span>
 </span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span>
 </span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>
-</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>    <span class="n">user_id</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">ModelRef</span><span class="p">(</span><span class="s2">&quot;user_id&quot;</span><span class="p">,</span> <span class="n">User</span><span class="p">)]</span>
 </span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ID for the user that owns this record.&quot;&quot;&quot;</span>
 </span><span id="__span-16-11"><a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>
@@ -2125,7 +2135,7 @@ In the below example, <code>Self</code> resolves to <code>CustomRecord</code>.</
 </span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">ModelRef</span><span class="p">,</span> <span class="n">RecordBase</span>
 </span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">Self</span>
 </span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>
-</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>    <span class="n">record_id</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">ModelRef</span><span class="p">(</span><span class="s2">&quot;user_id&quot;</span><span class="p">,</span> <span class="n">Self</span><span class="p">)]</span>
 </span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ID for the record related to this one, if set..&quot;&quot;&quot;</span>
 </span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>
@@ -2155,7 +2165,7 @@ All of these should all be defined on your record class.</p>
 </span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">ModelRef</span><span class="p">,</span> <span class="n">RecordBase</span><span class="p">,</span> <span class="n">Product</span>
 </span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span>
 </span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>
-</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>    <span class="n">product_ids</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">ModelRef</span><span class="p">(</span><span class="s2">&quot;product_id&quot;</span><span class="p">,</span> <span class="n">Product</span><span class="p">)]</span>
 </span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The list of IDs for the products to use.&quot;&quot;&quot;</span>
 </span></code></pre></div>
@@ -2167,7 +2177,7 @@ All of these should all be defined on your record class.</p>
 </span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">ModelRef</span><span class="p">,</span> <span class="n">RecordBase</span><span class="p">,</span> <span class="n">Product</span>
 </span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span>
 </span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a>
-</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-19-9"><a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>    <span class="n">products</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Product</span><span class="p">],</span> <span class="n">ModelRef</span><span class="p">(</span><span class="s2">&quot;product_id&quot;</span><span class="p">,</span> <span class="n">Product</span><span class="p">)]</span>
 </span><span id="__span-19-10"><a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The list of products to use.</span>
 </span><span id="__span-19-11"><a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>
@@ -2188,7 +2198,7 @@ The resulting record objects are then cached to ensure the same objects are retu
 </span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">ModelRef</span><span class="p">,</span> <span class="n">RecordBase</span><span class="p">,</span> <span class="n">Product</span>
 </span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span>
 </span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>
-</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a>    <span class="n">product_ids</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">ModelRef</span><span class="p">(</span><span class="s2">&quot;product_id&quot;</span><span class="p">,</span> <span class="n">Product</span><span class="p">)]</span>
 </span><span id="__span-20-10"><a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The list of IDs for the products to use.&quot;&quot;&quot;</span>
 </span><span id="__span-20-11"><a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a>
@@ -2213,7 +2223,7 @@ In the below example, <code>Self</code> resolves to <code>CustomRecord</code>.</
 </span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">ModelRef</span><span class="p">,</span> <span class="n">RecordBase</span>
 </span><span id="__span-21-6"><a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">Self</span>
 </span><span id="__span-21-7"><a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a>
-</span><span id="__span-21-8"><a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-21-8"><a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-21-9"><a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a>    <span class="n">child_ids</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">ModelRef</span><span class="p">(</span><span class="s2">&quot;child_id&quot;</span><span class="p">,</span> <span class="n">Self</span><span class="p">)]</span>
 </span><span id="__span-21-10"><a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The list of IDs for the child records.&quot;&quot;&quot;</span>
 </span><span id="__span-21-11"><a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a>
@@ -2238,10 +2248,10 @@ that reference each other are difficult (but not impossible) to support.</p>
 </span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>
 </span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 </span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>
-</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">ModelRef</span><span class="p">,</span> <span class="n">RecordBase</span>
+</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">ModelRef</span><span class="p">,</span> <span class="n">RecordBase</span><span class="p">,</span> <span class="n">RecordManagerBase</span>
 </span><span id="__span-22-6"><a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span>
 </span><span id="__span-22-7"><a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>
-</span><span id="__span-22-8"><a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a><span class="k">class</span> <span class="nc">Parent</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-22-8"><a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a><span class="k">class</span> <span class="nc">Parent</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;ParentManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-22-9"><a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a>    <span class="n">child_ids</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">ModelRef</span><span class="p">(</span><span class="s2">&quot;child_id&quot;</span><span class="p">,</span> <span class="n">Child</span><span class="p">)]</span>
 </span><span id="__span-22-10"><a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The list of IDs for the children records.&quot;&quot;&quot;</span>
 </span><span id="__span-22-11"><a id="__codelineno-22-11" name="__codelineno-22-11" href="#__codelineno-22-11"></a>
@@ -2252,16 +2262,20 @@ that reference each other are difficult (but not impossible) to support.</p>
 </span><span id="__span-22-16"><a id="__codelineno-22-16" name="__codelineno-22-16" href="#__codelineno-22-16"></a><span class="sd">    and caches them for subsequent accesses.</span>
 </span><span id="__span-22-17"><a id="__codelineno-22-17" name="__codelineno-22-17" href="#__codelineno-22-17"></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="__span-22-18"><a id="__codelineno-22-18" name="__codelineno-22-18" href="#__codelineno-22-18"></a>
-</span><span id="__span-22-19"><a id="__codelineno-22-19" name="__codelineno-22-19" href="#__codelineno-22-19"></a><span class="kn">from</span> <span class="nn">.child</span> <span class="kn">import</span> <span class="n">Child</span>  <span class="c1"># noqa: E402</span>
+</span><span id="__span-22-19"><a id="__codelineno-22-19" name="__codelineno-22-19" href="#__codelineno-22-19"></a><span class="k">class</span> <span class="nc">ParentManager</span><span class="p">(</span><span class="n">RecordManagerBase</span><span class="p">[</span><span class="n">Parent</span><span class="p">]):</span>
+</span><span id="__span-22-20"><a id="__codelineno-22-20" name="__codelineno-22-20" href="#__codelineno-22-20"></a>    <span class="n">env_name</span> <span class="o">=</span> <span class="s2">&quot;custom.parent&quot;</span>
+</span><span id="__span-22-21"><a id="__codelineno-22-21" name="__codelineno-22-21" href="#__codelineno-22-21"></a>    <span class="n">record_class</span> <span class="o">=</span> <span class="n">Parent</span>
+</span><span id="__span-22-22"><a id="__codelineno-22-22" name="__codelineno-22-22" href="#__codelineno-22-22"></a>
+</span><span id="__span-22-23"><a id="__codelineno-22-23" name="__codelineno-22-23" href="#__codelineno-22-23"></a><span class="kn">from</span> <span class="nn">.child</span> <span class="kn">import</span> <span class="n">Child</span>  <span class="c1"># noqa: E402</span>
 </span></code></pre></div>
 <div class="language-python highlight"><span class="filename">child.py</span><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 </span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>
 </span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 </span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>
-</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">ModelRef</span><span class="p">,</span> <span class="n">RecordBase</span>
+</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">ModelRef</span><span class="p">,</span> <span class="n">RecordBase</span><span class="p">,</span> <span class="n">RecordManagerBase</span>
 </span><span id="__span-23-6"><a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span>
 </span><span id="__span-23-7"><a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a>
-</span><span id="__span-23-8"><a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-23-8"><a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;ChildManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-23-9"><a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a>    <span class="n">parent_id</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">ModelRef</span><span class="p">(</span><span class="s2">&quot;parent_id&quot;</span><span class="p">,</span> <span class="n">Parent</span><span class="p">)]</span>
 </span><span id="__span-23-10"><a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ID for the parent record, if it has one.&quot;&quot;&quot;</span>
 </span><span id="__span-23-11"><a id="__codelineno-23-11" name="__codelineno-23-11" href="#__codelineno-23-11"></a>
@@ -2275,7 +2289,11 @@ that reference each other are difficult (but not impossible) to support.</p>
 </span><span id="__span-23-19"><a id="__codelineno-23-19" name="__codelineno-23-19" href="#__codelineno-23-19"></a><span class="sd">    and caches it for subsequent accesses.</span>
 </span><span id="__span-23-20"><a id="__codelineno-23-20" name="__codelineno-23-20" href="#__codelineno-23-20"></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="__span-23-21"><a id="__codelineno-23-21" name="__codelineno-23-21" href="#__codelineno-23-21"></a>
-</span><span id="__span-23-22"><a id="__codelineno-23-22" name="__codelineno-23-22" href="#__codelineno-23-22"></a><span class="kn">from</span> <span class="nn">.parent</span> <span class="kn">import</span> <span class="n">Parent</span>  <span class="c1"># noqa: E402</span>
+</span><span id="__span-23-22"><a id="__codelineno-23-22" name="__codelineno-23-22" href="#__codelineno-23-22"></a><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">RecordManagerBase</span><span class="p">[</span><span class="n">Child</span><span class="p">]):</span>
+</span><span id="__span-23-23"><a id="__codelineno-23-23" name="__codelineno-23-23" href="#__codelineno-23-23"></a>    <span class="n">env_name</span> <span class="o">=</span> <span class="s2">&quot;custom.child&quot;</span>
+</span><span id="__span-23-24"><a id="__codelineno-23-24" name="__codelineno-23-24" href="#__codelineno-23-24"></a>    <span class="n">record_class</span> <span class="o">=</span> <span class="n">child</span>
+</span><span id="__span-23-25"><a id="__codelineno-23-25" name="__codelineno-23-25" href="#__codelineno-23-25"></a>
+</span><span id="__span-23-26"><a id="__codelineno-23-26" name="__codelineno-23-26" href="#__codelineno-23-26"></a><span class="kn">from</span> <span class="nn">.parent</span> <span class="kn">import</span> <span class="n">Parent</span>  <span class="c1"># noqa: E402</span>
 </span></code></pre></div>
 <h3 id="odoo-version-compatibility">Odoo Version Compatibility<a class="headerlink" href="#odoo-version-compatibility" title="Permanent link">&para;</a></h3>
 <p>Major releases of Odoo may change the database models to introduce
@@ -2293,7 +2311,7 @@ to define local-to-remote field name mappings.</p>
 </span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>
 </span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">RecordBase</span>
 </span><span id="__span-25-4"><a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a>
-</span><span id="__span-25-5"><a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-25-5"><a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-25-6"><a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a>    <span class="n">custom_field</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="__span-25-7"><a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Description of the field.&quot;&quot;&quot;</span>
 </span><span id="__span-25-8"><a id="__codelineno-25-8" name="__codelineno-25-8" href="#__codelineno-25-8"></a>
@@ -2328,7 +2346,7 @@ and the record class's field mapping.</p>
 </span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>
 </span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">RecordBase</span>
 </span><span id="__span-26-4"><a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a>
-</span><span id="__span-26-5"><a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-26-5"><a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-26-6"><a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a>    <span class="n">custom_field</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="__span-26-7"><a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Description of the field.&quot;&quot;&quot;</span>
 </span><span id="__span-26-8"><a id="__codelineno-26-8" name="__codelineno-26-8" href="#__codelineno-26-8"></a>
@@ -2339,7 +2357,7 @@ and the record class's field mapping.</p>
 the following internal attributes are also available for use in object methods:</p>
 <ul>
 <li><code>_client</code> (<a href="../index.html#connecting-to-odoo"><code>Client</code></a>) - The Odoo client object the record was created from</li>
-<li><code>_manager</code> (<code>RecordManagerBase</code>) - The manager object the record was created from</li>
+<li><code>_manager</code> (<code>RecordManager</code>) - The manager object the record was created from (correctly type hinted so methods can be called)</li>
 <li><code>_records</code> (<code>MappingProxyType[str, Any]</code>) - The raw record fields from OdooRPC</li>
 <li><code>_fields</code> (<code>tuple[str, ...] | None</code>) - The fields that were selected during the query (or <code>None</code> for all fields)</li>
 <li><code>_odoo</code> (<code>odoorpc.ODOO</code>) - The OdooRPC connection object</li>
@@ -2347,8 +2365,17 @@ the following internal attributes are also available for use in object methods:<
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Record objects are intended to be immutable. Custom methods should not change
-the internal state, or the fields, of the record object.</p>
+<p>It is recommended to follow these guidelines when defining custom
+record methods:</p>
+<ul>
+<li>Record objects are intended to be immutable. Custom methods should not
+  change the internal state, or the fields, of the record object.</li>
+<li>If you are releasing your custom record types in a publicly available
+  library, <strong>do not</strong> rely on custom manager methods through the <code>_manager</code>
+  attribute. If a depending package subclasses your custom record types,
+  <strong>the manager for that record subclass will not have your custom manager
+  methods defined on it.</strong></li>
+</ul>
 </div>
 <h2 id="managers">Managers<a class="headerlink" href="#managers" title="Permanent link">&para;</a></h2>
 <p><strong>Manager classes</strong> are used to provide query methods and other functionality
@@ -2357,11 +2384,11 @@ necessary for managing record objects in the Odoo Client library.</p>
 for implementing the query methods for the record class.</p>
 <h3 id="creating-a-manager-class">Creating a Manager Class<a class="headerlink" href="#creating-a-manager-class" title="Permanent link">&para;</a></h3>
 <p>Manager classes are subclasses of the generic <code>RecordManagerBase</code> class,
-specifying the record class the generic type argument,
+specifying the record class as the generic type argument,
 and defining the following class attributes:</p>
 <ul>
 <li><code>env_name</code> (<code>str</code>) - The name of the Odoo environment (database model) for the record class</li>
-<li><code>record_class</code> (<code>Type[T]</code>) - The record class to use to create record objects (<strong>must</strong> be the same class as the one specified in the generic subclass definition)</li>
+<li><code>record_class</code> (<code>Type[Record]</code>) - The record class to use to create record objects (<strong>must</strong> be the same class as the one specified in the generic subclass definition)</li>
 </ul>
 <p>The following optional class attributes are also available:</p>
 <ul>
@@ -2375,7 +2402,7 @@ and defining the following class attributes:</p>
 </span><span id="__span-27-4"><a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a>
 </span><span id="__span-27-5"><a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">RecordBase</span><span class="p">,</span> <span class="n">RecordManagerBase</span>
 </span><span id="__span-27-6"><a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a>
-</span><span id="__span-27-7"><a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-27-7"><a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-27-8"><a id="__codelineno-27-8" name="__codelineno-27-8" href="#__codelineno-27-8"></a>    <span class="n">custom_field</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="__span-27-9"><a id="__codelineno-27-9" name="__codelineno-27-9" href="#__codelineno-27-9"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Description of the field.&quot;&quot;&quot;</span>
 </span><span id="__span-27-10"><a id="__codelineno-27-10" name="__codelineno-27-10" href="#__codelineno-27-10"></a>
@@ -2394,7 +2421,7 @@ object as the sole argument.</p>
 </span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>
 </span><span id="__span-28-5"><a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">Client</span><span class="p">,</span> <span class="n">RecordBase</span><span class="p">,</span> <span class="n">RecordManagerBase</span>
 </span><span id="__span-28-6"><a id="__codelineno-28-6" name="__codelineno-28-6" href="#__codelineno-28-6"></a>
-</span><span id="__span-28-7"><a id="__codelineno-28-7" name="__codelineno-28-7" href="#__codelineno-28-7"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-28-7"><a id="__codelineno-28-7" name="__codelineno-28-7" href="#__codelineno-28-7"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-28-8"><a id="__codelineno-28-8" name="__codelineno-28-8" href="#__codelineno-28-8"></a>    <span class="n">custom_field</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="__span-28-9"><a id="__codelineno-28-9" name="__codelineno-28-9" href="#__codelineno-28-9"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Description of the field.&quot;&quot;&quot;</span>
 </span><span id="__span-28-10"><a id="__codelineno-28-10" name="__codelineno-28-10" href="#__codelineno-28-10"></a>
@@ -2416,7 +2443,7 @@ custom manager class.</p>
 </span><span id="__span-29-4"><a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a>
 </span><span id="__span-29-5"><a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">RecordBase</span><span class="p">,</span> <span class="n">RecordManagerBase</span>
 </span><span id="__span-29-6"><a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a>
-</span><span id="__span-29-7"><a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-29-7"><a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-29-8"><a id="__codelineno-29-8" name="__codelineno-29-8" href="#__codelineno-29-8"></a>    <span class="n">custom_field</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="__span-29-9"><a id="__codelineno-29-9" name="__codelineno-29-9" href="#__codelineno-29-9"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Description of the field.&quot;&quot;&quot;</span>
 </span><span id="__span-29-10"><a id="__codelineno-29-10" name="__codelineno-29-10" href="#__codelineno-29-10"></a>
@@ -2441,7 +2468,7 @@ reference it on client objects created from it.</p>
 </span><span id="__span-31-4"><a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a>
 </span><span id="__span-31-5"><a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a><span class="kn">from</span> <span class="nn">openstack_odooclient</span> <span class="kn">import</span> <span class="n">RecordBase</span><span class="p">,</span> <span class="n">RecordManagerBase</span>
 </span><span id="__span-31-6"><a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a>
-</span><span id="__span-31-7"><a id="__codelineno-31-7" name="__codelineno-31-7" href="#__codelineno-31-7"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">):</span>
+</span><span id="__span-31-7"><a id="__codelineno-31-7" name="__codelineno-31-7" href="#__codelineno-31-7"></a><span class="k">class</span> <span class="nc">CustomRecord</span><span class="p">(</span><span class="n">RecordBase</span><span class="p">[</span><span class="s2">&quot;CustomRecordManager&quot;</span><span class="p">]):</span>
 </span><span id="__span-31-8"><a id="__codelineno-31-8" name="__codelineno-31-8" href="#__codelineno-31-8"></a>    <span class="n">custom_field</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="__span-31-9"><a id="__codelineno-31-9" name="__codelineno-31-9" href="#__codelineno-31-9"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Description of the field.&quot;&quot;&quot;</span>
 </span><span id="__span-31-10"><a id="__codelineno-31-10" name="__codelineno-31-10" href="#__codelineno-31-10"></a>
@@ -2464,7 +2491,7 @@ reference it on client objects created from it.</p>
 <p>The following internal attributes are also available for use in methods:</p>
 <ul>
 <li><code>env_name</code> (<code>str</code>) - The name of the Odoo environment (database model) for the record class</li>
-<li><code>record_class</code> (<code>Type[T]</code>) - The record class object</li>
+<li><code>record_class</code> (<code>Type[Record]</code>) - The record class object</li>
 <li><code>default_fields</code> (<code>tuple[str, ...] | None</code>) - The default list of fields to fetch on queries (or <code>None</code> to fetch all)</li>
 <li><code>_client</code> (<a href="../index.html#connecting-to-odoo"><code>Client</code></a>) - The Odoo client object the record manager uses</li>
 <li><code>_odoo</code> (<code>odoorpc.ODOO</code>) - The OdooRPC connection object</li>

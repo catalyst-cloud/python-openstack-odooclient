@@ -2777,7 +2777,7 @@ either of those types. Multiple positional arguments are allowed.</p>
 <tbody>
 <tr>
 <td><code>*records</code></td>
-<td><code>Record | int | Iterable[Record | int]</code></td>
+<td><code>int | Record | Iterable[int | Record]</code></td>
 <td>The records to delete (object, ID, or record/ID list) (positional arguments)</td>
 <td>(required)</td>
 </tr>
@@ -2796,7 +2796,6 @@ The managers for these record types have additional methods for querying records
 <li><a href="partner-category.html">Partner Categories</a></li>
 <li><a href="pricelist.html">Pricelists</a></li>
 <li><a href="product-category.html">Product Categories</a></li>
-<li><a href="project.html">OpenStack Projects</a></li>
 <li><a href="reseller-tier.html">OpenStack Reseller Tiers</a></li>
 <li><a href="sale-order.html">Sale Orders</a></li>
 <li><a href="support-subscription-type.html">OpenStack Support Subscription Types</a></li>
@@ -3266,15 +3265,15 @@ check the manager page for the record type.</p>
 </span></code></pre></div>
 <p>The time the record was created.</p>
 <h4 id="create_uid"><code>create_uid</code><a class="headerlink" href="#create_uid" title="Permanent link">&para;</a></h4>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-68-1"><a id="__codelineno-68-1" name="__codelineno-68-1" href="#__codelineno-68-1"></a><span class="n">create_uid</span><span class="p">:</span> <span class="nb">int</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-68-1"><a id="__codelineno-68-1" name="__codelineno-68-1" href="#__codelineno-68-1"></a><span class="n">create_uid</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
 </span></code></pre></div>
 <p>The ID of the <a href="user.html">user</a> that created this record.</p>
 <h4 id="create_name"><code>create_name</code><a class="headerlink" href="#create_name" title="Permanent link">&para;</a></h4>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-69-1"><a id="__codelineno-69-1" name="__codelineno-69-1" href="#__codelineno-69-1"></a><span class="n">create_name</span><span class="p">:</span> <span class="nb">str</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-69-1"><a id="__codelineno-69-1" name="__codelineno-69-1" href="#__codelineno-69-1"></a><span class="n">create_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
 </span></code></pre></div>
 <p>The name of the <a href="user.html">user</a> that created this record.</p>
 <h4 id="create_user"><code>create_user</code><a class="headerlink" href="#create_user" title="Permanent link">&para;</a></h4>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-70-1"><a id="__codelineno-70-1" name="__codelineno-70-1" href="#__codelineno-70-1"></a><span class="n">create_user</span><span class="p">:</span> <span class="n">User</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-70-1"><a id="__codelineno-70-1" name="__codelineno-70-1" href="#__codelineno-70-1"></a><span class="n">create_user</span><span class="p">:</span> <span class="n">User</span> <span class="o">|</span> <span class="kc">None</span>
 </span></code></pre></div>
 <p>The <a href="user.html">user</a> that created this record.</p>
 <p>This fetches the full record from Odoo once,
@@ -3284,15 +3283,15 @@ and caches it for subsequent accesses.</p>
 </span></code></pre></div>
 <p>The time the record was last modified.</p>
 <h4 id="write_uid"><code>write_uid</code><a class="headerlink" href="#write_uid" title="Permanent link">&para;</a></h4>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-72-1"><a id="__codelineno-72-1" name="__codelineno-72-1" href="#__codelineno-72-1"></a><span class="n">write_uid</span><span class="p">:</span> <span class="nb">int</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-72-1"><a id="__codelineno-72-1" name="__codelineno-72-1" href="#__codelineno-72-1"></a><span class="n">write_uid</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
 </span></code></pre></div>
 <p>The ID of the <a href="user.html">user</a> that last modified this record.</p>
 <h4 id="write_name"><code>write_name</code><a class="headerlink" href="#write_name" title="Permanent link">&para;</a></h4>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-73-1"><a id="__codelineno-73-1" name="__codelineno-73-1" href="#__codelineno-73-1"></a><span class="n">write_name</span><span class="p">:</span> <span class="nb">str</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-73-1"><a id="__codelineno-73-1" name="__codelineno-73-1" href="#__codelineno-73-1"></a><span class="n">write_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
 </span></code></pre></div>
 <p>The name of the <a href="user.html">user</a> that modified this record.</p>
 <h4 id="write_user"><code>write_user</code><a class="headerlink" href="#write_user" title="Permanent link">&para;</a></h4>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-74-1"><a id="__codelineno-74-1" name="__codelineno-74-1" href="#__codelineno-74-1"></a><span class="n">write_user</span><span class="p">:</span> <span class="n">User</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-74-1"><a id="__codelineno-74-1" name="__codelineno-74-1" href="#__codelineno-74-1"></a><span class="n">write_user</span><span class="p">:</span> <span class="n">User</span> <span class="o">|</span> <span class="kc">None</span>
 </span></code></pre></div>
 <p>The <a href="user.html">user</a> that last modified this record.</p>
 <p>This fetches the full record from Odoo once,
