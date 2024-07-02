@@ -2,192 +2,192 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/index.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/changelog.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/performance.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/index.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/account-move-line.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/account-move.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/company.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/credit-transaction.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/credit-type.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/credit.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/currency.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/custom.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/customer-group.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/grant-type.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/grant.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/partner-category.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/partner.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/pricelist.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/product-category.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/product.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/project-contact.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/project.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/referral-code.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/reseller-tier.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/reseller.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/sale-order-line.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/sale-order.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/support-subscription-type.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/support-subscription.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/tax-group.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/tax.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/term-discount.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/trial.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/uom-category.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/uom.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/user.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/volume-discount-range.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://catalyst-cloud.github.io/python-openstack-odooclient/develop/managers/voucher-code.html</loc>
-         <lastmod>2024-07-01</lastmod>
+         <lastmod>2024-07-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
