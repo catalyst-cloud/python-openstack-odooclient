@@ -329,7 +329,6 @@ search(
     order: str | None = None,
     as_id: bool = False,
     as_dict: bool = False,
-    optional: bool = False,
 ) -> list[Record]
 ```
 
@@ -338,20 +337,8 @@ search(
     filters: Sequence[Tuple[str, str, Any] | Sequence[Any] | str] | None = None,
     fields: Iterable[str] | None = None,
     order: str | None = None,
-    as_id: bool = False,
-    as_dict: bool = False,
-    optional: bool = True,
-) -> list[Record] | None
-```
-
-```python
-search(
-    filters: Sequence[Tuple[str, str, Any] | Sequence[Any] | str] | None = None,
-    fields: Iterable[str] | None = None,
-    order: str | None = None,
     as_id: bool = True,
     as_dict: bool = False,
-    optional: bool = False,
 ) -> list[int]
 ```
 
@@ -360,32 +347,9 @@ search(
     filters: Sequence[Tuple[str, str, Any] | Sequence[Any] | str] | None = None,
     fields: Iterable[str] | None = None,
     order: str | None = None,
-    as_id: bool = True,
-    as_dict: bool = False,
-    optional: bool = True,
-) -> list[int] | None
-```
-
-```python
-search(
-    filters: Sequence[Tuple[str, str, Any] | Sequence[Any] | str] | None = None,
-    fields: Iterable[str] | None = None,
-    order: str | None = None,
     as_id: bool = False,
     as_dict: bool = True,
-    optional: bool = False,
 ) -> list[dict[str, Any]]
-```
-
-```python
-search(
-    filters: Sequence[Tuple[str, str, Any] | Sequence[Any] | str] | None = None,
-    fields: Iterable[str] | None = None,
-    order: str | None = None,
-    as_id: bool = False,
-    as_dict: bool = True,
-    optional: bool = True,
-) -> list[dict[str, Any]] | None
 ```
 
 Query the ERP for records, optionally defining
