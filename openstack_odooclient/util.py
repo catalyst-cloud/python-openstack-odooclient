@@ -15,12 +15,10 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, TypeVar
-
-from typing_extensions import TypeGuard
+from typing import TYPE_CHECKING, Any, Type, TypeGuard, TypeVar
 
 if TYPE_CHECKING:
-    from typing import Any, Mapping, Optional, Tuple, Type, Union
+    from collections.abc import Mapping
 
 # Same values as defined in odoo.tools.misc.
 DEFAULT_SERVER_DATE_FORMAT = "%Y-%m-%d"
@@ -33,7 +31,7 @@ T = TypeVar("T")
 
 
 def get_mapped_field(
-    field_mapping: Mapping[Optional[str], Mapping[str, str]],
+    field_mapping: Mapping[str | None, Mapping[str, str]],
     odoo_version: str,
     field: str,
 ) -> str:
@@ -45,7 +43,7 @@ def get_mapped_field(
     If none is found there either, return the field name as is.
 
     :param field_mapping: Field mapping structure
-    :type field_mapping: Mapping[Optional[str], Mapping[str, str]]
+    :type field_mapping: Mapping[str | None, Mapping[str, str]]
     :param odoo_version: Odoo server version
     :type odoo_version: str
     :param field: Field name to map
@@ -65,7 +63,7 @@ def get_mapped_field(
 
 def is_subclass(
     type_obj: Type[Any],
-    classes: Union[Type[T], Tuple[Type[T], ...]],
+    classes: Type[T] | tuple[Type[T], ...],
 ) -> TypeGuard[Type[T]]:
     """Check whether or not the given type is a subclass of
     any of the given classes (single class, or tuple of one or more classes).
@@ -77,7 +75,7 @@ def is_subclass(
     :param type_obj: Type object to check
     :type type_obj: Type[Any]
     :param classes: Classes to check the type object is a subclass of
-    :type classes: Union[Type[Any], Tuple[Type[Any]]]
+    :type classes: Type[Any] | tuple[Type[Any]]
     :return: ``True`` if the type is a subclass of any of the given classes
     :rtype: bool
     """

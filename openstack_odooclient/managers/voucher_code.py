@@ -16,9 +16,7 @@
 from __future__ import annotations
 
 from datetime import date
-from typing import List, Literal, Optional, Union
-
-from typing_extensions import Annotated
+from typing import Annotated, Literal
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
@@ -31,13 +29,13 @@ class VoucherCode(RecordBase["VoucherCodeManager"]):
     code: str
     """The code string for this voucher code."""
 
-    credit_amount: Union[float, Literal[False]]
+    credit_amount: float | Literal[False]
     """The initial credit balance for the voucher code, if a credit is to be
     created by the voucher code.
     """
 
     credit_type_id: Annotated[
-        Optional[int],
+        int | None,
         ModelRef("credit_type", CreditType),
     ]
     """The ID of the credit type to use, if a credit is to be
@@ -45,7 +43,7 @@ class VoucherCode(RecordBase["VoucherCodeManager"]):
     """
 
     credit_type_name: Annotated[
-        Optional[str],
+        str | None,
         ModelRef("credit_type", CreditType),
     ]
     """The name of the credit type to use, if a credit is to be
@@ -53,7 +51,7 @@ class VoucherCode(RecordBase["VoucherCodeManager"]):
     """
 
     credit_type: Annotated[
-        Optional[CreditType],
+        CreditType | None,
         ModelRef("credit_type", CreditType),
     ]
     """The credit type to use, if a credit is to be
@@ -63,25 +61,25 @@ class VoucherCode(RecordBase["VoucherCodeManager"]):
     and caches it for subsequent accesses.
     """
 
-    credit_duration: Union[int, Literal[False]]
+    credit_duration: int | Literal[False]
     """The duration of the credit, in days, if a credit is to be
     created by the voucher code.
     """
 
     customer_group_id: Annotated[
-        Optional[int],
+        int | None,
         ModelRef("customer_group", CustomerGroup),
     ]
     """The ID of the customer group to add the customer to, if set."""
 
     customer_group_name: Annotated[
-        Optional[str],
+        str | None,
         ModelRef("customer_group", CustomerGroup),
     ]
     """The name of the customer group to add the customer to, if set."""
 
     customer_group: Annotated[
-        Optional[CustomerGroup],
+        CustomerGroup | None,
         ModelRef("customer_group", CustomerGroup),
     ]
     """The customer group to add the customer to, if set.
@@ -90,31 +88,28 @@ class VoucherCode(RecordBase["VoucherCodeManager"]):
     and caches it for subsequent accesses.
     """
 
-    expiry_date: Union[date, Literal[False]]
+    expiry_date: date | Literal[False]
     """The date the voucher code expires."""
 
-    grant_duration: Union[int, Literal[False]]
+    grant_duration: int | Literal[False]
     """The duration of the grant, in days, if a grant is to be
     created by the voucher code.
     """
 
-    grant_type_id: Annotated[Optional[int], ModelRef("grant_type", GrantType)]
+    grant_type_id: Annotated[int | None, ModelRef("grant_type", GrantType)]
     """The ID of the grant type to use, if a grant is to be
     created by this voucher code.
     """
 
     grant_type_name: Annotated[
-        Optional[str],
+        str | None,
         ModelRef("grant_type", GrantType),
     ]
     """The name of the grant type to use, if a grant is to be
     created by this voucher code.
     """
 
-    grant_type: Annotated[
-        Optional[GrantType],
-        ModelRef("grant_type", GrantType),
-    ]
+    grant_type: Annotated[GrantType | None, ModelRef("grant_type", GrantType)]
     """The grant type to use, if a grant is to be
     created by this voucher code.
 
@@ -122,7 +117,7 @@ class VoucherCode(RecordBase["VoucherCodeManager"]):
     and caches it for subsequent accesses.
     """
 
-    grant_value: Union[float, Literal[False]]
+    grant_value: float | Literal[False]
     """The value of the grant, if a grant is to be
     created by the voucher code.
     """
@@ -140,7 +135,7 @@ class VoucherCode(RecordBase["VoucherCodeManager"]):
     This uses the code specified in the record as-is.
     """
 
-    quota_size: Union[str, Literal[False]]
+    quota_size: str | Literal[False]
     """The default quota size for new projects signed up
     using this voucher code.
 
@@ -148,7 +143,7 @@ class VoucherCode(RecordBase["VoucherCodeManager"]):
     """
 
     sales_person_id: Annotated[
-        Optional[int],
+        int | None,
         ModelRef("sales_person", Partner),
     ]
     """The ID for the salesperson partner responsible for this
@@ -156,7 +151,7 @@ class VoucherCode(RecordBase["VoucherCodeManager"]):
     """
 
     sales_person_name: Annotated[
-        Optional[str],
+        str | None,
         ModelRef("sales_person", Partner),
     ]
     """The name of the salesperson partner responsible for this
@@ -164,7 +159,7 @@ class VoucherCode(RecordBase["VoucherCodeManager"]):
     """
 
     sales_person: Annotated[
-        Optional[Partner],
+        Partner | None,
         ModelRef("sales_person", Partner),
     ]
     """The salesperson partner responsible for this
@@ -174,12 +169,12 @@ class VoucherCode(RecordBase["VoucherCodeManager"]):
     and caches it for subsequent accesses.
     """
 
-    tag_ids: Annotated[List[int], ModelRef("tags", PartnerCategory)]
+    tag_ids: Annotated[list[int], ModelRef("tags", PartnerCategory)]
     """A list of IDs for the tags (partner categories) to assign
     to partners for new accounts that signed up using this voucher code.
     """
 
-    tags: Annotated[List[PartnerCategory], ModelRef("tags", PartnerCategory)]
+    tags: Annotated[list[PartnerCategory], ModelRef("tags", PartnerCategory)]
     """The list of tags (partner categories) to assign
     to partners for new accounts that signed up using this voucher code.
 

@@ -15,19 +15,17 @@
 
 from __future__ import annotations
 
-from typing import List
-
-from typing_extensions import Annotated
+from typing import Annotated
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
 
 
 class GrantType(RecordBase["GrantTypeManager"]):
-    grant_ids: Annotated[List[int], ModelRef("grants", Grant)]
+    grant_ids: Annotated[list[int], ModelRef("grants", Grant)]
     """A list of IDs for the grants which are of this grant type."""
 
-    grants: Annotated[List[Grant], ModelRef("grants", Grant)]
+    grants: Annotated[list[Grant], ModelRef("grants", Grant)]
     """A list of grants which are of this grant type.
 
     This fetches the full records from Odoo once,
@@ -38,7 +36,7 @@ class GrantType(RecordBase["GrantTypeManager"]):
     """Name of the Grant Type."""
 
     only_for_product_ids: Annotated[
-        List[int],
+        list[int],
         ModelRef("only_for_products", Product),
     ]
     """A list of IDs for the products this grant applies to.
@@ -48,7 +46,7 @@ class GrantType(RecordBase["GrantTypeManager"]):
     """
 
     only_for_products: Annotated[
-        List[Product],
+        list[Product],
         ModelRef("only_for_products", Product),
     ]
     """A list of products which this grant applies to.
@@ -61,7 +59,7 @@ class GrantType(RecordBase["GrantTypeManager"]):
     """
 
     only_for_product_category_ids: Annotated[
-        List[int],
+        list[int],
         ModelRef(
             "only_for_product_categories",
             ProductCategory,
@@ -75,7 +73,7 @@ class GrantType(RecordBase["GrantTypeManager"]):
     """
 
     only_for_product_categories: Annotated[
-        List[ProductCategory],
+        list[ProductCategory],
         ModelRef(
             "only_for_product_categories",
             ProductCategory,

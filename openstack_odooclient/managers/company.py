@@ -15,9 +15,9 @@
 
 from __future__ import annotations
 
-from typing import List, Literal, Optional, Union
+from typing import Annotated, Literal
 
-from typing_extensions import Annotated, Self
+from typing_extensions import Self
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
@@ -27,10 +27,10 @@ class Company(RecordBase["CompanyManager"]):
     active: bool
     """Whether or not this company is active (enabled)."""
 
-    child_ids: Annotated[List[int], ModelRef("child_ids", Self)]
+    child_ids: Annotated[list[int], ModelRef("child_ids", Self)]
     """A list of IDs for the child companies."""
 
-    children: Annotated[List[Self], ModelRef("child_ids", Self)]
+    children: Annotated[list[Self], ModelRef("child_ids", Self)]
     """The list of child companies.
 
     This fetches the full records from Odoo once,
@@ -40,17 +40,17 @@ class Company(RecordBase["CompanyManager"]):
     name: str
     """Company name, set from the partner name."""
 
-    parent_id: Annotated[Optional[int], ModelRef("parent_id", Self)]
+    parent_id: Annotated[int | None, ModelRef("parent_id", Self)]
     """The ID for the parent company, if this company
     is the child of another company.
     """
 
-    parent_name: Annotated[Optional[str], ModelRef("parent_id", Self)]
+    parent_name: Annotated[str | None, ModelRef("parent_id", Self)]
     """The name of the parent company, if this company
     is the child of another company.
     """
 
-    parent: Annotated[Optional[Self], ModelRef("parent_id", Self)]
+    parent: Annotated[Self | None, ModelRef("parent_id", Self)]
     """The parent company, if this company
     is the child of another company.
 
@@ -58,7 +58,7 @@ class Company(RecordBase["CompanyManager"]):
     and caches it for subsequent accesses.
     """
 
-    parent_path: Union[str, Literal[False]]
+    parent_path: str | Literal[False]
     """The path of the parent company, if there is a parent."""
 
     partner_id: Annotated[int, ModelRef("partner_id", Partner)]

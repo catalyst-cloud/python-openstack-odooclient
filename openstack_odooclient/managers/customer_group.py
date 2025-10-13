@@ -15,9 +15,7 @@
 
 from __future__ import annotations
 
-from typing import List, Optional
-
-from typing_extensions import Annotated
+from typing import Annotated
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
@@ -27,32 +25,29 @@ class CustomerGroup(RecordBase["CustomerGroupManager"]):
     name: str
     """The name of the customer group."""
 
-    partner_ids: Annotated[List[int], ModelRef("partners", Partner)]
+    partner_ids: Annotated[list[int], ModelRef("partners", Partner)]
     """A list of IDs for the partners that are part
     of this customer group.
     """
 
-    partners: Annotated[List[Partner], ModelRef("partners", Partner)]
+    partners: Annotated[list[Partner], ModelRef("partners", Partner)]
     """The partners that are part of this customer group.
 
     This fetches the full records from Odoo once,
     and caches them for subsequent accesses.
     """
 
-    pricelist_id: Annotated[Optional[int], ModelRef("pricelist", Pricelist)]
+    pricelist_id: Annotated[int | None, ModelRef("pricelist", Pricelist)]
     """The ID for the pricelist this customer group uses,
     if not the default one.
     """
 
-    pricelist_name: Annotated[Optional[str], ModelRef("pricelist", Pricelist)]
+    pricelist_name: Annotated[str | None, ModelRef("pricelist", Pricelist)]
     """The name of the pricelist this customer group uses,
     if not the default one.
     """
 
-    pricelist: Annotated[
-        Optional[Pricelist],
-        ModelRef("pricelist", Pricelist),
-    ]
+    pricelist: Annotated[Pricelist | None, ModelRef("pricelist", Pricelist)]
     """The pricelist this customer group uses, if not the default one.
 
     This fetches the full record from Odoo once,

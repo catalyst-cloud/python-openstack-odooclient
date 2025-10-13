@@ -15,9 +15,7 @@
 
 from __future__ import annotations
 
-from typing import List, Optional, Union
-
-from typing_extensions import Annotated
+from typing import Annotated
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
@@ -25,7 +23,7 @@ from ..base.record_manager import RecordManagerBase
 
 class VolumeDiscountRange(RecordBase["VolumeDiscountRangeManager"]):
     customer_group_id: Annotated[
-        Optional[int],
+        int | None,
         ModelRef("customer_group", CustomerGroup),
     ]
     """The ID for the customer group this volume discount range
@@ -36,7 +34,7 @@ class VolumeDiscountRange(RecordBase["VolumeDiscountRangeManager"]):
     """
 
     customer_group_name: Annotated[
-        Optional[str],
+        str | None,
         ModelRef("customer_group", CustomerGroup),
     ]
     """The name of the customer group this volume discount range
@@ -47,7 +45,7 @@ class VolumeDiscountRange(RecordBase["VolumeDiscountRangeManager"]):
     """
 
     customer_group: Annotated[
-        Optional[CustomerGroup],
+        CustomerGroup | None,
         ModelRef("customer_group", CustomerGroup),
     ]
     """The customer group this volume discount range
@@ -68,7 +66,7 @@ class VolumeDiscountRange(RecordBase["VolumeDiscountRangeManager"]):
     this volume discount range.
     """
 
-    max: Optional[float]
+    max: float | None
     """Optional maximum charge for this volume discount range.
 
     Intended to be used when creating tiered volume discounts for customers.
@@ -88,8 +86,8 @@ class VolumeDiscountRangeManager(RecordManagerBase[VolumeDiscountRange]):
     def get_for_charge(
         self,
         charge: float,
-        customer_group: Optional[Union[int, CustomerGroup]] = None,
-    ) -> Optional[VolumeDiscountRange]:
+        customer_group: int | CustomerGroup | None = None,
+    ) -> VolumeDiscountRange | None:
         """Return the volume discount range to apply to a given charge.
 
         If ``customer_group`` is supplied, volume discount ranges for
@@ -104,14 +102,14 @@ class VolumeDiscountRangeManager(RecordManagerBase[VolumeDiscountRange]):
         :param charge: The charge to find the applicable discount range for
         :type charge: float
         :param customer_group: Get discount for a specific customer group
-        :type customer_group: Optional[Union[int, CustomerGroup]], optional
+        :type customer_group: int | CustomerGroup | None, optional
         :return: Highest percentage applicable discount range (if found)
-        :rtype: Optional[VolumeDiscountRange]
+        :rtype: VolumeDiscountRange | None
         """
         ranges = self.search(
             [("customer_group", "=", customer_group or False)],
         )
-        found_ranges: List[VolumeDiscountRange] = []
+        found_ranges: list[VolumeDiscountRange] = []
         for vol_range in ranges:
             if charge < vol_range.min:
                 continue

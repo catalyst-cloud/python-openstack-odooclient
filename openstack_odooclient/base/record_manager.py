@@ -15,21 +15,16 @@
 
 from __future__ import annotations
 
+import builtins
+
 from datetime import date, datetime
 from types import MappingProxyType
 from typing import (
     TYPE_CHECKING,
+    Annotated,
     Any,
-    Dict,
     Generic,
-    Iterable,
-    List,
     Literal,
-    Mapping,
-    Optional,
-    Sequence,
-    Set,
-    Tuple,
     Type,
     TypeVar,
     Union,
@@ -37,7 +32,6 @@ from typing import (
 )
 
 from typing_extensions import (
-    Annotated,
     Self,
     get_args as get_type_args,
     get_origin as get_type_origin,
@@ -53,13 +47,16 @@ from ..util import (
 from .record import FieldAlias, ModelRef, RecordBase
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable, Mapping, Sequence
+
     from odoorpc import ODOO  # type: ignore[import]
     from odoorpc.env import Environment  # type: ignore[import]
 
     from .client import ClientBase
 
+    FilterCriterion = tuple[str, str, Any] | Sequence[Any] | str
+
 Record = TypeVar("Record", bound=RecordBase)
-FilterCriterion = Union[Tuple[str, str, Any], Sequence[Any], str]
 
 
 class RecordManagerBase(Generic[Record]):
@@ -100,7 +97,7 @@ class RecordManagerBase(Generic[Record]):
     record_class: Type[Record]
     """The record object type to instantiate using this manager."""
 
-    default_fields: Optional[Tuple[str, ...]] = None
+    default_fields: tuple[str, ...] | None = None
     """List of fields to fetch by default if a field list is not supplied
     in queries.
 
@@ -133,7 +130,7 @@ class RecordManagerBase(Generic[Record]):
         record class, mapping Odoo version-specific remote field names
         to their representations on the record class.
         """
-        self._model_ref_mapping: Dict[str, str] = {}
+        self._model_ref_mapping: dict[str, str] = {}
         """Mapping of the remote field name for a model ref
         to the local field name representing the model ref's IDs.
 
@@ -169,40 +166,40 @@ class RecordManagerBase(Generic[Record]):
     @overload
     def list(
         self,
-        ids: Union[int, Iterable[int]],
+        ids: int | Iterable[int],
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_dict: Literal[False] = ...,
         optional: bool = ...,
-    ) -> List[Record]: ...
+    ) -> builtins.list[Record]: ...
 
     @overload
     def list(
         self,
-        ids: Union[int, Iterable[int]],
+        ids: int | Iterable[int],
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_dict: Literal[True],
         optional: bool = ...,
-    ) -> List[Dict[str, Any]]: ...
+    ) -> builtins.list[dict[str, Any]]: ...
 
     @overload
     def list(
         self,
-        ids: Union[int, Iterable[int]],
+        ids: int | Iterable[int],
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_dict: bool = ...,
         optional: bool = ...,
-    ) -> Union[List[Record], List[Dict[str, Any]]]: ...
+    ) -> builtins.list[Record] | builtins.list[dict[str, Any]]: ...
 
     def list(
         self,
-        ids: Union[int, Iterable[int]],
-        fields: Optional[Iterable[str]] = None,
+        ids: int | Iterable[int],
+        fields: Iterable[str] | None = None,
         as_dict: bool = False,
         optional: bool = False,
-    ) -> Union[List[Record], List[Dict[str, Any]]]:
+    ) -> builtins.list[Record] | builtins.list[dict[str, Any]]:
         """Get one or more specific records by ID.
 
         By default all fields available on the record model
@@ -222,19 +219,19 @@ class RecordManagerBase(Generic[Record]):
         returns an empty list.
 
         :param ids: Record ID, or list of record IDs
-        :type ids: Union[int, Iterable[int]]
+        :type ids: int | Iterable[int]
         :param fields: Fields to select, defaults to ``None`` (select all)
-        :type fields: Optional[Iterable[str]], optional
+        :type fields: Iterable[str] | None, optional
         :param as_dict: Return records as dictionaries, defaults to ``False``
         :type as_dict: bool, optional
         :param optional: Disable missing record errors, defaults to ``False``
         :type optional: bool, optional
         :raises RecordNotFoundError: If IDs are required but some are missing
         :return: List of records
-        :rtype: list[Record] or list[dict[str, Any]]
+        :rtype: list[Record] | list[dict[str, Any]]
         """
         if isinstance(ids, int):
-            _ids: Union[int, List[int]] = ids
+            _ids: int | list[int] = ids
         else:
             _ids = list(ids)
             if not _ids:
@@ -249,7 +246,7 @@ class RecordManagerBase(Generic[Record]):
             if fields is not None
             else None
         )
-        records: Iterable[Dict[str, Any]] = self._env.read(
+        records: Iterable[dict[str, Any]] = self._env.read(
             _ids,
             fields=_fields,
         )
@@ -272,7 +269,7 @@ class RecordManagerBase(Generic[Record]):
             ]
         if not optional:
             required_ids = {_ids} if isinstance(_ids, int) else set(_ids)
-            found_ids: Set[int] = (
+            found_ids: set[int] = (
                 set(record["id"] for record in res_dicts)
                 if as_dict
                 else set(record.id for record in res_objs)
@@ -293,7 +290,7 @@ class RecordManagerBase(Generic[Record]):
         self,
         id: int,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_dict: Literal[False] = ...,
         optional: Literal[False] = ...,
     ) -> Record: ...
@@ -303,48 +300,48 @@ class RecordManagerBase(Generic[Record]):
         self,
         id: int,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_dict: Literal[True],
         optional: Literal[False] = ...,
-    ) -> Dict[str, Any]: ...
+    ) -> dict[str, Any]: ...
 
     @overload
     def get(
         self,
         id: int,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_dict: Literal[False] = ...,
         optional: Literal[True],
-    ) -> Optional[Record]: ...
+    ) -> Record | None: ...
 
     @overload
     def get(
         self,
         id: int,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_dict: Literal[True],
         optional: Literal[True],
-    ) -> Optional[Dict[str, Any]]: ...
+    ) -> dict[str, Any] | None: ...
 
     @overload
     def get(
         self,
         id: int,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_dict: bool = ...,
         optional: bool = ...,
-    ) -> Optional[Union[Record, Dict[str, Any]]]: ...
+    ) -> Record | dict[str, Any] | None: ...
 
     def get(
         self,
         id: int,  # noqa: A002
-        fields: Optional[Iterable[str]] = None,
+        fields: Iterable[str] | None = None,
         as_dict: bool = False,
         optional: bool = False,
-    ) -> Optional[Union[Record, Dict[str, Any]]]:
+    ) -> Record | dict[str, Any] | None:
         """Get a single record by ID.
 
         By default all fields available on the record model
@@ -363,7 +360,7 @@ class RecordManagerBase(Generic[Record]):
         :param optional: Return ``None`` if not found, defaults to ``False``
         :raises RecordNotFoundError: Record with the given ID not found
         :return: List of records
-        :rtype: Union[Record, List[str, Any]]
+        :rtype: Record | list[str, Any]
         """
         try:
             return self.list(
@@ -386,64 +383,72 @@ class RecordManagerBase(Generic[Record]):
     @overload
     def search(
         self,
-        filters: Optional[Sequence[FilterCriterion]] = ...,
-        fields: Optional[Iterable[str]] = ...,
-        order: Optional[str] = ...,
+        filters: Sequence[FilterCriterion] | None = ...,
+        fields: Iterable[str] | None = ...,
+        order: str | None = ...,
         as_id: Literal[False] = ...,
         as_dict: Literal[False] = ...,
-    ) -> List[Record]: ...
+    ) -> builtins.list[Record]: ...
 
     @overload
     def search(
         self,
-        filters: Optional[Sequence[FilterCriterion]] = ...,
-        fields: Optional[Iterable[str]] = ...,
-        order: Optional[str] = ...,
+        filters: Sequence[FilterCriterion] | None = ...,
+        fields: Iterable[str] | None = ...,
+        order: str | None = ...,
         *,
         as_id: Literal[True],
         as_dict: Literal[False] = ...,
-    ) -> List[int]: ...
+    ) -> builtins.list[int]: ...
 
     @overload
     def search(
         self,
-        filters: Optional[Sequence[FilterCriterion]] = ...,
-        fields: Optional[Iterable[str]] = ...,
-        order: Optional[str] = ...,
+        filters: Sequence[FilterCriterion] | None = ...,
+        fields: Iterable[str] | None = ...,
+        order: str | None = ...,
         as_id: Literal[False] = ...,
         *,
         as_dict: Literal[True],
-    ) -> List[Dict[str, Any]]: ...
+    ) -> builtins.list[dict[str, Any]]: ...
 
     @overload
     def search(
         self,
-        filters: Optional[Sequence[FilterCriterion]] = ...,
-        fields: Optional[Iterable[str]] = ...,
-        order: Optional[str] = ...,
+        filters: Sequence[FilterCriterion] | None = ...,
+        fields: Iterable[str] | None = ...,
+        order: str | None = ...,
         *,
         as_id: Literal[True],
         as_dict: Literal[True],
-    ) -> List[int]: ...
+    ) -> builtins.list[int]: ...
 
     @overload
     def search(
         self,
-        filters: Optional[Sequence[FilterCriterion]] = ...,
-        fields: Optional[Iterable[str]] = ...,
-        order: Optional[str] = ...,
+        filters: Sequence[FilterCriterion] | None = ...,
+        fields: Iterable[str] | None = ...,
+        order: str | None = ...,
         as_id: bool = ...,
         as_dict: bool = ...,
-    ) -> Union[List[Record], List[int], List[Dict[str, Any]]]: ...
+    ) -> (
+        builtins.list[Record]
+        | builtins.list[int]
+        | builtins.list[dict[str, Any]]
+    ): ...
 
     def search(
         self,
-        filters: Optional[Sequence[FilterCriterion]] = None,
-        fields: Optional[Iterable[str]] = None,
-        order: Optional[str] = None,
+        filters: Sequence[FilterCriterion] | None = None,
+        fields: Iterable[str] | None = None,
+        order: str | None = None,
         as_id: bool = False,
         as_dict: bool = False,
-    ) -> Union[List[Record], List[int], List[Dict[str, Any]]]:
+    ) -> (
+        builtins.list[Record]
+        | builtins.list[int]
+        | builtins.list[dict[str, Any]]
+    ):
         """Query the ERP for records, optionally defining
         filters to constrain the search and other parameters,
         and return the results.
@@ -510,7 +515,7 @@ class RecordManagerBase(Generic[Record]):
         a list of ``dict`` objects, instead of record objects.
 
         :param filters: Filters to query by, defaults to ``None`` (no filters)
-        :type filters: Union[Tuple[str, str, Any], Sequence[Any], str] | None
+        :type filters: tuple[str, str, Any] | Sequence[Any] | str | None
         :param fields: Fields to select, defaults to ``None`` (select all)
         :type fields: Iterable[str] or None, optional
         :param order: Order results by field name, defaults to ``None``
@@ -520,9 +525,9 @@ class RecordManagerBase(Generic[Record]):
         :param as_dict: Return records as dictionaries, defaults to ``False``
         :type as_dict: bool, optional
         :return: List of records
-        :rtype: list[Record] or list[int] or list[dict[str, Any]]
+        :rtype: list[Record] | list[int] | list[dict[str, Any]]
         """
-        ids: List[int] = self._env.search(
+        ids: list[int] = self._env.search(
             (self._encode_filters(filters) if filters else []),
             order=order,
         )
@@ -543,8 +548,8 @@ class RecordManagerBase(Generic[Record]):
     def _encode_filters(
         self,
         filters: Sequence[FilterCriterion],
-    ) -> List[Union[str, Tuple[str, str, Any]]]:
-        _filters: List[Union[str, Tuple[str, str, Any]]] = []
+    ) -> builtins.list[str | tuple[str, str, Any]]:
+        _filters: list[str | tuple[str, str, Any]] = []
         for f in filters:
             if isinstance(f, str):
                 _filters.append(f)
@@ -576,7 +581,7 @@ class RecordManagerBase(Generic[Record]):
                 _filters.append((field_name, operator, value))
         return _filters
 
-    def _encode_filter_field(self, field: str) -> Tuple[Any, str]:
+    def _encode_filter_field(self, field: str) -> tuple[Any, str]:
         # The field reference in a filter may be nested.
         # Split the reference by the delimiter (.),
         # so we can perform a recursive lookup of the correct field
@@ -657,7 +662,7 @@ class RecordManagerBase(Generic[Record]):
         """
         return self._env.create(self._encode_create_fields(fields))
 
-    def create_multi(self, *records: Mapping[str, Any]) -> List[int]:
+    def create_multi(self, *records: Mapping[str, Any]) -> builtins.list[int]:
         """Create one or more new records in a single request,
         passing in the mappings containing the record's input fields
         as positional arguments.
@@ -669,9 +674,9 @@ class RecordManagerBase(Generic[Record]):
         pass the returned IDs to the ``list`` method.
 
         :return: The IDs of the newly created records
-        :rtype: List[int]
+        :rtype: list[int]
         """
-        res: Union[int, List[int]] = self._env.create(
+        res: int | list[int] = self._env.create(
             [self._encode_create_fields(record) for record in records],
         )
         if isinstance(res, int):
@@ -681,9 +686,9 @@ class RecordManagerBase(Generic[Record]):
     def _encode_create_fields(
         self,
         fields: Mapping[str, Any],
-    ) -> Dict[str, Any]:
-        create_fields: Dict[str, Any] = {}
-        field_remote_mapping: Dict[str, str] = {}
+    ) -> dict[str, Any]:
+        create_fields: dict[str, Any] = {}
+        field_remote_mapping: dict[str, str] = {}
         for field, value in fields.items():
             remote_field, remote_value = self._encode_create_field(
                 field=field,
@@ -706,7 +711,7 @@ class RecordManagerBase(Generic[Record]):
         self,
         field: str,
         value: Any,
-    ) -> Tuple[str, Any]:
+    ) -> tuple[str, Any]:
         # Fetch the local and remote representations of the given field.
         # Field aliases and model ref target fields are resolved
         # at this point.
@@ -749,11 +754,8 @@ class RecordManagerBase(Generic[Record]):
             if get_type_origin(attr_type) is list:
                 if not value:
                     return (remote_field, [])
-                remote_values: List[
-                    Union[
-                        Tuple[int, int],
-                        Tuple[int, int, Dict[str, Any]],
-                    ],
+                remote_values: list[
+                    tuple[int, int] | tuple[int, int, dict[str, Any]]
                 ] = []
                 for v in value:
                     if isinstance(v, int):
@@ -808,7 +810,7 @@ class RecordManagerBase(Generic[Record]):
 
     def unlink(
         self,
-        *records: Union[int, Record, Iterable[Union[int, Record]]],
+        *records: int | Record | Iterable[int | Record],
     ) -> None:
         """Delete one or more records from Odoo.
 
@@ -818,9 +820,9 @@ class RecordManagerBase(Generic[Record]):
         All specified records will be deleted in a single request.
 
         :param records: The records to delete (object, ID, or record/ID list)
-        :type records: Union[Record, int, Iterable[Union[Record, int]]]
+        :type records: Record | int | Iterable[Record | int]
         """
-        _ids: List[int] = []
+        _ids: list[int] = []
         for ids in records:
             if isinstance(ids, int):
                 _ids.append(ids)
@@ -834,7 +836,7 @@ class RecordManagerBase(Generic[Record]):
 
     def delete(
         self,
-        *records: Union[Record, int, Iterable[Union[Record, int]]],
+        *records: Record | int | Iterable[Record | int],
     ) -> None:
         """Delete one or more records from Odoo.
 
@@ -844,7 +846,7 @@ class RecordManagerBase(Generic[Record]):
         All specified records will be deleted in a single request.
 
         :param records: The records to delete (object, ID, or record/ID list)
-        :type records: Union[Record, int, Iterable[Union[Record, int]]]
+        :type records: Record | int | Iterable[Record | int]
         """
         self.unlink(*records)
 
@@ -882,8 +884,8 @@ class RecordManagerBase(Generic[Record]):
             return field
         # NOTE(callumdickinson): Continually resolve field aliases
         # until we get to a field that is not an alias.
-        resolved_aliases: Set[str] = set()
-        alias_chain: List[str] = []
+        resolved_aliases: set[str] = set()
+        alias_chain: list[str] = []
         annotation = FieldAlias.get(self._record_type_hints[field])
         while annotation:
             # Check if field aliases loop back on each other.

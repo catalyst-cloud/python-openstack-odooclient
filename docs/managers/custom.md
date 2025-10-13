@@ -180,12 +180,12 @@ the type hint should be defined as shown below.
 ```python
 from __future__ import annotations
 
-from typing import Literal, Union
+from typing import Literal
 
 from openstack_odooclient import RecordBase
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
-    custom_field: Union[str, Literal[False]]
+    custom_field: str | Literal[False]
     """Description of the field."""
 ```
 
@@ -197,12 +197,10 @@ the type hint should be defined as shown below instead.
 ```python
 from __future__ import annotations
 
-from typing import Optional
-
 from openstack_odooclient import RecordBase
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
-    custom_field: Optional[str]
+    custom_field: str | None
     """Description of the field."""
 ```
 
@@ -223,8 +221,9 @@ The type of the alias **must** match the type of the target field.
 ```python
 from __future__ import annotations
 
+from typing import Annotated
+
 from openstack_odooclient import FieldAlias, RecordBase
-from typing_extensions import Annotated
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: str
@@ -265,8 +264,9 @@ The first is to expose the record's ID directly as an integer.
 ```python
 from __future__ import annotations
 
+from typing import Annotated
+
 from openstack_odooclient import ModelRef, RecordBase, User
-from typing_extensions import Annotated
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
     user_id: Annotated[int, ModelRef("user_id", User)]
@@ -278,8 +278,9 @@ The second is to expose the target record's display name as a string.
 ```python
 from __future__ import annotations
 
+from typing import Annotated
+
 from openstack_odooclient import ModelRef, RecordBase, User
-from typing_extensions import Annotated
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
     user_name: Annotated[str, ModelRef("user_id", User)]
@@ -291,8 +292,9 @@ The third and final one is to define the target record itself as a record object
 ```python
 from __future__ import annotations
 
+from typing import Annotated
+
 from openstack_odooclient import ModelRef, RecordBase, User
-from typing_extensions import Annotated
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
     user: Annotated[User, ModelRef("user_id", User)]
@@ -315,8 +317,9 @@ The final result should be the following fields defined on your record class.
 ```python
 from __future__ import annotations
 
+from typing import Annotated
+
 from openstack_odooclient import ModelRef, RecordBase, User
-from typing_extensions import Annotated
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
     user_id: Annotated[int, ModelRef("user_id", User)]
@@ -339,25 +342,24 @@ and [creating new records](index.md#create).
 The record ID or the record object can be passed directly to those methods
 (the record display name is not guaranteed to be unique, and thus, not accepted).
 
-Record references can be made optional by encasing the type hint with `Optional`.
+Record references can be made optional by unioning with `None`.
 If the record reference is not set, `None` will be returned.
 
 ```python
 from __future__ import annotations
 
-from typing import Optional
+from typing import Annotated
 
 from openstack_odooclient import ModelRef, RecordBase, User
-from typing_extensions import Annotated
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
-    user_id: Annotated[Optional[int], ModelRef("user_id", User)]
+    user_id: Annotated[int | None, ModelRef("user_id", User)]
     """ID for the user that owns this record."""
 
-    user_name: Annotated[Optional[str], ModelRef("user_id", User)]
+    user_name: Annotated[str | None, ModelRef("user_id", User)]
     """Name of the user that owns this record."""
 
-    user: Annotated[Optional[User], ModelRef("user_id", User)]
+    user: Annotated[User | None, ModelRef("user_id", User)]
     """The user that owns this record.
 
     This fetches the full record from Odoo once,
@@ -371,19 +373,19 @@ In the below example, `Self` resolves to `CustomRecord`.
 ```python
 from __future__ import annotations
 
-from typing import Optional
+from typing import Annotated
 
 from openstack_odooclient import ModelRef, RecordBase
-from typing_extensions import Annotated, Self
+from typing_extensions import Self
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
-    record_id: Annotated[Optional[int], ModelRef("user_id", Self)]
+    record_id: Annotated[int | None, ModelRef("user_id", Self)]
     """ID for the record related to this one, if set.."""
 
-    record_name: Annotated[Optional[str], ModelRef("user_id", Self)]
+    record_name: Annotated[str | None, ModelRef("user_id", Self)]
     """Name of the record related to this one, if set."""
 
-    record: Annotated[Optional[Self], ModelRef("user_id", Self)]
+    record: Annotated[Self | None, ModelRef("user_id", Self)]
     """The record related to this one, if set.
 
     This fetches the full record from Odoo once,
@@ -408,13 +410,12 @@ The first is to expose the record IDs directly as a list of integers.
 ```python
 from __future__ import annotations
 
-from typing import List
+from typing import Annotated
 
 from openstack_odooclient import ModelRef, RecordBase, Product
-from typing_extensions import Annotated
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
-    product_ids: Annotated[List[int], ModelRef("product_id", Product)]
+    product_ids: Annotated[list[int], ModelRef("product_id", Product)]
     """The list of IDs for the products to use."""
 ```
 
@@ -423,13 +424,12 @@ The second and final one is to expose the records as a list of record objects.
 ```python
 from __future__ import annotations
 
-from typing import List
+from typing import Annotated
 
 from openstack_odooclient import ModelRef, RecordBase, Product
-from typing_extensions import Annotated
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
-    products: Annotated[List[Product], ModelRef("product_id", Product)]
+    products: Annotated[list[Product], ModelRef("product_id", Product)]
     """The list of products to use.
 
     This fetches the full records from Odoo once,
@@ -449,16 +449,15 @@ The final result should be the following fields defined on your record class.
 ```python
 from __future__ import annotations
 
-from typing import List
+from typing import Annotated
 
 from openstack_odooclient import ModelRef, RecordBase, Product
-from typing_extensions import Annotated
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
-    product_ids: Annotated[List[int], ModelRef("product_id", Product)]
+    product_ids: Annotated[list[int], ModelRef("product_id", Product)]
     """The list of IDs for the products to use."""
 
-    products: Annotated[List[Product], ModelRef("product_id", Product)]
+    products: Annotated[list[Product], ModelRef("product_id", Product)]
     """The list of products to use.
 
     This fetches the full records from Odoo once,
@@ -478,16 +477,16 @@ In the below example, `Self` resolves to `CustomRecord`.
 ```python
 from __future__ import annotations
 
-from typing import List
+from typing import Annotated
 
 from openstack_odooclient import ModelRef, RecordBase
-from typing_extensions import Annotated, Self
+from typing_extensions import Self
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
-    child_ids: Annotated[List[int], ModelRef("child_id", Self)]
+    child_ids: Annotated[list[int], ModelRef("child_id", Self)]
     """The list of IDs for the child records."""
 
-    children: Annotated[List[Self], ModelRef("child_id", Self)]
+    children: Annotated[list[Self], ModelRef("child_id", Self)]
     """The list of child records.
 
     This fetches the full records from Odoo once,
@@ -511,16 +510,15 @@ Below is an example of two record classes that correctly reference each other.
 ```python title="parent.py"
 from __future__ import annotations
 
-from typing import List
+from typing import Annotated
 
 from openstack_odooclient import ModelRef, RecordBase, RecordManagerBase
-from typing_extensions import Annotated
 
 class Parent(RecordBase["ParentManager"]):
-    child_ids: Annotated[List[int], ModelRef("child_id", Child)]
+    child_ids: Annotated[list[int], ModelRef("child_id", Child)]
     """The list of IDs for the children records."""
 
-    children: Annotated[List[Parent], ModelRef("child_id", Child)]
+    children: Annotated[list[Parent], ModelRef("child_id", Child)]
     """The list of children records.
 
     This fetches the full records from Odoo once,
@@ -537,19 +535,18 @@ from .child import Child  # noqa: E402
 ```python title="child.py"
 from __future__ import annotations
 
-from typing import Optional
+from typing import Annotated
 
 from openstack_odooclient import ModelRef, RecordBase, RecordManagerBase
-from typing_extensions import Annotated
 
 class Child(RecordBase["ChildManager"]):
-    parent_id: Annotated[Optional[int], ModelRef("parent_id", Parent)]
+    parent_id: Annotated[int | None, ModelRef("parent_id", Parent)]
     """ID for the parent record, if it has one."""
 
-    parent_name: Annotated[Optional[str], ModelRef("parent_id", Parent)]
+    parent_name: Annotated[str | None, ModelRef("parent_id", Parent)]
     """Name of the parent record, if it has one."""
 
-    parent: Annotated[Optional[Parent], ModelRef("parent_id", Parent)]
+    parent: Annotated[Parent | None, ModelRef("parent_id", Parent)]
     """The parent record, if it has one.
 
     This fetches the full record from Odoo once,
@@ -686,8 +683,6 @@ Below is a simple example of a custom record type and its manager class.
 ```python
 from __future__ import annotations
 
-from typing import List, Union
-
 from openstack_odooclient import RecordBase, RecordManagerBase
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
@@ -709,8 +704,6 @@ This will allow manager methods to be used by calling them on the manager object
 
 ```python
 from __future__ import annotations
-
-from typing import List, Union
 
 from openstack_odooclient import Client, RecordBase, RecordManagerBase
 
@@ -735,8 +728,6 @@ custom manager class.
 
 ```python
 from __future__ import annotations
-
-from typing import List, Union
 
 from openstack_odooclient import RecordBase, RecordManagerBase
 
@@ -768,8 +759,6 @@ Methods can be defined on manager classes to provide additional functionality.
 ```python
 from __future__ import annotations
 
-from typing import List, Union
-
 from openstack_odooclient import RecordBase, RecordManagerBase
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
@@ -780,10 +769,10 @@ class CustomRecordManager(RecordManagerBase[CustomRecord]):
     env_name = "custom.record"
     record_class = CustomRecord
 
-    def search_by_custom_field(self, custom_field: str) -> List[Record]:
+    def search_by_custom_field(self, custom_field: str) -> list[Record]:
         return self.search([("custom_field", "ilike", custom_field)])
 
-    def perform_action(self, custom_record: Union[int, CustomRecord]) -> None:
+    def perform_action(self, custom_record: int | CustomRecord) -> None:
         self._env.perform_action(
             (
                 custom_record.id

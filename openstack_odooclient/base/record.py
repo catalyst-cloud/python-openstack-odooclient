@@ -22,20 +22,16 @@ from datetime import date, datetime
 from types import MappingProxyType
 from typing import (
     TYPE_CHECKING,
+    Annotated,
     Any,
-    Dict,
     Generic,
     Literal,
-    Mapping,
-    Optional,
-    Sequence,
     Type,
     TypeVar,
     Union,
 )
 
 from typing_extensions import (
-    Annotated,
     Self,
     get_args as get_type_args,
     get_origin as get_type_origin,
@@ -44,6 +40,8 @@ from typing_extensions import (
 from ..util import is_subclass
 
 if TYPE_CHECKING:
+    from collections.abc import Mapping, Sequence
+
     from odoorpc import ODOO  # type: ignore[import]
     from odoorpc.env import Environment  # type: ignore[import]
 
@@ -54,7 +52,7 @@ RecordManager = TypeVar("RecordManager", bound="RecordManagerBase")
 
 class AnnotationBase:
     @classmethod
-    def get(cls, type_hint: Any) -> Optional[Self]:
+    def get(cls, type_hint: Any) -> Self | None:
         """Return the annotation applied to the given type hint,
         if the type hint is annotated with this type of annotation.
 
@@ -64,11 +62,11 @@ class AnnotationBase:
         :param type_hint: The type hint to parse
         :type type_hint: Any
         :return: Applied annotation, or ``None`` if no annotation was found
-        :rtype: Optional[Self]
+        :rtype: Self | None
         """
         if get_type_origin(type_hint) is not Annotated:
             return None
-        matching_annotation: Optional[Self] = None
+        matching_annotation: Self | None = None
         for annotation in get_type_args(type_hint)[1:]:
             if isinstance(annotation, cls):
                 matching_annotation = annotation
@@ -96,7 +94,7 @@ class FieldAlias(AnnotationBase):
     when searching or creating records, or referencing field values
     on record objects.
 
-    >>> from typing_extensions import Annotated
+    >>> from typing import Annotated
     >>> from openstack_odooclient import FieldAlias, RecordBase
     >>> class CustomRecord(RecordBase["CustomRecordManager"]):
     ...     name: str
@@ -116,7 +114,7 @@ class ModelRef(AnnotationBase):
     the second argument is the record class that type is represented by
     in the OpenStack Odoo Client library.
 
-    >>> from typing_extensions import Annotated
+    >>> from typing import Annotated
     >>> from openstack_odooclient import ModelRef, RecordBase, User
     >>> class CustomRecord(RecordBase["CustomRecordManager"]):
     ...     user_id: Annotated[int, ModelRef("user_id", User)]
@@ -145,13 +143,13 @@ class RecordBase(Generic[RecordManager]):
     create_date: datetime
     """The time the record was created."""
 
-    create_uid: Annotated[Optional[int], ModelRef("create_uid", User)]
+    create_uid: Annotated[int | None, ModelRef("create_uid", User)]
     """The ID of the user that created this record."""
 
-    create_name: Annotated[Optional[str], ModelRef("create_uid", User)]
+    create_name: Annotated[str | None, ModelRef("create_uid", User)]
     """The name of the user that created this record."""
 
-    create_user: Annotated[Optional[User], ModelRef("create_uid", User)]
+    create_user: Annotated[User | None, ModelRef("create_uid", User)]
     """The user that created this record.
 
     This fetches the full record from Odoo once,
@@ -161,20 +159,20 @@ class RecordBase(Generic[RecordManager]):
     write_date: datetime
     """The time the record was last modified."""
 
-    write_uid: Annotated[Optional[int], ModelRef("write_uid", User)]
+    write_uid: Annotated[int | None, ModelRef("write_uid", User)]
     """The ID for the user that last modified this record."""
 
-    write_name: Annotated[Optional[str], ModelRef("write_uid", User)]
+    write_name: Annotated[str | None, ModelRef("write_uid", User)]
     """The name of the user that last modified this record."""
 
-    write_user: Annotated[Optional[User], ModelRef("write_uid", User)]
+    write_user: Annotated[User | None, ModelRef("write_uid", User)]
     """The user that last modified this record.
 
     This fetches the full record from Odoo once,
     and caches it for subsequence accesses.
     """
 
-    _field_mapping: Dict[Optional[str], Dict[str, str]] = {}
+    _field_mapping: dict[str | None, dict[str, str]] = {}
     """A dictionary structure mapping field names in the local class
     with the equivalents on specific versions of Odoo.
 
@@ -191,7 +189,7 @@ class RecordBase(Generic[RecordManager]):
         self,
         client: ClientBase,
         record: Mapping[str, Any],
-        fields: Optional[Sequence[str]],
+        fields: Sequence[str] | None,
     ) -> None:
         self._client = client
         """The Odoo client that created this record object."""
@@ -199,7 +197,7 @@ class RecordBase(Generic[RecordManager]):
         """The raw record fields from OdooRPC."""
         self._fields = tuple(fields) if fields else None
         """The fields selected in the query that created this record object."""
-        self._values: Dict[str, Any] = {}
+        self._values: dict[str, Any] = {}
         """The cache for the processed record field values."""
 
     @property
@@ -242,7 +240,7 @@ class RecordBase(Generic[RecordManager]):
             fields=record_obj._fields,
         )
 
-    def as_dict(self, raw: bool = False) -> Dict[str, Any]:
+    def as_dict(self, raw: bool = False) -> dict[str, Any]:
         """Convert this record object to a dictionary.
 
         The fields and values in the dictionary are the same
@@ -257,7 +255,7 @@ class RecordBase(Generic[RecordManager]):
         :param raw: Return raw dictionary from OdooRPC, defaults to False
         :type raw: bool, optional
         :return: Record dictionary
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         return (
             copy.deepcopy(dict(self._record))
@@ -452,7 +450,7 @@ class RecordBase(Generic[RecordManager]):
         if value_type is Union:
             attr_union_types = get_type_args(type_hint)
             if len(attr_union_types) == 2:  # noqa: PLR2004
-                # Optional[T]
+                # T | None
                 if type(None) in attr_union_types and value is not None:
                     return cls._decode_value(
                         next(
@@ -464,7 +462,7 @@ class RecordBase(Generic[RecordManager]):
                         ),
                         value,
                     )
-                # Union[T, Literal[False]]
+                # T | Literal[False]
                 if Literal[False] in attr_union_types and value is not False:
                     return cls._decode_value(
                         next(

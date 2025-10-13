@@ -15,9 +15,7 @@
 
 from __future__ import annotations
 
-from typing import Literal, Optional, Union
-
-from typing_extensions import Annotated
+from typing import Annotated, Literal
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
@@ -27,13 +25,13 @@ class Pricelist(RecordBase["PricelistManager"]):
     active: bool
     """Whether or not the pricelist is active."""
 
-    company_id: Annotated[Optional[int], ModelRef("company_id", Company)]
+    company_id: Annotated[int | None, ModelRef("company_id", Company)]
     """The ID for the company for this pricelist, if set."""
 
-    company_name: Annotated[Optional[str], ModelRef("company_id", Company)]
+    company_name: Annotated[str | None, ModelRef("company_id", Company)]
     """The name of the company for this pricelist, if set."""
 
-    company: Annotated[Optional[Company], ModelRef("company_id", Company)]
+    company: Annotated[Company | None, ModelRef("company_id", Company)]
     """The company for this pricelist, if set.
 
     This fetches the full record from Odoo once,
@@ -65,11 +63,11 @@ class Pricelist(RecordBase["PricelistManager"]):
     name: str
     """The name of this pricelist."""
 
-    def get_price(self, product: Union[int, Product], qty: float) -> float:
+    def get_price(self, product: int | Product, qty: float) -> float:
         """Get the price to charge for a given product and quantity.
 
         :param product: Product to get the price for (ID or object)
-        :type product: int or Product
+        :type product: int | Product
         :param qty: Quantity to charge for
         :type qty: float
         :return: Price to charge
@@ -89,17 +87,17 @@ class PricelistManager(NamedRecordManagerBase[Pricelist]):
 
     def get_price(
         self,
-        pricelist: Union[int, Pricelist],
-        product: Union[int, Product],
+        pricelist: int | Pricelist,
+        product: int | Product,
         qty: float,
     ) -> float:
         """Get the price to charge for a given pricelist, product
         and quantity.
 
         :param pricelist: Pricelist to reference (ID or object)
-        :type pricelist: int or Pricelist
+        :type pricelist: int | Pricelist
         :param product: Product to get the price for (ID or object)
-        :type product: int or Product
+        :type product: int | Product
         :param qty: Quantity to charge for
         :type qty: float
         :return: Price to charge
@@ -115,8 +113,8 @@ class PricelistManager(NamedRecordManagerBase[Pricelist]):
 
 def get_price(
     manager: PricelistManager,
-    pricelist: Union[int, Pricelist],
-    product: Union[int, Product],
+    pricelist: int | Pricelist,
+    product: int | Product,
     qty: float,
 ) -> float:
     pricelist_id = (

@@ -67,21 +67,21 @@ class Client(ClientBase):
     All parameters must be specified as keyword arguments.
 
     :param hostname: Server hostname, required if ``odoo`` is not set
-    :type hostname: Optional[str], optional
+    :type hostname: str | None, optional
     :param database: Database name, required if ``odoo`` is not set
-    :type database: Optional[str], optional
+    :type database: str | None, optional
     :param username: Username, required if ``odoo`` is not set
-    :type username: Optional[str], optional
+    :type username: str | None, optional
     :param password: Password (or API key), required if ``odoo`` is not set
-    :type password: Optional[str], optional
+    :type password: str | None, optional
     :param protocol: Communication protocol, defaults to ``jsonrpc``
     :type protocol: str, optional
     :param port: Access port, defaults to ``8069``
     :type port: int, optional
     :param verify: Configure SSL cert verification, defaults to ``True``
-    :type verify: Union[bool, str, Path]
+    :type verify: bool | str | Path
     :param version: Server version, defaults to ``None`` (auto-detect)
-    :type version: Optional[str], optional
+    :type version: str | None, optional
     """
 
     account_moves: AccountMoveManager

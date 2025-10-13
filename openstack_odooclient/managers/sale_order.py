@@ -16,9 +16,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import List, Literal, Optional, Union
-
-from typing_extensions import Annotated
+from typing import Annotated, Literal
 
 from ..base.record import FieldAlias, ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
@@ -34,7 +32,7 @@ class SaleOrder(RecordBase["SaleOrderManager"]):
     amount_total: float
     """The taxed total cost of the sale order."""
 
-    client_order_ref: Union[str, Literal[False]]
+    client_order_ref: str | Literal[False]
     """The customer reference for this sale order, if defined."""
 
     currency_id: Annotated[int, ModelRef("currency_id", Currency)]
@@ -77,13 +75,13 @@ class SaleOrder(RecordBase["SaleOrderManager"]):
     """
 
     order_line_ids: Annotated[
-        List[int],
+        list[int],
         ModelRef("order_line", SaleOrderLine),
     ]
     """A list of IDs for the lines added to the sale order."""
 
     order_line: Annotated[
-        List[SaleOrderLine],
+        list[SaleOrderLine],
         ModelRef("order_line", SaleOrderLine),
     ]
     """The lines added to the sale order.
@@ -92,7 +90,7 @@ class SaleOrder(RecordBase["SaleOrderManager"]):
     and caches them for subsequent accesses.
     """
 
-    order_lines: Annotated[List[SaleOrderLine], FieldAlias("order_line")]
+    order_lines: Annotated[list[SaleOrderLine], FieldAlias("order_line")]
     """An alias for ``order_line``."""
 
     os_invoice_date: date
@@ -105,17 +103,17 @@ class SaleOrder(RecordBase["SaleOrderManager"]):
     from the sale order.
     """
 
-    os_project_id: Annotated[Optional[int], ModelRef("os_project", Project)]
+    os_project_id: Annotated[int | None, ModelRef("os_project", Project)]
     """The ID for the the OpenStack project this sale order was
     was generated for.
     """
 
-    os_project_name: Annotated[Optional[str], ModelRef("os_project", Project)]
+    os_project_name: Annotated[str | None, ModelRef("os_project", Project)]
     """The name of the the OpenStack project this sale order was
     was generated for.
     """
 
-    os_project: Annotated[Optional[Project], ModelRef("os_project", Project)]
+    os_project: Annotated[Project | None, ModelRef("os_project", Project)]
     """The OpenStack project this sale order was
     was generated for.
 
@@ -160,11 +158,11 @@ class SaleOrderManager(NamedRecordManagerBase[SaleOrder]):
     env_name = "sale.order"
     record_class = SaleOrder
 
-    def action_confirm(self, sale_order: Union[int, SaleOrder]) -> None:
+    def action_confirm(self, sale_order: int | SaleOrder) -> None:
         """Confirm the given sale order.
 
         :param sale_order: The sale order to confirm
-        :type sale_order: Union[int, SaleOrder]
+        :type sale_order: int | SaleOrder
         """
         self._env.action_confirm(
             (
@@ -174,11 +172,11 @@ class SaleOrderManager(NamedRecordManagerBase[SaleOrder]):
             ),
         )
 
-    def create_invoices(self, sale_order: Union[int, SaleOrder]) -> None:
+    def create_invoices(self, sale_order: int | SaleOrder) -> None:
         """Create invoices from the given sale order.
 
         :param sale_order: The sale order to create invoices from
-        :type sale_order: Union[int, SaleOrder]
+        :type sale_order: int | SaleOrder
         """
         self._env.create_invoices(
             (

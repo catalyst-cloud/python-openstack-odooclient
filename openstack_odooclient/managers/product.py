@@ -15,23 +15,15 @@
 
 from __future__ import annotations
 
-from typing import (
-    Any,
-    Dict,
-    Iterable,
-    List,
-    Literal,
-    Optional,
-    Union,
-    overload,
-)
-
-from typing_extensions import Annotated
+from typing import TYPE_CHECKING, Annotated, Any, Literal, overload
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_with_unique_field import (
     RecordManagerWithUniqueFieldBase,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 class Product(RecordBase["ProductManager"]):
@@ -48,13 +40,13 @@ class Product(RecordBase["ProductManager"]):
     and caches it for subsequent accesses.
     """
 
-    company_id: Annotated[Optional[int], ModelRef("company_id", Company)]
+    company_id: Annotated[int | None, ModelRef("company_id", Company)]
     """The ID for the company that owns this product, if set."""
 
-    company_name: Annotated[Optional[str], ModelRef("company_id", Company)]
+    company_name: Annotated[str | None, ModelRef("company_id", Company)]
     """The name of the company that owns this product, if set."""
 
-    company: Annotated[Optional[Company], ModelRef("company_id", Company)]
+    company: Annotated[Company | None, ModelRef("company_id", Company)]
     """The company that owns this product, if set.
 
     This fetches the full record from Odoo once,
@@ -104,80 +96,80 @@ class ProductManager(RecordManagerWithUniqueFieldBase[Product, str]):
     @overload
     def get_sellable_company_products(
         self,
-        company: Union[int, Company],
+        company: int | Company,
         *,
-        fields: Optional[Iterable[str]] = ...,
-        order: Optional[str] = ...,
+        fields: Iterable[str] | None = ...,
+        order: str | None = ...,
         as_id: Literal[False] = ...,
         as_dict: Literal[False] = ...,
-    ) -> List[Product]: ...
+    ) -> list[Product]: ...
 
     @overload
     def get_sellable_company_products(
         self,
-        company: Union[int, Company],
+        company: int | Company,
         *,
-        fields: Optional[Iterable[str]] = ...,
-        order: Optional[str] = ...,
+        fields: Iterable[str] | None = ...,
+        order: str | None = ...,
         as_id: Literal[True],
         as_dict: Literal[False] = ...,
-    ) -> List[int]: ...
+    ) -> list[int]: ...
 
     @overload
     def get_sellable_company_products(
         self,
-        company: Union[int, Company],
-        fields: Optional[Iterable[str]] = ...,
-        order: Optional[str] = ...,
+        company: int | Company,
+        fields: Iterable[str] | None = ...,
+        order: str | None = ...,
         *,
         as_id: Literal[True],
         as_dict: Literal[True],
-    ) -> List[int]: ...
+    ) -> list[int]: ...
 
     @overload
     def get_sellable_company_products(
         self,
-        company: Union[int, Company],
+        company: int | Company,
         *,
-        fields: Optional[Iterable[str]] = ...,
-        order: Optional[str] = ...,
+        fields: Iterable[str] | None = ...,
+        order: str | None = ...,
         as_id: Literal[False] = ...,
         as_dict: Literal[True],
-    ) -> List[Dict[str, Any]]: ...
+    ) -> list[dict[str, Any]]: ...
 
     @overload
     def get_sellable_company_products(
         self,
-        company: Union[int, Company],
+        company: int | Company,
         *,
-        fields: Optional[Iterable[str]] = ...,
-        order: Optional[str] = ...,
+        fields: Iterable[str] | None = ...,
+        order: str | None = ...,
         as_id: bool = ...,
         as_dict: bool = ...,
-    ) -> Union[List[Product], List[int], Union[List[Dict[str, Any]]]]: ...
+    ) -> list[Product] | list[int] | list[dict[str, Any]]: ...
 
     def get_sellable_company_products(
         self,
-        company: Union[int, Company],
-        fields: Optional[Iterable[str]] = None,
-        order: Optional[str] = None,
+        company: int | Company,
+        fields: Iterable[str] | None = None,
+        order: str | None = None,
         as_id: bool = False,
         as_dict: bool = False,
-    ) -> Union[List[Product], List[int], Union[List[Dict[str, Any]]]]:
+    ) -> list[Product] | list[int] | list[dict[str, Any]]:
         """Fetch a list of active and saleable products for the given company.
 
         :param company: The company to search for products (ID or object)
         :type company: int | Company
         :param fields: Fields to select, defaults to ``None`` (select all)
-        :type fields: Iterable[str] or None, optional
+        :type fields: Iterable[str] | None, optional
         :param order: Order results by a specific field, defaults to None
-        :type order: Optional[str], optional
+        :type order: str | None, optional
         :param as_id: Return the record IDs only, defaults to False
         :type as_id: bool, optional
         :param as_dict: Return records as dictionaries, defaults to False
         :type as_dict: bool, optional
         :return: List of products
-        :rtype: Union[List[Product], List[int], Union[Dict[str, Any]]]
+        :rtype: list[Product] | list[int] | list[dict[str, Any]]
         """
         return self.search(
             [
@@ -194,34 +186,34 @@ class ProductManager(RecordManagerWithUniqueFieldBase[Product, str]):
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, Company],
+        company: int | Company,
         name: str,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[True],
         as_dict: Literal[True],
         optional: Literal[True],
-    ) -> Optional[int]: ...
+    ) -> int | None: ...
 
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, Company],
+        company: int | Company,
         name: str,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[True],
         as_dict: Literal[False] = ...,
         optional: Literal[True],
-    ) -> Optional[int]: ...
+    ) -> int | None: ...
 
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, Company],
+        company: int | Company,
         name: str,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[True],
         as_dict: Literal[True],
         optional: Literal[False] = ...,
@@ -230,10 +222,10 @@ class ProductManager(RecordManagerWithUniqueFieldBase[Product, str]):
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, Company],
+        company: int | Company,
         name: str,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[True],
         as_dict: Literal[False] = ...,
         optional: Literal[False] = ...,
@@ -242,46 +234,46 @@ class ProductManager(RecordManagerWithUniqueFieldBase[Product, str]):
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, Company],
+        company: int | Company,
         name: str,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[False] = ...,
         as_dict: Literal[True],
         optional: Literal[True],
-    ) -> Optional[Dict[str, Any]]: ...
+    ) -> dict[str, Any] | None: ...
 
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, Company],
+        company: int | Company,
         name: str,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[False] = ...,
         as_dict: Literal[True],
         optional: Literal[False] = ...,
-    ) -> Dict[str, Any]: ...
+    ) -> dict[str, Any]: ...
 
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, Company],
+        company: int | Company,
         name: str,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[False] = ...,
         as_dict: Literal[False] = ...,
         optional: Literal[True],
-    ) -> Optional[Product]: ...
+    ) -> Product | None: ...
 
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, Company],
+        company: int | Company,
         name: str,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[False] = ...,
         as_dict: Literal[False] = ...,
         optional: Literal[False] = ...,
@@ -290,24 +282,24 @@ class ProductManager(RecordManagerWithUniqueFieldBase[Product, str]):
     @overload
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, Company],
+        company: int | Company,
         name: str,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_id: bool = ...,
         as_dict: bool = ...,
         optional: bool = ...,
-    ) -> Optional[Union[Product, int, Dict[str, Any]]]: ...
+    ) -> Product | int | dict[str, Any] | None: ...
 
     def get_sellable_company_product_by_name(
         self,
-        company: Union[int, Company],
+        company: int | Company,
         name: str,
-        fields: Optional[Iterable[str]] = None,
+        fields: Iterable[str] | None = None,
         as_id: bool = False,
         as_dict: bool = False,
         optional: bool = False,
-    ) -> Optional[Union[Product, int, Dict[str, Any]]]:
+    ) -> Product | int | dict[str, Any] | None:
         """Query a unique product for the given company by name.
 
         A number of parameters are available to configure the return type,
@@ -331,7 +323,7 @@ class ProductManager(RecordManagerWithUniqueFieldBase[Product, str]):
         :param name: The product name
         :type name: str
         :param fields: Fields to select, defaults to ``None`` (select all)
-        :type fields: Iterable[str] or None, optional
+        :type fields: Iterable[str] | None, optional
         :param as_id: Return a record ID, defaults to False
         :type as_id: bool, optional
         :param as_dict: Return the record as a dictionary, defaults to False
@@ -341,7 +333,7 @@ class ProductManager(RecordManagerWithUniqueFieldBase[Product, str]):
         :raises MultipleRecordsFoundError: Multiple records with the same name
         :raises RecordNotFoundError: Record with the given name not found
         :return: Product (or ``None`` if record not found and optional)
-        :rtype: Optional[Union[Record, int, Dict[str, Any]]]
+        :rtype: Record | int | dict[str, Any] | None
         """
         return self._get_by_unique_field(
             field="name",

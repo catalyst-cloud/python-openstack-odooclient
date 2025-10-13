@@ -15,9 +15,7 @@
 
 from __future__ import annotations
 
-from typing import List, Literal, Optional, Union
-
-from typing_extensions import Annotated
+from typing import Annotated, Literal
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
@@ -62,7 +60,7 @@ class SaleOrderLine(RecordBase["SaleOrderLineManager"]):
     """Display name for the sale order line in the sale order."""
 
     invoice_line_ids: Annotated[
-        List[int],
+        list[int],
         ModelRef("invoice_lines", AccountMoveLine),
     ]
     """A list of IDs for the account move (invoice) lines created
@@ -70,7 +68,7 @@ class SaleOrderLine(RecordBase["SaleOrderLineManager"]):
     """
 
     invoice_lines: Annotated[
-        List[AccountMoveLine],
+        list[AccountMoveLine],
         ModelRef("invoice_lines", AccountMoveLine),
     ]
     """The account move (invoice) lines created
@@ -131,17 +129,17 @@ class SaleOrderLine(RecordBase["SaleOrderLineManager"]):
     and caches it for subsequent accesses.
     """
 
-    os_project_id: Annotated[Optional[int], ModelRef("os_project", Project)]
+    os_project_id: Annotated[int | None, ModelRef("os_project", Project)]
     """The ID for the the OpenStack project this sale order line was
     was generated for.
     """
 
-    os_project_name: Annotated[Optional[str], ModelRef("os_project", Project)]
+    os_project_name: Annotated[str | None, ModelRef("os_project", Project)]
     """The name of the the OpenStack project this sale order line was
     was generated for.
     """
 
-    os_project: Annotated[Optional[Project], ModelRef("os_project", Project)]
+    os_project: Annotated[Project | None, ModelRef("os_project", Project)]
     """The OpenStack project this sale order line was
     was generated for.
 
@@ -149,15 +147,15 @@ class SaleOrderLine(RecordBase["SaleOrderLineManager"]):
     and caches it for subsequent accesses.
     """
 
-    os_region: Union[str, Literal[False]]
+    os_region: str | Literal[False]
     """The OpenStack region the sale order line was created from."""
 
-    os_resource_id: Union[str, Literal[False]]
+    os_resource_id: str | Literal[False]
     """The OpenStack resource ID for the resource that generated
     this sale order line.
     """
 
-    os_resource_name: Union[str, Literal[False]]
+    os_resource_name: str | Literal[False]
     """The name of the OpenStack resource tier or flavour,
     as used by services such as Distil for rating purposes.
 
@@ -165,7 +163,7 @@ class SaleOrderLine(RecordBase["SaleOrderLineManager"]):
     this would be set to the instance's flavour name.
     """
 
-    os_resource_type: Union[str, Literal[False]]
+    os_resource_type: str | Literal[False]
     """A human-readable description of the type of resource captured
     by this sale order line.
     """

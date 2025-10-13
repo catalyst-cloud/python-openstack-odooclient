@@ -15,9 +15,9 @@
 
 from __future__ import annotations
 
-from typing import List, Literal, Optional, Union
+from typing import Annotated, Literal
 
-from typing_extensions import Annotated, Self
+from typing_extensions import Self
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
@@ -47,7 +47,7 @@ class Partner(RecordBase["PartnerManager"]):
     """Full name of the partner."""
 
     os_customer_group_id: Annotated[
-        Optional[int],
+        int | None,
         ModelRef("os_customer_group", CustomerGroup),
     ]
     """The ID for the customer group this partner is part of,
@@ -55,7 +55,7 @@ class Partner(RecordBase["PartnerManager"]):
     """
 
     os_customer_group_name: Annotated[
-        Optional[str],
+        str | None,
         ModelRef("os_customer_group", CustomerGroup),
     ]
     """The name of the customer group this partner is part of,
@@ -63,7 +63,7 @@ class Partner(RecordBase["PartnerManager"]):
     """
 
     os_customer_group: Annotated[
-        Optional[CustomerGroup],
+        CustomerGroup | None,
         ModelRef("os_customer_group", CustomerGroup),
     ]
     """The customer group this partner is part of,
@@ -73,12 +73,12 @@ class Partner(RecordBase["PartnerManager"]):
     and caches it for subsequent accesses.
     """
 
-    os_project_ids: Annotated[List[int], ModelRef("os_projects", Project)]
+    os_project_ids: Annotated[list[int], ModelRef("os_projects", Project)]
     """A list of IDs for the OpenStack projects that
     belong to this partner.
     """
 
-    os_projects: Annotated[List[Project], ModelRef("os_projects", Project)]
+    os_projects: Annotated[list[Project], ModelRef("os_projects", Project)]
     """The OpenStack projects that belong to this partner.
 
     This fetches the full records from Odoo once,
@@ -86,7 +86,7 @@ class Partner(RecordBase["PartnerManager"]):
     """
 
     os_project_contact_ids: Annotated[
-        List[int],
+        list[int],
         ModelRef("os_project_contacts", ProjectContact),
     ]
     """A list of IDs for the project contacts that are associated
@@ -94,7 +94,7 @@ class Partner(RecordBase["PartnerManager"]):
     """
 
     os_project_contacts: Annotated[
-        List[ProjectContact],
+        list[ProjectContact],
         ModelRef("os_project_contacts", ProjectContact),
     ]
     """The project contacts that are associated with this partner.
@@ -104,7 +104,7 @@ class Partner(RecordBase["PartnerManager"]):
     """
 
     os_referral_id: Annotated[
-        Optional[int],
+        int | None,
         ModelRef("os_referral", ReferralCode),
     ]
     """The ID for the referral code the partner used on sign-up,
@@ -112,7 +112,7 @@ class Partner(RecordBase["PartnerManager"]):
     """
 
     os_referral_name: Annotated[
-        Optional[str],
+        str | None,
         ModelRef("os_referral", ReferralCode),
     ]
     """The name of the referral code the partner used on sign-up,
@@ -120,7 +120,7 @@ class Partner(RecordBase["PartnerManager"]):
     """
 
     os_referral: Annotated[
-        Optional[ReferralCode],
+        ReferralCode | None,
         ModelRef("os_referral", ReferralCode),
     ]
     """The referral code the partner used on sign-up, if one was used.
@@ -130,13 +130,13 @@ class Partner(RecordBase["PartnerManager"]):
     """
 
     os_referral_code_ids: Annotated[
-        List[int],
+        list[int],
         ModelRef("os_referral_codes", ReferralCode),
     ]
     """A list of IDs for the referral codes the partner has used."""
 
     os_referral_codes: Annotated[
-        List[ReferralCode],
+        list[ReferralCode],
         ModelRef("os_referral_codes", ReferralCode),
     ]
     """The referral codes the partner has used.
@@ -146,7 +146,7 @@ class Partner(RecordBase["PartnerManager"]):
     """
 
     os_reseller_id: Annotated[
-        Optional[int],
+        int | None,
         ModelRef("os_reseller", Reseller),
     ]
     """The ID for the reseller for this partner, if this partner
@@ -154,7 +154,7 @@ class Partner(RecordBase["PartnerManager"]):
     """
 
     os_reseller_name: Annotated[
-        Optional[str],
+        str | None,
         ModelRef("os_reseller", Reseller),
     ]
     """The name of the reseller for this partner, if this partner
@@ -162,7 +162,7 @@ class Partner(RecordBase["PartnerManager"]):
     """
 
     os_reseller: Annotated[
-        Optional[Reseller],
+        Reseller | None,
         ModelRef("os_reseller", Reseller),
     ]
     """The reseller for this partner, if this partner
@@ -172,17 +172,17 @@ class Partner(RecordBase["PartnerManager"]):
     and caches it for subsequent accesses.
     """
 
-    os_trial_id: Annotated[Optional[int], ModelRef("os_trial", Trial)]
+    os_trial_id: Annotated[int | None, ModelRef("os_trial", Trial)]
     """The ID for the sign-up trial for this partner,
     if signed up under a trial.
     """
 
-    os_trial_name: Annotated[Optional[str], ModelRef("os_trial", Trial)]
+    os_trial_name: Annotated[str | None, ModelRef("os_trial", Trial)]
     """The name of the sign-up trial for this partner,
     if signed up under a trial.
     """
 
-    os_trial: Annotated[Optional[Trial], ModelRef("os_trial", Trial)]
+    os_trial: Annotated[Trial | None, ModelRef("os_trial", Trial)]
     """The sign-up trial for this partner,
     if signed up under a trial.
 
@@ -191,7 +191,7 @@ class Partner(RecordBase["PartnerManager"]):
     """
 
     parent_id: Annotated[
-        Optional[int],
+        int | None,
         ModelRef("parent_id", Self),
     ]
     """The ID for the parent partner of this partner,
@@ -199,14 +199,14 @@ class Partner(RecordBase["PartnerManager"]):
     """
 
     parent_name: Annotated[
-        Optional[str],
+        str | None,
         ModelRef("parent_id", Self),
     ]
     """The name of the parent partner of this partner,
     if it has a parent.
     """
 
-    parent: Annotated[Optional[Self], ModelRef("parent_id", Self)]
+    parent: Annotated[Self | None, ModelRef("parent_id", Self)]
     """The parent partner of this partner,
     if it has a parent.
 
@@ -215,7 +215,7 @@ class Partner(RecordBase["PartnerManager"]):
     """
 
     property_product_pricelist_id: Annotated[
-        Optional[int],
+        int | None,
         ModelRef("property_product_pricelist", Pricelist),
     ]
     """The ID for the pricelist this partner uses, if explicitly set.
@@ -226,7 +226,7 @@ class Partner(RecordBase["PartnerManager"]):
     """
 
     property_product_pricelist_name: Annotated[
-        Optional[str],
+        str | None,
         ModelRef("property_product_pricelist", Pricelist),
     ]
     """The name of the pricelist this partner uses, if explicitly set.
@@ -237,7 +237,7 @@ class Partner(RecordBase["PartnerManager"]):
     """
 
     property_product_pricelist: Annotated[
-        Optional[Pricelist],
+        Pricelist | None,
         ModelRef("property_product_pricelist", Pricelist),
     ]
     """The pricelist this partner uses, if explicitly set.
@@ -250,20 +250,20 @@ class Partner(RecordBase["PartnerManager"]):
     and caches it for subsequent accesses.
     """
 
-    stripe_customer_id: Union[str, Literal[False]]
+    stripe_customer_id: str | Literal[False]
     """The Stripe customer ID for this partner, if one has been assigned."""
 
-    user_id: Annotated[Optional[int], ModelRef("user_id", User)]
+    user_id: Annotated[int | None, ModelRef("user_id", User)]
     """The ID of the internal user associated with this partner,
     if one is assigned.
     """
 
-    user_name: Annotated[Optional[str], ModelRef("user_id", User)]
+    user_name: Annotated[str | None, ModelRef("user_id", User)]
     """The name of the internal user associated with this partner,
     if one is assigned.
     """
 
-    user: Annotated[Optional[User], ModelRef("user_id", User)]
+    user: Annotated[User | None, ModelRef("user_id", User)]
     """The internal user associated with this partner,
     if one is assigned.
 

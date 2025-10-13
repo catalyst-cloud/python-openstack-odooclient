@@ -15,9 +15,7 @@
 
 from __future__ import annotations
 
-from typing import List
-
-from typing_extensions import Annotated
+from typing import Annotated
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_coded import CodedRecordManagerBase
@@ -41,12 +39,12 @@ class ReferralCode(RecordBase["ReferralCodeManager"]):
     name: str
     """Automatically generated name for the referral code."""
 
-    referral_ids: Annotated[List[int], ModelRef("referrals", Partner)]
+    referral_ids: Annotated[list[int], ModelRef("referrals", Partner)]
     """A list of IDs for the partners that signed up
     using this referral code.
     """
 
-    referrals: Annotated[List[Partner], ModelRef("referrals", Partner)]
+    referrals: Annotated[list[Partner], ModelRef("referrals", Partner)]
     """The partners that signed up using this referral code.
 
     This fetches the full records from Odoo once,

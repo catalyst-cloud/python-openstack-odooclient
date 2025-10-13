@@ -16,9 +16,9 @@
 from __future__ import annotations
 
 from datetime import date
-from typing import Optional
+from typing import Annotated
 
-from typing_extensions import Annotated, Self
+from typing_extensions import Self
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
@@ -28,7 +28,7 @@ class TermDiscount(RecordBase["TermDiscountManager"]):
     discount_percent: float
     """The maximum discount percentage for this term discount (0-100)."""
 
-    early_termination_date: Optional[date]
+    early_termination_date: date | None
     """An optional early termination date for the term discount."""
 
     end_date: date
@@ -50,7 +50,7 @@ class TermDiscount(RecordBase["TermDiscountManager"]):
     and caches it for subsequent accesses.
     """
 
-    project_id: Annotated[Optional[int], ModelRef("project", Project)]
+    project_id: Annotated[int | None, ModelRef("project", Project)]
     """The ID for the project this term discount applies to,
     if it is a project-specific term discount.
 
@@ -58,7 +58,7 @@ class TermDiscount(RecordBase["TermDiscountManager"]):
     the partner owns.
     """
 
-    project_name: Annotated[Optional[str], ModelRef("project", Project)]
+    project_name: Annotated[str | None, ModelRef("project", Project)]
     """The name of the project this term discount applies to,
     if it is a project-specific term discount.
 
@@ -66,7 +66,7 @@ class TermDiscount(RecordBase["TermDiscountManager"]):
     the partner owns.
     """
 
-    project: Annotated[Optional[Project], ModelRef("project", Project)]
+    project: Annotated[Project | None, ModelRef("project", Project)]
     """The project this term discount applies to,
     if it is a project-specific term discount.
 
@@ -81,7 +81,7 @@ class TermDiscount(RecordBase["TermDiscountManager"]):
     """The date from which this term discount starts."""
 
     superseded_by_id: Annotated[
-        Optional[int],
+        int | None,
         ModelRef("superseded_by", Self),
     ]
     """The ID for the term discount that supersedes this one,
@@ -89,7 +89,7 @@ class TermDiscount(RecordBase["TermDiscountManager"]):
     """
 
     superseded_by_name: Annotated[
-        Optional[str],
+        str | None,
         ModelRef("superseded_by", Self),
     ]
     """The name of the term discount that supersedes this one,
@@ -97,7 +97,7 @@ class TermDiscount(RecordBase["TermDiscountManager"]):
     """
 
     superseded_by: Annotated[
-        Optional[Self],
+        Self | None,
         ModelRef("superseded_by", Self),
     ]
     """The term discount that supersedes this one,

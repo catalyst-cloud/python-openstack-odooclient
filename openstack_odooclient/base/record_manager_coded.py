@@ -15,7 +15,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, overload
+from typing import TYPE_CHECKING, Any, Literal, overload
 
 from .record_manager_with_unique_field import (
     Record,
@@ -23,14 +23,7 @@ from .record_manager_with_unique_field import (
 )
 
 if TYPE_CHECKING:
-    from typing import (
-        Any,
-        Dict,
-        Iterable,
-        Literal,
-        Optional,
-        Union,
-    )
+    from collections.abc import Iterable
 
 
 class CodedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
@@ -55,29 +48,29 @@ class CodedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
         self,
         code: str,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[True],
         as_dict: Literal[True],
         optional: Literal[True],
-    ) -> Optional[int]: ...
+    ) -> int | None: ...
 
     @overload
     def get_by_code(
         self,
         code: str,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[True],
         as_dict: Literal[False] = ...,
         optional: Literal[True],
-    ) -> Optional[int]: ...
+    ) -> int | None: ...
 
     @overload
     def get_by_code(
         self,
         code: str,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[True],
         as_dict: Literal[True],
         optional: Literal[False] = ...,
@@ -88,7 +81,7 @@ class CodedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
         self,
         code: str,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[True],
         as_dict: Literal[False] = ...,
         optional: Literal[False] = ...,
@@ -99,40 +92,40 @@ class CodedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
         self,
         code: str,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[False] = ...,
         as_dict: Literal[True],
         optional: Literal[True],
-    ) -> Optional[Dict[str, Any]]: ...
+    ) -> dict[str, Any] | None: ...
 
     @overload
     def get_by_code(
         self,
         code: str,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[False] = ...,
         as_dict: Literal[True],
         optional: Literal[False] = ...,
-    ) -> Dict[str, Any]: ...
+    ) -> dict[str, Any]: ...
 
     @overload
     def get_by_code(
         self,
         code: str,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[False] = ...,
         as_dict: Literal[False] = ...,
         optional: Literal[True],
-    ) -> Optional[Record]: ...
+    ) -> Record | None: ...
 
     @overload
     def get_by_code(
         self,
         code: str,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[False] = ...,
         as_dict: Literal[False] = ...,
         optional: Literal[False] = ...,
@@ -143,20 +136,20 @@ class CodedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
         self,
         code: str,
         *,
-        fields: Optional[Iterable[str]] = ...,
+        fields: Iterable[str] | None = ...,
         as_id: bool = ...,
         as_dict: bool = ...,
         optional: bool = ...,
-    ) -> Optional[Union[Record, int, Dict[str, Any]]]: ...
+    ) -> Record | int | dict[str, Any] | None: ...
 
     def get_by_code(
         self,
         code: str,
-        fields: Optional[Iterable[str]] = None,
+        fields: Iterable[str] | None = None,
         as_id: bool = False,
         as_dict: bool = False,
         optional: bool = False,
-    ) -> Optional[Union[Record, int, Dict[str, Any]]]:
+    ) -> Record | int | dict[str, Any] | None:
         """Query a unique record by code.
 
         A number of parameters are available to configure the return type,
@@ -180,7 +173,7 @@ class CodedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
         :param as_id: Return a record ID, defaults to False
         :type as_id: bool, optional
         :param fields: Fields to select, defaults to ``None`` (select all)
-        :type fields: Iterable[str] or None, optional
+        :type fields: Iterable[str] | None, optional
         :param as_dict: Return the record as a dictionary, defaults to False
         :type as_dict: bool, optional
         :param optional: Return ``None`` if not found, defaults to False
@@ -188,7 +181,7 @@ class CodedRecordManagerBase(RecordManagerWithUniqueFieldBase[Record, str]):
         :raises MultipleRecordsFoundError: Multiple records with the same code
         :raises RecordNotFoundError: Record with the given code not found
         :return: Query result (or ``None`` if record not found and optional)
-        :rtype: Optional[Union[Record, int, Dict[str, Any]]]
+        :rtype: Record | int | dict[str, Any] | None
         """
         return self._get_by_unique_field(
             field=self.code_field,
