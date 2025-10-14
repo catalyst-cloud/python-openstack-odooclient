@@ -291,7 +291,7 @@ class RecordManagerBase(Generic[Record]):
     @overload
     def get(
         self,
-        id: int,  # noqa: A002
+        id: int,
         *,
         fields: Optional[Iterable[str]] = ...,
         as_dict: Literal[False] = ...,
@@ -301,7 +301,7 @@ class RecordManagerBase(Generic[Record]):
     @overload
     def get(
         self,
-        id: int,  # noqa: A002
+        id: int,
         *,
         fields: Optional[Iterable[str]] = ...,
         as_dict: Literal[True],
@@ -311,7 +311,7 @@ class RecordManagerBase(Generic[Record]):
     @overload
     def get(
         self,
-        id: int,  # noqa: A002
+        id: int,
         *,
         fields: Optional[Iterable[str]] = ...,
         as_dict: Literal[False] = ...,
@@ -321,7 +321,7 @@ class RecordManagerBase(Generic[Record]):
     @overload
     def get(
         self,
-        id: int,  # noqa: A002
+        id: int,
         *,
         fields: Optional[Iterable[str]] = ...,
         as_dict: Literal[True],
@@ -331,7 +331,7 @@ class RecordManagerBase(Generic[Record]):
     @overload
     def get(
         self,
-        id: int,  # noqa: A002
+        id: int,
         *,
         fields: Optional[Iterable[str]] = ...,
         as_dict: bool = ...,

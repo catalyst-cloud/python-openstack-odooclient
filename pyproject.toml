@@ -15,29 +15,38 @@ keywords = [
     "erp",
     "billing",
 ]
-license = {text = "Apache-2.0"}
+license = "Apache-2.0"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Software Development :: Libraries",
     "Typing :: Typed",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 dependencies = [
     "OdooRPC>=0.9.0",
     "packaging",
-    "typing-extensions>=4.0.0",
+    "typing-extensions>=4.15.0",
 ]
 dynamic = ["version"]
+
+[dependency-groups]
+dev = [
+    "mike>=2.1.2",
+    "mkdocs-material>=9.5.27",
+    "mypy==1.18.2",
+    "poethepoet>=0.37.0",
+    "ruff==0.14.0",
+    "towncrier>=23.11.0",
+]
 
 [project.urls]
 Homepage = "https://catalyst-cloud.github.io/python-openstack-odooclient"
@@ -46,22 +55,14 @@ Repository = "https://github.com/catalyst-cloud/python-openstack-odooclient"
 Issues = "https://github.com/catalyst-cloud/python-openstack-odooclient/issues"
 Changelog = "https://catalyst-cloud.github.io/python-openstack-odooclient/latest/changelog.html"
 
+[tool.setuptools]
+packages = ["openstack_odooclient"]
+
 [tool.setuptools_scm]
 
-[tool.pdm.dev-dependencies]
-lint = [
-    "mypy==1.10.0",
-    "ruff==0.4.8",
-]
-docs = [
-    "mkdocs-material>=9.5.27",
-    "towncrier>=23.11.0",
-    "mike>=2.1.2",
-]
-
-[tool.pdm.scripts]
-lint = {cmd = "ruff check"}
-format = {cmd = "ruff format"}
+[tool.poe.tasks]
+lint = "ruff check"
+format = "ruff format"
 
 [tool.ruff]
 fix = true
@@ -128,7 +129,6 @@ required-imports = [
 ]
 
 [tool.mypy]
-python_version = "3.8"
 pretty = true
 
 [tool.towncrier]
