@@ -23,6 +23,7 @@ For example, performing a simple search query would look something like this:
 
 * [Account Moves (Invoices)](account-move.md)
 * [Account Move (Invoice) Lines](account-move-line.md)
+* [Attachments](attachment.md)
 * [Companies](company.md)
 * [OpenStack Credits](credit.md)
 * [OpenStack Credit Transactions](credit-transaction.md)
@@ -1479,6 +1480,187 @@ Traceback (most recent call last):
 ...
 openstack_odooclient.exceptions.RecordNotFoundError: User record not found with ID: 1234
 ```
+
+## Records with Attachments
+
+Some records can have [attachments](attachment.md) uploaded and associated with them.
+
+* [Account Moves (Invoices)](account-move.md)
+
+When fetching an attachment record from Odoo, the contents of the attachment
+(available using the `datas` field) are not fetched by default. This is to
+ensure that downloading only takes place when requested, preventing
+unexpected large downloads.
+
+```python
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> account_move = odoo_client.account_moves.get(1234)
+>>> attachment = odoo_client.attachments.get(
+...     account_move.message_main_attachment_id,
+... )
+>>> attachment
+Attachment(record={'id': 5678, ...}, fields=None)
+>>> attachment.datas  # AttributeError
+```
+
+Common attachment operations for binary attachments
+(attachments with a `type` of `binary`) are documented below.
+
+In addition to regular binary attachments, Odoo
+also supports URL-referenced attachments and a number
+of other useful fields; for more information see the
+manager page for [attachments](attachment.md).
+
+### Downloading
+
+Attachments can be downloaded by simply calling the `download` method
+on an attachment object.
+
+The contents of the attachment will be returned as a `bytes` object.
+
+```python
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> account_move = odoo_client.account_moves.get(1234)
+>>> attachment = odoo_client.attachments.get(
+...     account_move.message_main_attachment_id,
+... )
+>>> attachment.download()
+b'Hello, world!'
+```
+
+### Uploading
+
+New attachments can be uploaded and associated with a record
+using the `upload` method.
+
+For more information, see the documentation for the
+[`upload`](attachment.md#upload) method.
+
+```python
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> contents = b"Hello, world!"
+>>> account_move = odoo_client.account_moves.get(1234)
+>>> odoo_client.attachments.upload(
+...     "example.txt",
+...     contents,
+...     record=account_move,
+... )
+5678
+```
+
+### Evaluating checksums
+
+Attachments have a `checksum` field, which is a SHA-1 hash of the attachment
+stored by Odoo that can be used to efficiently verify the integrity of the
+uploaded attachment without redownloading the contents.
+
+```python
+>>> import hashlib
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> contents = b"Hello, world!"
+>>> account_move = odoo_client.account_moves.get(1234)
+>>> attachment_id = odoo_client.attachments.upload(
+...     "example.txt",
+...     contents,
+...     record=account_move,
+... )
+>>> attachment.checksum == hashlib.sha1(contents).hexdigest()
+True
+```
+
+### In-place updates
+
+If you'd like to update an attachment in-place without creating
+a new record (and then having to delete the old one), this can
+be done using the `reupload` method on the attachment object.
+
+For more information, see the documentation for the
+[`reupload`](attachment.md#reupload_1) method.
+
+```python
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> account_move = odoo_client.account_moves.get(1234)
+>>> attachment = odoo_client.attachments.get(
+...     account_move.message_main_attachment_id,
+... )
+>>> attachment.download()
+b'Hello, world!'
+>>> attachment.reupload(b"Goodbye, world!")
+>>> attachment = attachment.refresh()
+>>> attachment.download()
+b'Goodbye, world!'
+```
+
+### Attributes and Methods
+
+Record types that can have attachments associated with them
+have the following fields added.
+
+#### `message_main_attachment_id`
+
+```python
+message_main_attachment_id: int | None
+```
+
+The ID of the main [attachment](attachment.md) on the record, if there is one.
+
+#### `message_main_attachment_name`
+
+```python
+message_main_attachment_name: str | None
+```
+
+The name of the main [attachment](attachment.md) on the record, if there is one.
+
+#### `message_main_attachment`
+
+```python
+message_main_attachment: Attachment | None
+```
+The main [attachment](attachment.md) on the record, if there is one.
+
+This fetches the full record from Odoo once,
+and caches it for subsequent accesses.
 
 ## Custom Managers and Record Types
 

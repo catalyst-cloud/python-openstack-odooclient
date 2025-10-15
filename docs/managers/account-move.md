@@ -177,6 +177,40 @@ is_move_sent: bool
 
 Whether or not the account move (invoice) has been sent.
 
+### `message_main_attachment_id`
+
+```python
+message_main_attachment_id: int | None
+```
+
+The ID of the main [attachment](attachment.md) on the account move (invoice),
+if there is one.
+
+*Added in version 0.2.0.*
+
+### `message_main_attachment_name`
+
+```python
+message_main_attachment_name: str | None
+```
+
+The name of the main [attachment](attachment.md) on the account move (invoice),
+if there is one.
+
+*Added in version 0.2.0.*
+
+### `message_main_attachment`
+
+```python
+message_main_attachment: Attachment | None
+```
+The main [attachment](attachment.md) on the account move (invoice), if there is one.
+
+This fetches the full record from Odoo once,
+and caches it for subsequent accesses.
+
+*Added in version 0.2.0.*
+
 ### `move_type`
 
 ```python

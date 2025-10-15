@@ -31,6 +31,10 @@ from .managers.account_move_line import (
     AccountMoveLine,
     AccountMoveLineManager,
 )
+from .managers.attachment import (
+    Attachment,
+    AttachmentManager,
+)
 from .managers.company import Company, CompanyManager
 from .managers.credit import Credit, CreditManager
 from .managers.credit_transaction import (
@@ -76,6 +80,7 @@ from .managers.volume_discount_range import (
 from .managers.voucher_code import VoucherCode, VoucherCodeManager
 from .mixins.coded_record import CodedRecordManagerMixin, CodedRecordMixin
 from .mixins.named_record import NamedRecordManagerMixin, NamedRecordMixin
+from .mixins.record_with_attachment import RecordWithAttachmentMixin
 
 __all__ = [
     "RM",
@@ -83,6 +88,8 @@ __all__ = [
     "AccountMoveLine",
     "AccountMoveLineManager",
     "AccountMoveManager",
+    "Attachment",
+    "AttachmentManager",
     "Client",
     "ClientBase",
     "ClientError",
@@ -130,6 +137,7 @@ __all__ = [
     "RecordManagerProtocol",
     "RecordNotFoundError",
     "RecordProtocol",
+    "RecordWithAttachmentMixin",
     "ReferralCode",
     "ReferralCodeManager",
     "Reseller",

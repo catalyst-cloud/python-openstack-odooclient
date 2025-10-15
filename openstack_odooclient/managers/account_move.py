@@ -22,6 +22,7 @@ from ..base.record.base import RecordBase
 from ..base.record.types import ModelRef
 from ..base.record_manager.base import RecordManagerBase
 from ..mixins.named_record import NamedRecordManagerMixin, NamedRecordMixin
+from ..mixins.record_with_attachment import RecordWithAttachmentMixin
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping
@@ -30,6 +31,7 @@ if TYPE_CHECKING:
 class AccountMove(
     RecordBase["AccountMoveManager"],
     NamedRecordMixin["AccountMoveManager"],
+    RecordWithAttachmentMixin["AccountMoveManager"],
 ):
     amount_total: float
     """Total (taxed) amount charged on the account move (invoice)."""
