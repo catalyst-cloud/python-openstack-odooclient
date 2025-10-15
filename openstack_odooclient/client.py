@@ -18,6 +18,7 @@ from __future__ import annotations
 from .base.client import ClientBase
 from .managers.account_move import AccountMoveManager
 from .managers.account_move_line import AccountMoveLineManager
+from .managers.attachment import AttachmentManager
 from .managers.company import CompanyManager
 from .managers.credit import CreditManager
 from .managers.credit_transaction import CreditTransactionManager
@@ -89,6 +90,9 @@ class Client(ClientBase):
 
     account_move_lines: AccountMoveLineManager
     """Account move (invoice) line manager."""
+
+    attachments: AttachmentManager
+    """Attachment manager."""
 
     companies: CompanyManager
     """Company manager."""
