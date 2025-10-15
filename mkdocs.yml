@@ -34,6 +34,7 @@ nav:
     - managers/index.md
     - managers/account-move.md
     - managers/account-move-line.md
+    - managers/attachment.md
     - managers/company.md
     - managers/credit.md
     - managers/credit-type.md

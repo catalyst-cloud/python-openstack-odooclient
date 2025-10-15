@@ -167,6 +167,14 @@ class ClientBase:
                 opener=opener,
             )
             self._odoo.login(database, username, password)
+        self._env_manager_mapping: dict[str, RecordManagerBase] = {}
+        """An internal mapping between env (model) names and their managers.
+
+        This is populated by the manager classes themselves when created,
+        and used by the ``Attachment.res_model_manager`` field.
+
+        *Added in version 0.2.0.*
+        """
         self._record_manager_mapping: dict[
             Type[RecordBase],
             RecordManagerBase,

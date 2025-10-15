@@ -109,6 +109,7 @@ class RecordManagerBase(Generic[Record]):
         """The Odoo client object the manager uses."""
         # Assign this record manager object as the manager
         # responsible for the configured record class in the client.
+        self._client._env_manager_mapping[self.env_name] = self
         self._client._record_manager_mapping[self.record_class] = self
         self._record_type_hints = MappingProxyType(
             get_type_hints(
@@ -983,3 +984,6 @@ class RecordManagerBase(Generic[Record]):
                 v_type = get_type_args(type_hint)[0]
                 return [self._encode_value(v_type, v) for v in value]
         return value
+
+
+RecordManager = RecordManagerBase[RecordBase["RecordManager"]]
