@@ -23,6 +23,7 @@ For example, performing a simple search query would look something like this:
 
 * [Account Moves (Invoices)](account-move.md)
 * [Account Move (Invoice) Lines](account-move-line.md)
+* [Attachments](attachment.md)
 * [Companies](company.md)
 * [OpenStack Credits](credit.md)
 * [OpenStack Credit Transactions](credit-transaction.md)

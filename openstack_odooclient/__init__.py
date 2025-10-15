@@ -34,6 +34,11 @@ from .managers.account_move_line import (
     AccountMoveLine,
     AccountMoveLineManager,
 )
+from .managers.attachment import (
+    Attachment,
+    AttachmentManager,
+    AttachmentMixin,
+)
 from .managers.company import Company, CompanyManager
 from .managers.credit import Credit, CreditManager
 from .managers.credit_transaction import (
@@ -83,6 +88,9 @@ __all__ = [
     "AccountMoveLine",
     "AccountMoveLineManager",
     "AccountMoveManager",
+    "Attachment",
+    "AttachmentManager",
+    "AttachmentMixin",
     "Client",
     "ClientBase",
     "ClientError",

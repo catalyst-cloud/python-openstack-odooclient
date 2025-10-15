@@ -19,7 +19,7 @@ import copy
 
 from dataclasses import dataclass
 from datetime import date, datetime
-from types import MappingProxyType
+from types import MappingProxyType, UnionType
 from typing import (
     TYPE_CHECKING,
     Annotated,
@@ -392,7 +392,8 @@ class RecordBase(Generic[RecordManager]):
         # The following is for decoding a singular model ref value.
         # Check if the model ref is optional, and if it is,
         # return the desired value for when the value is empty.
-        if get_type_origin(attr_type) is Union:
+        attr_type_origin = get_type_origin(attr_type)
+        if attr_type_origin is Union or attr_type_origin is UnionType:
             unsupported_union = (
                 "Only unions of the format Optional[T], "
                 "Union[T, type(None)] or Union[T, Literal[False]] "
