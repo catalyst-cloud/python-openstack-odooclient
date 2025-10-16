@@ -266,6 +266,23 @@ class RecordBase(Generic[RecordManager]):
             }
         )
 
+    def update(self, **fields: Any) -> None:
+        """Update one or more fields on this record in place.
+
+        Field names are passed as keyword arguments.
+        This method has the same flexibility with regards to what
+        field names are used as when creating records; for example,
+        when updating a model ref, either its ID (e.g. ``user_id``)
+        or object (e.g. ``user``) field names can be used.
+
+        Note that this record object is not updated in place by
+        this method. If you need an updated version of the record
+        object, use the `refresh` method to fetch the latest version.
+
+        *Added in version 0.2.0.*
+        """
+        self._manager.update(self.id, **fields)
+
     def refresh(self) -> Self:
         """Fetch the latest version of this record from Odoo.
 

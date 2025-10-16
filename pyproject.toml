@@ -63,6 +63,7 @@ packages = ["openstack_odooclient"]
 [tool.poe.tasks]
 lint = "ruff check"
 format = "ruff format"
+type-check = "mypy openstack_odooclient"
 
 [tool.ruff]
 fix = true

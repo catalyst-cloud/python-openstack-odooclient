@@ -770,14 +770,55 @@ pass the returned IDs to the [``list``](#list) method.
 |-------------|--------------------------------------|
 | `list[int]` | The IDs of the newly created records |
 
+### `update`
+
+```python
+def update(record: int | Record, **fields: Any) -> None
+```
+
+Update one or more fields on this record in place.
+
+```python
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> odoo_client.users.get(1234)
+User(record={'id': 1234, 'name': 'Old Name', ...}, fields=None)
+>>> odoo_client.users.update(1234, name="New Name")
+>>> odoo_client.users.get(1234)
+User(record={'id': 1234, 'name': 'New Name', ...}, fields=None)
+```
+
+Field names are passed as keyword arguments.
+This method has the same flexibility with regards to what
+field names are used as when [creating records](#create);
+for example, when updating a model ref, either its ID
+(e.g. ``user_id``) or object (e.g. ``user``) field names
+can be used.
+
+*Added in version 0.2.0.*
+
+#### Parameters
+
+| Name       | Type           | Description                             | Default    |
+|------------|----------------|-----------------------------------------|------------|
+| `record`   | `int | Record` | The record to update (object or ID)     | (required) |
+| `**fields` | `Any`          | Record field values (keyword arguments) | (required) |
+
 ### `unlink`/`delete`
 
 ```python
-unlink(*records: Record | int | Iterable[Record | int]) -> None
+unlink(*records: int | Record | Iterable[int | Record]) -> None
 ```
 
 ```python
-delete(*records: Record | int | Iterable[Record | int]) -> None
+delete(*records: int | Record | Iterable[int | Record]) -> None
 ```
 
 Delete one or more records from Odoo.
@@ -1357,6 +1398,44 @@ User(record={'id': 1234, ...}, fields=None)
 |------------------|-------------------|
 | `dict[str, Any]` | Record dictionary |
 
+#### `update`
+
+```python
+def update(**fields: Any) -> None
+```
+
+Update one or more fields on this record in place.
+
+```python
+>>> user
+User(record={'id': 1234, 'name': 'Old Name', ...}, fields=None)
+>>> user.update(name="New Name")
+>>> user.refresh()
+User(record={'id': 1234, 'name': 'New Name', ...}, fields=None)
+```
+
+Field names are passed as keyword arguments.
+This method has the same flexibility with regards to what
+field names are used as when [creating records](#create);
+for example, when updating a model ref, either its ID
+(e.g. ``user_id``) or object (e.g. ``user``) field names
+can be used.
+
+!!! note
+
+    This record object is not updated in place by this method.
+
+    If you need an updated version of the record object,
+    use the [`refresh`](#refresh) method to fetch the latest version.
+
+*Added in version 0.2.0.*
+
+##### Parameters
+
+| Name       | Type  | Description                             | Default    |
+|------------|-------|-----------------------------------------|------------|
+| `**fields` | `Any` | Record field values (keyword arguments) | (required) |
+
 #### `refresh`
 
 ```python
@@ -1395,9 +1474,10 @@ Delete this record from Odoo.
 
 ```python
 >>> user
-User(record={'id': 1234, 'name': 'Old Name', ...}, fields=None)
+User(record={'id': 1234, ...}, fields=None)
 >>> user.unlink()
 >>> user.refresh()
+Traceback (most recent call last):
 ...
 openstack_odooclient.exceptions.RecordNotFoundError: User record not found with ID: 1234
 ```
