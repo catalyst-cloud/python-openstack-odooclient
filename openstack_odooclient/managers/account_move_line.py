@@ -15,9 +15,7 @@
 
 from __future__ import annotations
 
-from typing import Literal, Optional, Union
-
-from typing_extensions import Annotated
+from typing import Annotated, Literal
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
@@ -61,17 +59,17 @@ class AccountMoveLine(RecordBase["AccountMoveLineManager"]):
     name: str
     """Name of the product charged on the account move (invoice) line."""
 
-    os_project_id: Annotated[Optional[int], ModelRef("os_project", Project)]
+    os_project_id: Annotated[int | None, ModelRef("os_project", Project)]
     """The ID for the OpenStack project this account move (invoice) line
     was generated for.
     """
 
-    os_project_name: Annotated[Optional[str], ModelRef("os_project", Project)]
+    os_project_name: Annotated[str | None, ModelRef("os_project", Project)]
     """The name of the OpenStack project this account move (invoice) line
     was generated for.
     """
 
-    os_project: Annotated[Optional[Project], ModelRef("os_project", Project)]
+    os_project: Annotated[Project | None, ModelRef("os_project", Project)]
     """The OpenStack project this account move (invoice) line
     was generated for.
 
@@ -79,17 +77,17 @@ class AccountMoveLine(RecordBase["AccountMoveLineManager"]):
     and caches it for subsequent accesses.
     """
 
-    os_region: Union[str, Literal[False]]
+    os_region: str | Literal[False]
     """The OpenStack region the account move (invoice) line
     was created from.
     """
 
-    os_resource_id: Union[str, Literal[False]]
+    os_resource_id: str | Literal[False]
     """The OpenStack resource ID for the resource that generated
     this account move (invoice) line.
     """
 
-    os_resource_name: Union[str, Literal[False]]
+    os_resource_name: str | Literal[False]
     """The name of the OpenStack resource tier or flavour,
     as used by services such as Distil for rating purposes.
 
@@ -97,7 +95,7 @@ class AccountMoveLine(RecordBase["AccountMoveLineManager"]):
     for a compute instance, this would be set to the instance's flavour name.
     """
 
-    os_resource_type: Union[str, Literal[False]]
+    os_resource_type: str | Literal[False]
     """A human-readable description of the type of resource captured
     by this account move (invoice) line.
     """

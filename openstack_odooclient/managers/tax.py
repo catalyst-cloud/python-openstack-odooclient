@@ -15,9 +15,7 @@
 
 from __future__ import annotations
 
-from typing import Literal
-
-from typing_extensions import Annotated
+from typing import Annotated, Literal
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase

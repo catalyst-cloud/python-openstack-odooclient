@@ -16,7 +16,7 @@
 from __future__ import annotations
 
 from datetime import date as datetime_date
-from typing import Literal, Union
+from typing import Literal
 
 from ..base.record import RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
@@ -26,10 +26,10 @@ class Currency(RecordBase["CurrencyManager"]):
     active: bool
     """Whether or not this currency is active (enabled)."""
 
-    currency_unit_label: Union[str, Literal[False]]
+    currency_unit_label: str | Literal[False]
     """The unit label for this currency, if set."""
 
-    currency_subunit_label: Union[str, Literal[False]]
+    currency_subunit_label: str | Literal[False]
     """The sub-unit label for this currency, if set."""
 
     date: datetime_date

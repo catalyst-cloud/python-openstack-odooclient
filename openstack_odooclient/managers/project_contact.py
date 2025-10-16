@@ -15,9 +15,7 @@
 
 from __future__ import annotations
 
-from typing import Literal, Optional
-
-from typing_extensions import Annotated
+from typing import Annotated, Literal
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
@@ -49,13 +47,13 @@ class ProjectContact(RecordBase["ProjectContactManager"]):
     and caches it for subsequent accesses.
     """
 
-    project_id: Annotated[Optional[int], ModelRef("project", Project)]
+    project_id: Annotated[int | None, ModelRef("project", Project)]
     """The ID for the project this contact is linked to, if set."""
 
-    project_name: Annotated[Optional[str], ModelRef("project", Project)]
+    project_name: Annotated[str | None, ModelRef("project", Project)]
     """The name of the project this contact is linked to, if set."""
 
-    project: Annotated[Optional[Project], ModelRef("project", Project)]
+    project: Annotated[Project | None, ModelRef("project", Project)]
     """The project this contact is linked to, if set.
 
     This fetches the full record from Odoo once,

@@ -60,7 +60,7 @@ All specified records will be processed in a single request.
 ```python
 send_openstack_invoice_email(
     account_move: int | AccountMove,
-    email_ctx: Optional[Mapping[str, Any]] = None,
+    email_ctx: Mapping[str, Any] | None = None,
 ) -> None
 ```
 
@@ -291,7 +291,7 @@ Change this draft account move (invoice) into "posted" state.
 
 ```python
 send_openstack_invoice_email(
-    email_ctx: Optional[Mapping[str, Any]] = None,
+    email_ctx: Mapping[str, Any] | None = None,
 ) -> None
 ```
 

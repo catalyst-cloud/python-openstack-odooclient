@@ -16,12 +16,13 @@
 from __future__ import annotations
 
 from datetime import date
-from typing import Any, Iterable, List, Literal, Mapping, Optional, Union
-
-from typing_extensions import Annotated
+from typing import TYPE_CHECKING, Annotated, Any, Literal
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Mapping
 
 
 class AccountMove(RecordBase["AccountMoveManager"]):
@@ -51,7 +52,7 @@ class AccountMove(RecordBase["AccountMoveManager"]):
     """The due date that the account move (invoice) must be paid by."""
 
     invoice_line_ids: Annotated[
-        List[int],
+        list[int],
         ModelRef("invoice_line_ids", AccountMoveLine),
     ]
     """The list of the IDs for the account move (invoice) lines
@@ -59,7 +60,7 @@ class AccountMove(RecordBase["AccountMoveManager"]):
     """
 
     invoice_lines: Annotated[
-        List[AccountMoveLine],
+        list[AccountMoveLine],
         ModelRef("invoice_line_ids", AccountMoveLine),
     ]
     """A list of account move (invoice) lines
@@ -94,20 +95,20 @@ class AccountMove(RecordBase["AccountMoveManager"]):
     * ``in_receipt`` - Purchase Receipt
     """
 
-    name: Union[str, Literal[False]]
+    name: str | Literal[False]
     """Name assigned to the account move (invoice), if posted."""
 
-    os_project_id: Annotated[Optional[int], ModelRef("os_project", Project)]
+    os_project_id: Annotated[int | None, ModelRef("os_project", Project)]
     """The ID of the OpenStack project this account move (invoice)
     was generated for, if this is an invoice for OpenStack project usage.
     """
 
-    os_project_name: Annotated[Optional[str], ModelRef("os_project", Project)]
+    os_project_name: Annotated[str | None, ModelRef("os_project", Project)]
     """The name of the OpenStack project this account move (invoice)
     was generated for, if this is an invoice for OpenStack project usage.
     """
 
-    os_project: Annotated[Optional[Project], ModelRef("os_project", Project)]
+    os_project: Annotated[Project | None, ModelRef("os_project", Project)]
     """The OpenStack project this account move (invoice)
     was generated for, if this is an invoice for OpenStack project usage.
 
@@ -162,12 +163,12 @@ class AccountMove(RecordBase["AccountMoveManager"]):
 
     def send_openstack_invoice_email(
         self,
-        email_ctx: Optional[Mapping[str, Any]] = None,
+        email_ctx: Mapping[str, Any] | None = None,
     ) -> None:
         """Send an OpenStack invoice email for this account move (invoice).
 
         :param email_ctx: Optional email context, defaults to None
-        :type email_ctx: Optional[Mapping[str, Any]], optional
+        :type email_ctx: Mapping[str, Any] | None, optional
         """
         self._env.send_openstack_invoice_email(
             self.id,
@@ -181,11 +182,7 @@ class AccountMoveManager(NamedRecordManagerBase[AccountMove]):
 
     def action_post(
         self,
-        *account_moves: Union[
-            int,
-            AccountMove,
-            Iterable[Union[int, AccountMove]],
-        ],
+        *account_moves: int | AccountMove | Iterable[int | AccountMove],
     ) -> None:
         """Change one or more draft account moves (invoices)
         into "posted" state.
@@ -198,7 +195,7 @@ class AccountMoveManager(NamedRecordManagerBase[AccountMove]):
         :param account_moves: Record objects, IDs, or record/ID iterables
         :type account_moves: int | AccountMove | Iterable[int | AccountMove]
         """
-        _ids: List[int] = []
+        _ids: list[int] = []
         for ids in account_moves:
             if isinstance(ids, int):
                 _ids.append(ids)
@@ -217,8 +214,8 @@ class AccountMoveManager(NamedRecordManagerBase[AccountMove]):
 
     def send_openstack_invoice_email(
         self,
-        account_move: Union[int, AccountMove],
-        email_ctx: Optional[Mapping[str, Any]] = None,
+        account_move: int | AccountMove,
+        email_ctx: Mapping[str, Any] | None = None,
     ) -> None:
         """Send an OpenStack invoice email for the given
         account move (invoice).
@@ -226,7 +223,7 @@ class AccountMoveManager(NamedRecordManagerBase[AccountMove]):
         :param account_move: The account move (invoice) to send an email for
         :type account_move: int | AccountMove
         :param email_ctx: Optional email context, defaults to None
-        :type email_ctx: Optional[Mapping[str, Any]], optional
+        :type email_ctx: Mapping[str, Any] | None, optional
         """
         self._env.send_openstack_invoice_email(
             (

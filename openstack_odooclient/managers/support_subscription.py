@@ -16,9 +16,7 @@
 from __future__ import annotations
 
 from datetime import date
-from typing import Literal, Optional
-
-from typing_extensions import Annotated
+from typing import Annotated, Literal
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
@@ -37,7 +35,7 @@ class SupportSubscription(RecordBase["SupportSubscriptionManager"]):
     end_date: date
     """The end date of the credit."""
 
-    partner_id: Annotated[Optional[int], ModelRef("partner", Partner)]
+    partner_id: Annotated[int | None, ModelRef("partner", Partner)]
     """The ID for the partner linked to this support subscription,
     if it is linked to a partner.
 
@@ -45,7 +43,7 @@ class SupportSubscription(RecordBase["SupportSubscriptionManager"]):
     cover all projects the partner owns.
     """
 
-    partner_name: Annotated[Optional[str], ModelRef("partner", Partner)]
+    partner_name: Annotated[str | None, ModelRef("partner", Partner)]
     """The name of the partner linked to this support subscription,
     if it is linked to a partner.
 
@@ -53,7 +51,7 @@ class SupportSubscription(RecordBase["SupportSubscriptionManager"]):
     cover all projects the partner owns.
     """
 
-    partner: Annotated[Optional[Partner], ModelRef("partner", Partner)]
+    partner: Annotated[Partner | None, ModelRef("partner", Partner)]
     """The partner linked to this support subscription,
     if it is linked to a partner.
 
@@ -64,17 +62,17 @@ class SupportSubscription(RecordBase["SupportSubscriptionManager"]):
     and caches it for subsequent accesses.
     """
 
-    project_id: Annotated[Optional[int], ModelRef("project", Project)]
+    project_id: Annotated[int | None, ModelRef("project", Project)]
     """The ID of the project this support subscription is for,
     if it is linked to a specific project.
     """
 
-    project_name: Annotated[Optional[str], ModelRef("project", Project)]
+    project_name: Annotated[str | None, ModelRef("project", Project)]
     """The name of the project this support subscription is for,
     if it is linked to a specific project.
     """
 
-    project: Annotated[Optional[Project], ModelRef("project", Project)]
+    project: Annotated[Project | None, ModelRef("project", Project)]
     """The project this support subscription is for,
     if it is linked to a specific project.
 

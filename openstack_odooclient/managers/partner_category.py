@@ -15,9 +15,9 @@
 
 from __future__ import annotations
 
-from typing import List, Literal, Optional, Union
+from typing import Annotated, Literal
 
-from typing_extensions import Annotated, Self
+from typing_extensions import Self
 
 from ..base.record import FieldAlias, ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
@@ -27,10 +27,10 @@ class PartnerCategory(RecordBase["PartnerCategoryManager"]):
     active: bool
     """Whether or not the partner category is active (enabled)."""
 
-    child_ids: Annotated[List[int], ModelRef("child_id", Self)]
+    child_ids: Annotated[list[int], ModelRef("child_id", Self)]
     """A list of IDs for the child categories."""
 
-    children: Annotated[List[Self], ModelRef("child_id", Self)]
+    children: Annotated[list[Self], ModelRef("child_id", Self)]
     """The list of child categories.
 
     This fetches the full records from Odoo once,
@@ -46,17 +46,17 @@ class PartnerCategory(RecordBase["PartnerCategoryManager"]):
     name: str
     """The name of the partner category."""
 
-    parent_id: Annotated[Optional[int], ModelRef("parent_id", Self)]
+    parent_id: Annotated[int | None, ModelRef("parent_id", Self)]
     """The ID for the parent partner category, if this category
     is the child of another category.
     """
 
-    parent_name: Annotated[Optional[str], ModelRef("parent_id", Self)]
+    parent_name: Annotated[str | None, ModelRef("parent_id", Self)]
     """The name of the parent partner category, if this category
     is the child of another category.
     """
 
-    parent: Annotated[Optional[Self], ModelRef("parent_id", Self)]
+    parent: Annotated[Self | None, ModelRef("parent_id", Self)]
     """The parent partner category, if this category
     is the child of another category.
 
@@ -64,13 +64,13 @@ class PartnerCategory(RecordBase["PartnerCategoryManager"]):
     and caches it for subsequent accesses.
     """
 
-    parent_path: Union[str, Literal[False]]
+    parent_path: str | Literal[False]
     """The path of the parent partner category, if there is a parent."""
 
-    partner_ids: Annotated[List[int], ModelRef("partner_id", Partner)]
+    partner_ids: Annotated[list[int], ModelRef("partner_id", Partner)]
     """A list of IDs for the partners in this category."""
 
-    partners: Annotated[List[Partner], ModelRef("partner_id", Partner)]
+    partners: Annotated[list[Partner], ModelRef("partner_id", Partner)]
     """The list of partners in this category.
 
     This fetches the full records from Odoo once,

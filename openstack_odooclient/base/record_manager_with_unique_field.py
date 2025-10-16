@@ -17,20 +17,13 @@ from __future__ import annotations
 
 import itertools
 
-from typing import TYPE_CHECKING, Generic, TypeVar, overload
+from typing import TYPE_CHECKING, Any, Generic, Literal, TypeVar, overload
 
 from ..exceptions import MultipleRecordsFoundError, RecordNotFoundError
 from .record_manager import Record, RecordManagerBase
 
 if TYPE_CHECKING:
-    from typing import (
-        Any,
-        Dict,
-        Iterable,
-        Literal,
-        Optional,
-        Union,
-    )
+    from collections.abc import Iterable
 
 T = TypeVar("T")
 
@@ -69,12 +62,12 @@ class RecordManagerWithUniqueFieldBase(
         field: str,
         value: T,
         *,
-        filters: Optional[Iterable[Any]] = ...,
-        fields: Optional[Iterable[str]] = ...,
+        filters: Iterable[Any] | None = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[True],
         as_dict: Literal[True],
         optional: Literal[True],
-    ) -> Optional[int]: ...
+    ) -> int: ...
 
     @overload
     def _get_by_unique_field(
@@ -82,12 +75,12 @@ class RecordManagerWithUniqueFieldBase(
         field: str,
         value: T,
         *,
-        filters: Optional[Iterable[Any]] = ...,
-        fields: Optional[Iterable[str]] = ...,
+        filters: Iterable[Any] | None = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[True],
         as_dict: Literal[False] = ...,
         optional: Literal[True],
-    ) -> Optional[int]: ...
+    ) -> int | None: ...
 
     @overload
     def _get_by_unique_field(
@@ -95,8 +88,8 @@ class RecordManagerWithUniqueFieldBase(
         field: str,
         value: T,
         *,
-        filters: Optional[Iterable[Any]] = ...,
-        fields: Optional[Iterable[str]] = ...,
+        filters: Iterable[Any] | None = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[True],
         as_dict: Literal[True],
         optional: Literal[False] = ...,
@@ -108,8 +101,8 @@ class RecordManagerWithUniqueFieldBase(
         field: str,
         value: T,
         *,
-        filters: Optional[Iterable[Any]] = ...,
-        fields: Optional[Iterable[str]] = ...,
+        filters: Iterable[Any] | None = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[True],
         as_dict: Literal[False] = ...,
         optional: Literal[False] = ...,
@@ -121,12 +114,12 @@ class RecordManagerWithUniqueFieldBase(
         field: str,
         value: T,
         *,
-        filters: Optional[Iterable[Any]] = ...,
-        fields: Optional[Iterable[str]] = ...,
+        filters: Iterable[Any] | None = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[False] = ...,
         as_dict: Literal[True],
         optional: Literal[True],
-    ) -> Optional[Dict[str, Any]]: ...
+    ) -> dict[str, Any] | None: ...
 
     @overload
     def _get_by_unique_field(
@@ -134,12 +127,12 @@ class RecordManagerWithUniqueFieldBase(
         field: str,
         value: T,
         *,
-        filters: Optional[Iterable[Any]] = ...,
-        fields: Optional[Iterable[str]] = ...,
+        filters: Iterable[Any] | None = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[False] = ...,
         as_dict: Literal[True],
         optional: Literal[False] = ...,
-    ) -> Dict[str, Any]: ...
+    ) -> dict[str, Any]: ...
 
     @overload
     def _get_by_unique_field(
@@ -147,12 +140,12 @@ class RecordManagerWithUniqueFieldBase(
         field: str,
         value: T,
         *,
-        filters: Optional[Iterable[Any]] = ...,
-        fields: Optional[Iterable[str]] = ...,
+        filters: Iterable[Any] | None = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[False] = ...,
         as_dict: Literal[False] = ...,
         optional: Literal[True],
-    ) -> Optional[Record]: ...
+    ) -> Record | None: ...
 
     @overload
     def _get_by_unique_field(
@@ -160,8 +153,8 @@ class RecordManagerWithUniqueFieldBase(
         field: str,
         value: T,
         *,
-        filters: Optional[Iterable[Any]] = ...,
-        fields: Optional[Iterable[str]] = ...,
+        filters: Iterable[Any] | None = ...,
+        fields: Iterable[str] | None = ...,
         as_id: Literal[False] = ...,
         as_dict: Literal[False] = ...,
         optional: Literal[False] = ...,
@@ -173,23 +166,23 @@ class RecordManagerWithUniqueFieldBase(
         field: str,
         value: T,
         *,
-        filters: Optional[Iterable[Any]] = ...,
-        fields: Optional[Iterable[str]] = ...,
+        filters: Iterable[Any] | None = ...,
+        fields: Iterable[str] | None = ...,
         as_id: bool = ...,
         as_dict: bool = ...,
         optional: bool = ...,
-    ) -> Optional[Union[Record, int, Dict[str, Any]]]: ...
+    ) -> Record | int | dict[str, Any] | None: ...
 
     def _get_by_unique_field(
         self,
         field: str,
         value: T,
-        filters: Optional[Iterable[Any]] = None,
-        fields: Optional[Iterable[str]] = None,
+        filters: Iterable[Any] | None = None,
+        fields: Iterable[str] | None = None,
         as_id: bool = False,
         as_dict: bool = False,
         optional: bool = False,
-    ) -> Optional[Union[Record, int, Dict[str, Any]]]:
+    ) -> Record | int | dict[str, Any] | None:
         """Query a unique record by a specific field.
 
         A number of parameters are available to configure the return type,
@@ -218,9 +211,9 @@ class RecordManagerWithUniqueFieldBase(
         :param value: The unique field value
         :type value: T
         :param filters: Optional additional filters to apply, defaults to None
-        :type filters: Optional[Iterable[Any]], optional
+        :type filters: Iterable[Any] | None, optional
         :param fields: Fields to select, defaults to ``None`` (select all)
-        :type fields: Iterable[str] or None, optional
+        :type fields: Iterable[str] | None, optional
         :param as_id: Return a record ID, defaults to False
         :type as_id: bool, optional
         :param as_dict: Return the record as a dictionary, defaults to False
@@ -230,7 +223,7 @@ class RecordManagerWithUniqueFieldBase(
         :raises MultipleRecordsFoundError: Multiple records with the same name
         :raises RecordNotFoundError: Record with the given name not found
         :return: Query result (or ``None`` if record not found and optional)
-        :rtype: Optional[Union[Record, int, Dict[str, Any]]]
+        :rtype: Record | int | dict[str, Any] | None
         """
         field_filter = [(field, "=", value)]
         try:

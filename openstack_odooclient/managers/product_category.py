@@ -15,22 +15,22 @@
 
 from __future__ import annotations
 
-from typing import List, Literal, Optional, Union
+from typing import Annotated, Literal
 
-from typing_extensions import Annotated, Self
+from typing_extensions import Self
 
 from ..base.record import FieldAlias, ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
 
 
 class ProductCategory(RecordBase["ProductCategoryManager"]):
-    child_id: Annotated[List[int], ModelRef("child_id", Self)]
+    child_id: Annotated[list[int], ModelRef("child_id", Self)]
     """A list of IDs for the child categories."""
 
-    child_ids: Annotated[List[int], FieldAlias("child_id")]
+    child_ids: Annotated[list[int], FieldAlias("child_id")]
     """An alias for ``child_id``."""
 
-    children: Annotated[List[Self], ModelRef("child_id", Self)]
+    children: Annotated[list[Self], ModelRef("child_id", Self)]
     """The list of child categories.
 
     This fetches the full records from Odoo once,
@@ -43,17 +43,17 @@ class ProductCategory(RecordBase["ProductCategoryManager"]):
     name: str
     """Name of the product category."""
 
-    parent_id: Annotated[Optional[int], ModelRef("parent_id", Self)]
+    parent_id: Annotated[int | None, ModelRef("parent_id", Self)]
     """The ID for the parent product category, if this category
     is the child of another category.
     """
 
-    parent_name: Annotated[Optional[str], ModelRef("parent_id", Self)]
+    parent_name: Annotated[str | None, ModelRef("parent_id", Self)]
     """The name of the parent product category, if this category
     is the child of another category.
     """
 
-    parent: Annotated[Optional[Self], ModelRef("parent_id", Self)]
+    parent: Annotated[Self | None, ModelRef("parent_id", Self)]
     """The parent product category, if this category
     is the child of another category.
 
@@ -61,7 +61,7 @@ class ProductCategory(RecordBase["ProductCategoryManager"]):
     and caches it for subsequent accesses.
     """
 
-    parent_path: Union[str, Literal[False]]
+    parent_path: str | Literal[False]
     """The path of the parent product category, if there is a parent."""
 
     product_count: int

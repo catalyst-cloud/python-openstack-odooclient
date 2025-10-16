@@ -15,35 +15,33 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
-from typing_extensions import Annotated
+from typing import Annotated
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
 
 
 class Reseller(RecordBase["ResellerManager"]):
-    alternative_billing_url: Optional[str]
+    alternative_billing_url: str | None
     """The URL to the cloud billing page for the reseller, if available."""
 
-    alternative_support_url: Optional[str]
+    alternative_support_url: str | None
     """The URL to the cloud support centre for the reseller, if available."""
 
     demo_project_id: Annotated[
-        Optional[int],
+        int | None,
         ModelRef("demo_project", Project),
     ]
     """The ID for the optional demo project belonging to the reseller."""
 
     demo_project_name: Annotated[
-        Optional[str],
+        str | None,
         ModelRef("demo_project", Project),
     ]
     """The name of the optional demo project belonging to the reseller."""
 
     demo_project: Annotated[
-        Optional[Project],
+        Project | None,
         ModelRef("demo_project", Project),
     ]
     """An optional demo project belonging to the reseller.

@@ -16,9 +16,7 @@
 from __future__ import annotations
 
 from datetime import date
-from typing import List, Optional
-
-from typing_extensions import Annotated
+from typing import Annotated
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
@@ -54,7 +52,7 @@ class Credit(RecordBase["CreditManager"]):
     """The start date of the credit."""
 
     transaction_ids: Annotated[
-        List[int],
+        list[int],
         ModelRef("transactions", CreditTransaction),
     ]
     """A list of IDs for the transactions that have been made
@@ -62,7 +60,7 @@ class Credit(RecordBase["CreditManager"]):
     """
 
     transactions: Annotated[
-        List[CreditTransaction],
+        list[CreditTransaction],
         ModelRef("transactions", CreditTransaction),
     ]
     """The transactions that have been made using this credit.
@@ -72,7 +70,7 @@ class Credit(RecordBase["CreditManager"]):
     """
 
     voucher_code_id: Annotated[
-        Optional[int],
+        int | None,
         ModelRef("voucher_code", VoucherCode),
     ]
     """The ID of the voucher code used when applying for the credit,
@@ -80,7 +78,7 @@ class Credit(RecordBase["CreditManager"]):
     """
 
     voucher_code_name: Annotated[
-        Optional[str],
+        str | None,
         ModelRef("voucher_code", VoucherCode),
     ]
     """The name of the voucher code used when applying for the credit,
@@ -88,7 +86,7 @@ class Credit(RecordBase["CreditManager"]):
     """
 
     voucher_code: Annotated[
-        Optional[VoucherCode],
+        VoucherCode | None,
         ModelRef("voucher_code", VoucherCode),
     ]
     """The voucher code used when applying for the credit,

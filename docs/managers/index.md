@@ -324,7 +324,7 @@ a ``dict`` object, instead of a record object.
 
 ```python
 search(
-    filters: Sequence[Tuple[str, str, Any] | Sequence[Any] | str] | None = None,
+    filters: Sequence[tuple[str, str, Any] | Sequence[Any] | str] | None = None,
     fields: Iterable[str] | None = None,
     order: str | None = None,
     as_id: bool = False,
@@ -334,7 +334,7 @@ search(
 
 ```python
 search(
-    filters: Sequence[Tuple[str, str, Any] | Sequence[Any] | str] | None = None,
+    filters: Sequence[tuple[str, str, Any] | Sequence[Any] | str] | None = None,
     fields: Iterable[str] | None = None,
     order: str | None = None,
     as_id: bool = True,
@@ -344,7 +344,7 @@ search(
 
 ```python
 search(
-    filters: Sequence[Tuple[str, str, Any] | Sequence[Any] | str] | None = None,
+    filters: Sequence[tuple[str, str, Any] | Sequence[Any] | str] | None = None,
     fields: Iterable[str] | None = None,
     order: str | None = None,
     as_id: bool = False,
@@ -564,7 +564,7 @@ a list of `dict` objects, instead of record objects.
 
 | Name      | Type                                                          | Description                                       | Default |
 |-----------|---------------------------------------------------------------|---------------------------------------------------|---------|
-| `filters` | `Sequence[Tuple[str, str, Any] | Sequence[Any] | str] | None` | Filters to query by (or `None` for no filters)    | `None`  |
+| `filters` | `Sequence[tuple[str, str, Any] | Sequence[Any] | str] | None` | Filters to query by (or `None` for no filters)    | `None`  |
 | `fields`  | `Iterable[str] | None`                                        | Fields to select (or `None` to select all fields) | `None`  |
 | `order`   | `str | None`                                                  | Field to order results by, if ordering results    | `None`  |
 | `as_id`   | `bool`                                                        | Return the record IDs only                        | `False` |

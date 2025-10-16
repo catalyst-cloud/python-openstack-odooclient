@@ -19,19 +19,17 @@ import ssl
 import urllib.request
 
 from pathlib import Path
-from typing import TYPE_CHECKING, overload
+from typing import TYPE_CHECKING, Literal, Type, overload
 
 from odoorpc import ODOO  # type: ignore[import]
 from packaging.version import Version
-from typing_extensions import get_type_hints
+from typing_extensions import get_type_hints  # 3.11 and later
 
 from ..util import is_subclass
 from .record import RecordBase
 from .record_manager import RecordManagerBase
 
 if TYPE_CHECKING:
-    from typing import Dict, Literal, Optional, Type, Union
-
     from odoorpc.db import DB  # type: ignore[import]
     from odoorpc.env import Environment  # type: ignore[import]
     from odoorpc.report import Report  # type: ignore[import]
@@ -66,35 +64,35 @@ class ClientBase:
     All parameters must be specified as keyword arguments.
 
     :param hostname: Server hostname, required if ``odoo`` is not set
-    :type hostname: Optional[str], optional
+    :type hostname: str | None, optional
     :param database: Database name, required if ``odoo`` is not set
-    :type database: Optional[str], optional
+    :type database: str | None, optional
     :param username: Username, required if ``odoo`` is not set
-    :type username: Optional[str], optional
+    :type username: str | None, optional
     :param password: Password (or API key), required if ``odoo`` is not set
-    :type password: Optional[str], optional
+    :type password: str | None, optional
     :param protocol: Communication protocol, defaults to ``jsonrpc``
     :type protocol: str, optional
     :param port: Access port, defaults to ``8069``
     :type port: int, optional
     :param verify: Configure SSL cert verification, defaults to ``True``
-    :type verify: Union[bool, str, Path]
+    :type verify: bool | str | Path
     :param version: Server version, defaults to ``None`` (auto-detect)
-    :type version: Optional[str], optional
+    :type version: str | None, optional
     """
 
     @overload
     def __init__(
         self,
         *,
-        hostname: Optional[str] = ...,
-        database: Optional[str] = ...,
-        username: Optional[str] = ...,
-        password: Optional[str] = ...,
+        hostname: str | None = ...,
+        database: str | None = ...,
+        username: str | None = ...,
+        password: str | None = ...,
         protocol: str = "jsonrpc",
         port: int = 8069,
-        verify: Union[bool, str, Path] = ...,
-        version: Optional[str] = ...,
+        verify: bool | str | Path = ...,
+        version: str | None = ...,
         odoo: ODOO,
     ) -> None: ...
 
@@ -108,8 +106,8 @@ class ClientBase:
         password: str,
         protocol: str = "jsonrpc",
         port: int = 8069,
-        verify: Union[bool, str, Path] = ...,
-        version: Optional[str] = ...,
+        verify: bool | str | Path = ...,
+        version: str | None = ...,
         odoo: Literal[None] = ...,
     ) -> None: ...
 
@@ -117,29 +115,29 @@ class ClientBase:
     def __init__(
         self,
         *,
-        hostname: Optional[str] = ...,
-        database: Optional[str] = ...,
-        username: Optional[str] = ...,
-        password: Optional[str] = ...,
+        hostname: str | None = ...,
+        database: str | None = ...,
+        username: str | None = ...,
+        password: str | None = ...,
         protocol: str = "jsonrpc",
         port: int = 8069,
-        verify: Union[bool, str, Path] = ...,
-        version: Optional[str] = ...,
-        odoo: Optional[ODOO] = ...,
+        verify: bool | str | Path = ...,
+        version: str | None = ...,
+        odoo: ODOO | None = ...,
     ) -> None: ...
 
     def __init__(
         self,
         *,
-        hostname: Optional[str] = None,
-        database: Optional[str] = None,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
+        hostname: str | None = None,
+        database: str | None = None,
+        username: str | None = None,
+        password: str | None = None,
         protocol: str = "jsonrpc",
         port: int = 8069,
-        verify: Union[bool, str, Path] = True,
-        version: Optional[str] = None,
-        odoo: Optional[ODOO] = None,
+        verify: bool | str | Path = True,
+        version: str | None = None,
+        odoo: ODOO | None = None,
     ) -> None:
         # If an OdooRPC object is provided, use that directly.
         # Otherwise, make a new one with the provided settings.
@@ -169,7 +167,7 @@ class ClientBase:
                 opener=opener,
             )
             self._odoo.login(database, username, password)
-        self._record_manager_mapping: Dict[
+        self._record_manager_mapping: dict[
             Type[RecordBase],
             RecordManagerBase,
         ] = {}

@@ -15,19 +15,17 @@
 
 from __future__ import annotations
 
-from typing import List
-
-from typing_extensions import Annotated
+from typing import Annotated
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
 
 
 class CreditType(RecordBase["CreditTypeManager"]):
-    credit_ids: Annotated[List[int], ModelRef("credits", Credit)]
+    credit_ids: Annotated[list[int], ModelRef("credits", Credit)]
     """A list of IDs for the credits which are of this credit type."""
 
-    credits: Annotated[List[Credit], ModelRef("credits", Credit)]
+    credits: Annotated[list[Credit], ModelRef("credits", Credit)]
     """A list of credits which are of this credit type.
 
     This fetches the full records from Odoo once,
@@ -38,7 +36,7 @@ class CreditType(RecordBase["CreditTypeManager"]):
     """Name of the Credit Type."""
 
     only_for_product_ids: Annotated[
-        List[int],
+        list[int],
         ModelRef("only_for_products", Product),
     ]
     """A list of IDs for the products this credit applies to.
@@ -49,7 +47,7 @@ class CreditType(RecordBase["CreditTypeManager"]):
     """
 
     only_for_products: Annotated[
-        List[Product],
+        list[Product],
         ModelRef("only_for_products", Product),
     ]
     """A list of products which this credit applies to.
@@ -63,7 +61,7 @@ class CreditType(RecordBase["CreditTypeManager"]):
     """
 
     only_for_product_category_ids: Annotated[
-        List[int],
+        list[int],
         ModelRef("only_for_product_categories", ProductCategory),
     ]
     """A list of IDs for the product categories this credit applies to.
@@ -73,7 +71,7 @@ class CreditType(RecordBase["CreditTypeManager"]):
     """
 
     only_for_product_categories: Annotated[
-        List[ProductCategory],
+        list[ProductCategory],
         ModelRef("only_for_product_categories", ProductCategory),
     ]
     """A list of product categories which this credit applies to.

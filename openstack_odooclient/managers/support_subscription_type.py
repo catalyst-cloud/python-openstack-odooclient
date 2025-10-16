@@ -15,9 +15,7 @@
 
 from __future__ import annotations
 
-from typing import List, Literal
-
-from typing_extensions import Annotated
+from typing import Annotated, Literal
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
@@ -52,13 +50,13 @@ class SupportSubscriptionType(RecordBase["SupportSubscriptionTypeManager"]):
     """Percentage of usage compared to price (0-100)."""
 
     support_subscription_ids: Annotated[
-        List[int],
+        list[int],
         ModelRef("support_subscription", SupportSubscription),
     ]
     """A list of IDs for the support subscriptions of this type."""
 
     support_subscription: Annotated[
-        List[SupportSubscription],
+        list[SupportSubscription],
         ModelRef("support_subscription", SupportSubscription),
     ]
     """The list of support subscriptions of this type.
@@ -68,7 +66,7 @@ class SupportSubscriptionType(RecordBase["SupportSubscriptionTypeManager"]):
     """
 
     support_subscriptions: Annotated[
-        List[SupportSubscription],
+        list[SupportSubscription],
         ModelRef("support_subscription", SupportSubscription),
     ]
     """An alias for ``support_subscription``."""

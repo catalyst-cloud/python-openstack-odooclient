@@ -16,22 +16,20 @@
 from __future__ import annotations
 
 from datetime import date
-from typing import Literal, Union
-
-from typing_extensions import Annotated
+from typing import Annotated, Literal
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager import RecordManagerBase
 
 
 class Trial(RecordBase["TrialManager"]):
-    account_suspended_date: Union[date, Literal[False]]
+    account_suspended_date: date | Literal[False]
     """The date the account was suspended, following the end of the trial."""
 
-    account_terminated_date: Union[date, Literal[False]]
+    account_terminated_date: date | Literal[False]
     """The date the account was terminated, following the end of the trial."""
 
-    account_upgraded_date: Union[date, Literal[False]]
+    account_upgraded_date: date | Literal[False]
     """The date the account was upgraded to a full account,
     following the end of the trial.
     """
