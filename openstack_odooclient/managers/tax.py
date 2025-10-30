@@ -15,6 +15,7 @@
 
 from __future__ import annotations
 
+from decimal import Decimal
 from typing import Annotated, Literal
 
 from ..base.record import ModelRef, RecordBase
@@ -25,7 +26,7 @@ class Tax(RecordBase["TaxManager"]):
     active: bool
     """Whether or not this tax is active (enabled)."""
 
-    amount: float
+    amount: Decimal
     """The amount of tax to apply."""
 
     amount_type: Literal["group", "fixed", "percent", "division"]

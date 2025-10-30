@@ -15,24 +15,23 @@
 
 from __future__ import annotations
 
-import ssl
-import urllib.request
+import json
+import random
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Literal, Type, overload
+from typing import TYPE_CHECKING, Any, Type
 
-from odoorpc import ODOO  # type: ignore[import]
+import httpx
+
 from packaging.version import Version
 from typing_extensions import get_type_hints  # 3.11 and later
 
-from ..util import is_subclass
+from ..util import JSONDecoder, JSONEncoder, is_subclass
 from .record import RecordBase
 from .record_manager import RecordManagerBase
 
 if TYPE_CHECKING:
-    from odoorpc.db import DB  # type: ignore[import]
-    from odoorpc.env import Environment  # type: ignore[import]
-    from odoorpc.report import Report  # type: ignore[import]
+    from collections.abc import Mapping
 
 
 class ClientBase:
@@ -81,92 +80,22 @@ class ClientBase:
     :type version: str | None, optional
     """
 
-    @overload
     def __init__(
         self,
         *,
-        hostname: str | None = ...,
-        database: str | None = ...,
-        username: str | None = ...,
-        password: str | None = ...,
-        protocol: str = "jsonrpc",
-        port: int = 8069,
-        verify: bool | str | Path = ...,
-        version: str | None = ...,
-        odoo: ODOO,
-    ) -> None: ...
-
-    @overload
-    def __init__(
-        self,
-        *,
-        hostname: str,
+        base_url: str,
         database: str,
         username: str,
         password: str,
-        protocol: str = "jsonrpc",
-        port: int = 8069,
-        verify: bool | str | Path = ...,
-        version: str | None = ...,
-        odoo: Literal[None] = ...,
-    ) -> None: ...
-
-    @overload
-    def __init__(
-        self,
-        *,
-        hostname: str | None = ...,
-        database: str | None = ...,
-        username: str | None = ...,
-        password: str | None = ...,
-        protocol: str = "jsonrpc",
-        port: int = 8069,
-        verify: bool | str | Path = ...,
-        version: str | None = ...,
-        odoo: ODOO | None = ...,
-    ) -> None: ...
-
-    def __init__(
-        self,
-        *,
-        hostname: str | None = None,
-        database: str | None = None,
-        username: str | None = None,
-        password: str | None = None,
-        protocol: str = "jsonrpc",
-        port: int = 8069,
         verify: bool | str | Path = True,
-        version: str | None = None,
-        odoo: ODOO | None = None,
+        timeout: int | None = None,
     ) -> None:
-        # If an OdooRPC object is provided, use that directly.
-        # Otherwise, make a new one with the provided settings.
-        if odoo:
-            self._odoo = odoo
-        else:
-            opener = None
-            if protocol.endswith("+ssl"):
-                ssl_verify = verify is not False
-                ssl_cafile = (
-                    str(verify) if isinstance(verify, (Path, str)) else None
-                )
-                if not ssl_verify or ssl_cafile:
-                    ssl_context = ssl.create_default_context(cafile=ssl_cafile)
-                    if not ssl_verify:
-                        ssl_context.check_hostname = False
-                        ssl_context.verify_mode = ssl.CERT_NONE
-                    opener = urllib.request.build_opener(
-                        urllib.request.HTTPSHandler(context=ssl_context),
-                        urllib.request.HTTPCookieProcessor(),
-                    )
-            self._odoo = ODOO(
-                protocol=protocol,
-                host=hostname,
-                port=port,
-                version=version,
-                opener=opener,
-            )
-            self._odoo.login(database, username, password)
+        self._base_url = base_url
+        self._database = database
+        self._username = username
+        self._password = password
+        self._verify = str(verify) if isinstance(verify, Path) else verify
+        self._timeout = timeout
         self._env_manager_mapping: dict[str, RecordManagerBase] = {}
         """An internal mapping between env (model) names and their managers.
 
@@ -189,47 +118,170 @@ class ClientBase:
         for attr_name, attr_type in get_type_hints(type(self)).items():
             if is_subclass(attr_type, RecordManagerBase):
                 setattr(self, attr_name, attr_type(self))
-
-    @property
-    def odoo(self) -> ODOO:
-        """The OdooRPC connection object currently being used
-        by this client.
-        """
-        return self._odoo
-
-    @property
-    def db(self) -> DB:
-        """The database management service."""
-        return self._odoo.db
-
-    @property
-    def report(self) -> Report:
-        """The report management service."""
-        return self._odoo.report
-
-    @property
-    def env(self) -> Environment:
-        """The OdooRPC environment wrapper object.
-
-        This allows interacting with models that do not have managers
-        within this Odoo client.
-        Usage is the same as on a native ``odoorpc.ODOO`` object.
-        """
-        return self._odoo.env
+        self.login()
 
     @property
     def user_id(self) -> int:
         """The ID for the currently logged in user."""
-        return self._odoo.env.uid
+        return self._user_id
 
     @property
     def version(self) -> Version:
         """The version of the server,
         as a comparable ``packaging.version.Version`` object.
         """
-        return Version(self._odoo.version)
+        return self._odoo_version
 
     @property
     def version_str(self) -> str:
         """The version of the server, as a string."""
-        return self._odoo.version
+        return self._odoo_version_str
+
+    def _jsonrpc(
+        self,
+        *,
+        params: Mapping[str, Any] | None = None,
+        url: str = "/jsonrpc",
+    ) -> httpx.Response:
+        return self._http_client.post(
+            url,
+            headers={"Content-Type": "application/json"},
+            content=json.dumps(
+                {
+                    "jsonrpc": "2.0",
+                    "method": "call",
+                    "params": dict(params) if params else {},
+                    "id": random.randint(0, 1000000000),  # noqa: S311
+                },
+                cls=JSONEncoder,
+                separators=(",", ":"),
+            ),
+        )
+
+    def login(self) -> None:
+        """Login to the Odoo database with the configured
+        username and password.
+
+        Fetches and stores a new session cookie, usable until
+        it expires after a pre-determined amount of time.
+
+        If a request is made to Odoo after the session cookie
+        has expired, the Odoo client will automatically run this
+        method to refresh the session cookie.
+        """
+        # Set up the HTTP client session that will be used
+        # for all requests.
+        self._http_client = httpx.Client(
+            base_url=self._base_url,
+            verify=self._verify,
+            timeout=self._timeout,
+        )
+        # Login, and set up the user context.
+        response = self._jsonrpc(
+            params={
+                "service": "common",
+                "method": "login",
+                "args": [self._database, self._username, self._password],
+            },
+        )
+        # TODO(callumdickinson): Handle HTTP 401.
+        user_id: int | None = response.json()["result"]
+        if not user_id:
+            # TODO(callumdickinson): Custom exception class.
+            raise ValueError("Incorrect username or password")
+        response = self._jsonrpc(
+            params={
+                "service": "object",
+                "method": "execute",
+                "args": [
+                    self._database,
+                    self._username,
+                    self._password,
+                    "res.users",
+                    "context_get",
+                ],
+            },
+        )
+        context: dict[str, Any] = response.json()["result"]
+        context["uid"] = user_id
+        self._user_id = user_id
+        self._context = context
+        # Discover the Odoo server's version.
+        response = self._jsonrpc(url="/web/webclient/version_info")
+        self._odoo_version_str: str = response.json()["server_version"]
+        self._odoo_version = Version(self._odoo_version_str)
+
+    def close(self) -> None:
+        self._http_client.close()
+
+    def execute(
+        self,
+        model: str,
+        method: str,
+        /,
+        *args: Any,
+    ) -> Any:
+        """Invoke a method on the given model,
+        passing all other positional arguments
+        as parameters, and return the result.
+
+        :param model: The model to run the method on
+        :type model: str
+        :param method: The method to invoke
+        :type method: str
+        :return: The return value of the method
+        :rtype: Any
+        """
+        response = self._jsonrpc(
+            params={
+                "service": "object",
+                "method": "execute",
+                "args": [
+                    self._database,
+                    self._user_id,
+                    self._password,
+                    model,
+                    method,
+                    *args,
+                ],
+            },
+        )
+        data: dict[str, Any] = json.loads(response.text, cls=JSONDecoder)
+        return data.get("result")
+
+    def execute_kw(
+        self,
+        model: str,
+        method: str,
+        /,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Any:
+        """Invoke a method on the given model,
+        passing all other positional arguments
+        and all keyword arguments as parameters,
+        and return the result.
+
+        :param model: The model to run the method on
+        :type model: str
+        :param method: The method to invoke
+        :type method: str
+        :return: The return value of the method
+        :rtype: Any
+        """
+        response = self._jsonrpc(
+            params={
+                "service": "object",
+                "method": "execute_kw",
+                "args": [
+                    self._database,
+                    self._user_id,
+                    self._password,
+                    model,
+                    method,
+                    [args, kwargs],
+                ],
+            },
+        )
+        data: dict[str, Any] = json.loads(response.text, cls=JSONDecoder)
+        return data.get("result")

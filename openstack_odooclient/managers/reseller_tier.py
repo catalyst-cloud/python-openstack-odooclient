@@ -15,6 +15,7 @@
 
 from __future__ import annotations
 
+from decimal import Decimal
 from typing import Annotated
 
 from ..base.record import ModelRef, RecordBase
@@ -22,7 +23,7 @@ from ..base.record_manager_named import NamedRecordManagerBase
 
 
 class ResellerTier(RecordBase["ResellerTierManager"]):
-    discount_percent: float
+    discount_percent: Decimal
     """The maximum discount percentage for this reseller tier (0-100)."""
 
     discount_product_id: Annotated[
@@ -47,7 +48,7 @@ class ResellerTier(RecordBase["ResellerTierManager"]):
     and caches it for subsequent accesses.
     """
 
-    free_monthly_credit: float
+    free_monthly_credit: Decimal
     """The amount the reseller gets monthly in credit for demo projects."""
 
     free_monthly_credit_product_id: Annotated[
@@ -85,7 +86,7 @@ class ResellerTier(RecordBase["ResellerTierManager"]):
     name: str
     """Reseller tier name."""
 
-    min_usage_threshold: float
+    min_usage_threshold: Decimal
     """The minimum required usage amount for the reseller tier."""
 
 

@@ -42,9 +42,6 @@ from ..util import is_subclass
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
 
-    from odoorpc import ODOO  # type: ignore[import]
-    from odoorpc.env import Environment  # type: ignore[import]
-
     from .client import ClientBase
 
 RecordManager = TypeVar("RecordManager", bound="RecordManagerBase")
@@ -207,16 +204,6 @@ class RecordBase(Generic[RecordManager]):
         return mapping[type(self)]  # type: ignore[return-value]
 
     @property
-    def _odoo(self) -> ODOO:
-        """The OdooRPC connection object this record was created from."""
-        return self._client._odoo
-
-    @property
-    def _env(self) -> Environment:
-        """The OdooRPC environment object this record was created from."""
-        return self._manager._env
-
-    @property
     def _type_hints(self) -> MappingProxyType[str, Any]:
         return self._manager._record_type_hints
 
@@ -294,7 +281,7 @@ class RecordBase(Generic[RecordManager]):
         """
         return type(self)(
             client=self._client,
-            record=self._env.read(
+            record=self._manager._read(
                 self.id,
                 fields=self._fields,
             )[0],

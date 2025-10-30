@@ -15,6 +15,7 @@
 
 from __future__ import annotations
 
+from decimal import Decimal
 from typing import Annotated
 
 from ..base.record import ModelRef, RecordBase
@@ -28,7 +29,7 @@ class ReferralCode(RecordBase["ReferralCodeManager"]):
     Set to ``-1`` for unlimited uses.
     """
 
-    before_reward_usage_threshold: float
+    before_reward_usage_threshold: Decimal
     """The amount of usage that must be recorded by the new sign-up
     before the reward credit is awarded to the referrer.
     """
@@ -51,7 +52,7 @@ class ReferralCode(RecordBase["ReferralCodeManager"]):
     and caches them for subsequent accesses.
     """
 
-    referral_credit_amount: float
+    referral_credit_amount: Decimal
     """Initial balance for the referral credit."""
 
     referral_credit_duration: int
@@ -79,7 +80,7 @@ class ReferralCode(RecordBase["ReferralCodeManager"]):
     and caches it for subsequent accesses.
     """
 
-    reward_credit_amount: float
+    reward_credit_amount: Decimal
     """Initial balance for the reward credit."""
 
     reward_credit_duration: int

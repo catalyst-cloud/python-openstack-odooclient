@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime
+from decimal import Decimal
 from typing import Annotated, Literal
 
 from ..base.record import FieldAlias, ModelRef, RecordBase
@@ -23,13 +24,13 @@ from ..base.record_manager_named import NamedRecordManagerBase
 
 
 class SaleOrder(RecordBase["SaleOrderManager"]):
-    amount_untaxed: float
+    amount_untaxed: Decimal
     """The untaxed total cost of the sale order."""
 
-    amount_tax: float
+    amount_tax: Decimal
     """The amount in taxes on this sale order."""
 
-    amount_total: float
+    amount_total: Decimal
     """The taxed total cost of the sale order."""
 
     client_order_ref: str | Literal[False]
@@ -147,11 +148,11 @@ class SaleOrder(RecordBase["SaleOrderManager"]):
 
     def action_confirm(self) -> None:
         """Confirm this sale order."""
-        self._env.action_confirm(self.id)
+        self._manager.execute_kw("action_confirm", self.id)
 
     def create_invoices(self) -> None:
         """Create invoices from this sale order."""
-        self._env.create_invoices(self.id)
+        self._manager.execute_kw("create_invoices", self.id)
 
 
 class SaleOrderManager(NamedRecordManagerBase[SaleOrder]):
@@ -164,7 +165,8 @@ class SaleOrderManager(NamedRecordManagerBase[SaleOrder]):
         :param sale_order: The sale order to confirm
         :type sale_order: int | SaleOrder
         """
-        self._env.action_confirm(
+        self.execute_kw(
+            "action_confirm",
             (
                 sale_order.id
                 if isinstance(sale_order, SaleOrder)
@@ -178,7 +180,8 @@ class SaleOrderManager(NamedRecordManagerBase[SaleOrder]):
         :param sale_order: The sale order to create invoices from
         :type sale_order: int | SaleOrder
         """
-        self._env.create_invoices(
+        self.execute_kw(
+            "create_invoices",
             (
                 sale_order.id
                 if isinstance(sale_order, SaleOrder)

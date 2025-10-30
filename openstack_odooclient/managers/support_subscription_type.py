@@ -15,6 +15,7 @@
 
 from __future__ import annotations
 
+from decimal import Decimal
 from typing import Annotated, Literal
 
 from ..base.record import ModelRef, RecordBase
@@ -46,7 +47,7 @@ class SupportSubscriptionType(RecordBase["SupportSubscriptionTypeManager"]):
     and caches it for subsequent accesses.
     """
 
-    usage_percent: float
+    usage_percent: Decimal
     """Percentage of usage compared to price (0-100)."""
 
     support_subscription_ids: Annotated[

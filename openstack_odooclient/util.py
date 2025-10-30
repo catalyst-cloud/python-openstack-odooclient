@@ -15,6 +15,9 @@
 
 from __future__ import annotations
 
+import json
+
+from decimal import Decimal
 from typing import TYPE_CHECKING, Any, Type, TypeGuard, TypeVar
 
 if TYPE_CHECKING:
@@ -28,6 +31,19 @@ DEFAULT_SERVER_DATETIME_FORMAT = (
 )
 
 T = TypeVar("T")
+
+
+class JSONDecoder(json.JSONDecoder):
+    def __init__(self, **kwargs: Any) -> None:
+        kwargs.pop("parse_float", None)
+        super().__init__(parse_float=Decimal, **kwargs)
+
+
+class JSONEncoder(json.JSONEncoder):
+    def default(self, o: Any) -> Any:
+        if isinstance(o, Decimal):
+            return str(o)
+        return super().default(o)
 
 
 def get_mapped_field(

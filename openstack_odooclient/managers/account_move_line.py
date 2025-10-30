@@ -15,6 +15,7 @@
 
 from __future__ import annotations
 
+from decimal import Decimal
 from typing import Annotated, Literal
 
 from ..base.record import ModelRef, RecordBase
@@ -40,7 +41,7 @@ class AccountMoveLine(RecordBase["AccountMoveLineManager"]):
     and caches it for subsequent accesses.
     """
 
-    line_tax_amount: float
+    line_tax_amount: Decimal
     """Amount charged in tax on the account move (invoice) line."""
 
     move_id: Annotated[int, ModelRef("move_id", AccountMove)]
@@ -100,12 +101,12 @@ class AccountMoveLine(RecordBase["AccountMoveLineManager"]):
     by this account move (invoice) line.
     """
 
-    price_subtotal: float
+    price_subtotal: Decimal
     """Amount charged for the product (untaxed) on the
     account move (invoice) line.
     """
 
-    price_unit: float
+    price_unit: Decimal
     """Unit price for the product used on the account move (invoice) line."""
 
     product_id: Annotated[int, ModelRef("product_id", Product)]
@@ -126,7 +127,7 @@ class AccountMoveLine(RecordBase["AccountMoveLineManager"]):
     and caches it for subsequent accesses.
     """
 
-    quantity: float
+    quantity: Decimal
     """Quantity of product charged on the account move (invoice) line."""
 
 

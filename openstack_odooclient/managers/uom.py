@@ -15,6 +15,7 @@
 
 from __future__ import annotations
 
+from decimal import Decimal
 from typing import Annotated, Literal
 
 from ..base.record import ModelRef, RecordBase
@@ -38,12 +39,12 @@ class Uom(RecordBase["UomManager"]):
     and caches it for subsequent accesses.
     """
 
-    factor: float
+    factor: Decimal
     """How much bigger or smaller this unit is compared to the reference
     Unit of Measure (UoM) for the classified category.
     """
 
-    factor_inv: float
+    factor_inv: Decimal
     """How many times this Unit of Measure is bigger than the reference
     Unit of Measure (UoM) for the classified category.
     """
