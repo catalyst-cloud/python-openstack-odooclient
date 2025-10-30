@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 from datetime import date
+from decimal import Decimal
 from typing import TYPE_CHECKING, Annotated, Any, Literal
 
 from ..base.record import ModelRef, RecordBase
@@ -27,10 +28,10 @@ if TYPE_CHECKING:
 
 
 class AccountMove(AttachmentMixin, RecordBase["AccountMoveManager"]):
-    amount_total: float
+    amount_total: Decimal
     """Total (taxed) amount charged on the account move (invoice)."""
 
-    amount_untaxed: float
+    amount_untaxed: Decimal
     """Total (untaxed) amount charged on the account move (invoice)."""
 
     currency_id: Annotated[int, ModelRef("currency_id", Currency)]
@@ -160,7 +161,7 @@ class AccountMove(AttachmentMixin, RecordBase["AccountMoveManager"]):
 
     def action_post(self) -> None:
         """Change this draft account move (invoice) into "posted" state."""
-        self._env.action_post(self.id)
+        self._manager.execute_kw("action_post", self.id)
 
     def send_openstack_invoice_email(
         self,
@@ -171,7 +172,8 @@ class AccountMove(AttachmentMixin, RecordBase["AccountMoveManager"]):
         :param email_ctx: Optional email context, defaults to None
         :type email_ctx: Mapping[str, Any] | None, optional
         """
-        self._env.send_openstack_invoice_email(
+        self._manager.execute_kw(
+            "send_openstack_invoice_email",
             self.id,
             email_ctx=dict(email_ctx) if email_ctx else None,
         )
@@ -211,7 +213,7 @@ class AccountMoveManager(NamedRecordManagerBase[AccountMove]):
                         for i in ids  # type: ignore[union-attr]
                     ),
                 )
-        self._env.action_post(_ids)
+        self.execute_kw("action_post", _ids)
 
     def send_openstack_invoice_email(
         self,
@@ -226,7 +228,8 @@ class AccountMoveManager(NamedRecordManagerBase[AccountMove]):
         :param email_ctx: Optional email context, defaults to None
         :type email_ctx: Mapping[str, Any] | None, optional
         """
-        self._env.send_openstack_invoice_email(
+        self.execute_kw(
+            "send_openstack_invoice_email",
             (
                 account_move.id
                 if isinstance(account_move, AccountMove)

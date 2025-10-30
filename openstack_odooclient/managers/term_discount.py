@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 from datetime import date
+from decimal import Decimal
 from typing import Annotated
 
 from typing_extensions import Self
@@ -25,7 +26,7 @@ from ..base.record_manager import RecordManagerBase
 
 
 class TermDiscount(RecordBase["TermDiscountManager"]):
-    discount_percent: float
+    discount_percent: Decimal
     """The maximum discount percentage for this term discount (0-100)."""
 
     early_termination_date: date | None
@@ -34,7 +35,7 @@ class TermDiscount(RecordBase["TermDiscountManager"]):
     end_date: date
     """The date that the term discount expires on."""
 
-    min_commit: float
+    min_commit: Decimal
     """The minimum commitment for this term discount to apply."""
 
     partner_id: Annotated[int, ModelRef("partner", Partner)]

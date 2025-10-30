@@ -170,7 +170,11 @@ class Attachment(RecordBase["AttachmentManager"]):
         :param force: Overwrite if already set, defaults to True
         :type force: bool, optional
         """
-        self._env.register_as_main_attachment(self.id, force=force)
+        self._manager.execute_kw(
+            "register_as_main_attachment",
+            self.id,
+            force=force,
+        )
 
 
 class AttachmentManager(RecordManagerBase[Attachment]):
@@ -298,7 +302,8 @@ class AttachmentManager(RecordManagerBase[Attachment]):
         :param force: Overwrite if already set, defaults to True
         :type force: bool, optional
         """
-        self._env.register_as_main_attachment(
+        self.execute_kw(
+            "register_as_main_attachment",
             (
                 attachment.id
                 if isinstance(attachment, Attachment)
@@ -430,7 +435,7 @@ def download(manager: AttachmentManager, attachment_id: int) -> bytes:
     """
 
     return base64.b64decode(
-        manager._env.read(attachment_id, fields=["datas"])[0]["datas"],
+        manager._read(attachment_id, fields=("datas",))[0]["datas"],
     )
 
 

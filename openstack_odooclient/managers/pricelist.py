@@ -15,6 +15,7 @@
 
 from __future__ import annotations
 
+from decimal import Decimal
 from typing import Annotated, Literal
 
 from ..base.record import ModelRef, RecordBase
@@ -63,15 +64,19 @@ class Pricelist(RecordBase["PricelistManager"]):
     name: str
     """The name of this pricelist."""
 
-    def get_price(self, product: int | Product, qty: float) -> float:
+    def get_price(
+        self,
+        product: int | Product,
+        qty: float | Decimal,
+    ) -> Decimal:
         """Get the price to charge for a given product and quantity.
 
         :param product: Product to get the price for (ID or object)
         :type product: int | Product
         :param qty: Quantity to charge for
-        :type qty: float
+        :type qty: float | Decimal
         :return: Price to charge
-        :rtype: float
+        :rtype: Decimal
         """
         return get_price(
             manager=self._manager,
@@ -89,8 +94,8 @@ class PricelistManager(NamedRecordManagerBase[Pricelist]):
         self,
         pricelist: int | Pricelist,
         product: int | Product,
-        qty: float,
-    ) -> float:
+        qty: float | Decimal,
+    ) -> Decimal:
         """Get the price to charge for a given pricelist, product
         and quantity.
 
@@ -99,9 +104,9 @@ class PricelistManager(NamedRecordManagerBase[Pricelist]):
         :param product: Product to get the price for (ID or object)
         :type product: int | Product
         :param qty: Quantity to charge for
-        :type qty: float
+        :type qty: float | Decimal
         :return: Price to charge
-        :rtype: float
+        :rtype: Decimal
         """
         return get_price(
             manager=self,
@@ -115,12 +120,13 @@ def get_price(
     manager: PricelistManager,
     pricelist: int | Pricelist,
     product: int | Product,
-    qty: float,
-) -> float:
+    qty: float | Decimal,
+) -> Decimal:
     pricelist_id = (
         pricelist.id if isinstance(pricelist, Pricelist) else pricelist
     )
-    price = manager._env.price_get(
+    price = manager.execute_kw(
+        "price_get",
         pricelist_id,
         (product.id if isinstance(product, Product) else product),
         max(qty, 0),

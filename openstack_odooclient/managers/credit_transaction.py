@@ -15,6 +15,7 @@
 
 from __future__ import annotations
 
+from decimal import Decimal
 from typing import Annotated
 
 from ..base.record import ModelRef, RecordBase
@@ -38,7 +39,7 @@ class CreditTransaction(RecordBase["CreditTransactionManager"]):
     description: str
     """A description of this credit transaction."""
 
-    value: float
+    value: Decimal
     """The value of the credit transaction."""
 
 

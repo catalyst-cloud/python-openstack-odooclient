@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 from datetime import date as datetime_date
+from decimal import Decimal
 from typing import Literal
 
 from ..base.record import RecordBase
@@ -54,10 +55,10 @@ class Currency(RecordBase["CurrencyManager"]):
     * ``after`` - Place the unit after the amount
     """
 
-    rate: float
+    rate: Decimal
     """The rate of the currency to the currency of rate 1."""
 
-    rounding: float
+    rounding: Decimal
     """The rounding factor configured for this currency."""
 
     symbol: str

@@ -49,9 +49,6 @@ from .record import FieldAlias, ModelRef, RecordBase
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping, Sequence
 
-    from odoorpc import ODOO  # type: ignore[import]
-    from odoorpc.env import Environment  # type: ignore[import]
-
     from .client import ClientBase
 
     FilterCriterion = tuple[str, str, Any] | Sequence[Any] | str
@@ -154,15 +151,45 @@ class RecordManagerBase(Generic[Record]):
                 except IndexError:
                     pass
 
-    @property
-    def _odoo(self) -> ODOO:
-        """The OdooRPC connection object this record manager uses."""
-        return self._client._odoo
+    def execute(self, method: str, /, *args: Any) -> Any:
+        """Invoke a method on the record model,
+        passing all other positional arguments
+        as parameters, and return the result.
 
-    @property
-    def _env(self) -> Environment:
-        """The OdooRPC environment object this record manager uses."""
-        return self._odoo.env[self.env_name]
+        :param method: The method to invoke
+        :type method: str
+        :return: The return value of the method
+        :rtype: Any
+        """
+        return self._client.execute(
+            self.env_name,
+            method,
+            *args,
+        )
+
+    def execute_kw(
+        self,
+        method: str,
+        /,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Any:
+        """Invoke a method on the record model,
+        passing all other positional arguments
+        and all keyword arguments as parameters,
+        and return the result.
+
+        :param method: The method to invoke
+        :type method: str
+        :return: The return value of the method
+        :rtype: Any
+        """
+        return self._client.execute_kw(
+            self.env_name,
+            method,
+            *args,
+            **kwargs,
+        )
 
     @overload
     def list(
@@ -231,12 +258,7 @@ class RecordManagerBase(Generic[Record]):
         :return: List of records
         :rtype: list[Record] | list[dict[str, Any]]
         """
-        if isinstance(ids, int):
-            _ids: int | list[int] = ids
-        else:
-            _ids = list(ids)
-            if not _ids:
-                return []  # type: ignore[return-value]
+        _ids = [ids] if isinstance(ids, int) else list(ids)
         fields = fields or self.default_fields or None
         _fields = (
             list(
@@ -247,10 +269,7 @@ class RecordManagerBase(Generic[Record]):
             if fields is not None
             else None
         )
-        records: Iterable[dict[str, Any]] = self._env.read(
-            _ids,
-            fields=_fields,
-        )
+        records: Iterable[dict[str, Any]] = self._read(ids, fields=_fields)
         if as_dict:
             res_dicts = [
                 {
@@ -269,7 +288,7 @@ class RecordManagerBase(Generic[Record]):
                 for record in records
             ]
         if not optional:
-            required_ids = {_ids} if isinstance(_ids, int) else set(_ids)
+            required_ids = set(_ids)
             found_ids: set[int] = (
                 set(record["id"] for record in res_dicts)
                 if as_dict
@@ -528,8 +547,9 @@ class RecordManagerBase(Generic[Record]):
         :return: List of records
         :rtype: list[Record] | list[int] | list[dict[str, Any]]
         """
-        ids: list[int] = self._env.search(
-            (self._encode_filters(filters) if filters else []),
+        ids: list[int] = self.execute_kw(
+            "search",
+            self._encode_filters(filters) if filters else [],
             order=order,
         )
         if as_id:
@@ -661,7 +681,7 @@ class RecordManagerBase(Generic[Record]):
         :return: The ID of the newly created record
         :rtype: int
         """
-        return self._env.create(self._encode_create_fields(fields))
+        return self.execute_kw("create", self._encode_create_fields(fields))
 
     def create_multi(self, *records: Mapping[str, Any]) -> builtins.list[int]:
         """Create one or more new records in a single request,
@@ -677,12 +697,37 @@ class RecordManagerBase(Generic[Record]):
         :return: The IDs of the newly created records
         :rtype: list[int]
         """
-        res: int | list[int] = self._env.create(
+        res: int | list[int] = self.execute_kw(
+            "create",
             [self._encode_create_fields(record) for record in records],
         )
         if isinstance(res, int):
             return [res]
         return res
+
+    def _read(
+        self,
+        ids: int | Iterable[int],
+        *,
+        fields: Iterable[str] | None = None,
+    ) -> builtins.list[dict[str, Any]]:
+        """Read raw record objects with the given IDs.
+
+        :param ids: IDs of the records to read
+        :type ids: Iterable[int]
+        :param fields: Fields to select, defaults to None
+        :type fields: Iterable[str] | None, optional
+        :return: Raw record objects
+        :rtype: list[dict[str, Any]]
+        """
+        kwargs = {}
+        if fields:
+            kwargs["fields"] = list(fields)
+        return self.execute_kw(
+            "read",
+            [ids] if isinstance(ids, int) else list(ids),
+            **kwargs,
+        )
 
     def _encode_create_fields(
         self,
@@ -823,7 +868,8 @@ class RecordManagerBase(Generic[Record]):
         :param record: The record to update (object or ID)
         :type record: int | Record
         """
-        self._env.update(
+        self.execute_kw(
+            "update",
             record.id if isinstance(record, RecordBase) else record,
             self._encode_create_fields(fields),
         )
@@ -852,7 +898,7 @@ class RecordManagerBase(Generic[Record]):
                 _ids.extend(
                     ((i.id if isinstance(i, RecordBase) else i) for i in ids),
                 )
-        self._env.unlink(_ids)
+        self.execute_kw("unlink", _ids)
 
     def delete(
         self,
@@ -881,7 +927,7 @@ class RecordManagerBase(Generic[Record]):
         # based on the version of the Odoo server.
         return get_mapped_field(
             field_mapping=self.record_class._field_mapping,
-            odoo_version=self._odoo.version,
+            odoo_version=self._client.version_str,
             field=field,
         )
 
@@ -890,7 +936,7 @@ class RecordManagerBase(Generic[Record]):
         # based on the version of the Odoo server.
         local_field = get_mapped_field(
             field_mapping=self._field_mapping_reverse,
-            odoo_version=self._odoo.version,
+            odoo_version=self._client.version_str,
             field=field,
         )
         # If the field is a model ref, find the local field

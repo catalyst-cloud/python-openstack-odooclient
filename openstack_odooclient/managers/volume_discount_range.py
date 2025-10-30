@@ -15,6 +15,7 @@
 
 from __future__ import annotations
 
+from decimal import Decimal
 from typing import Annotated
 
 from ..base.record import ModelRef, RecordBase
@@ -58,7 +59,7 @@ class VolumeDiscountRange(RecordBase["VolumeDiscountRangeManager"]):
     and caches it for subsequent accesses.
     """
 
-    discount_percent: float
+    discount_percent: Decimal
     """Discount percentage of this volume discount range (0-100)."""
 
     name: str
@@ -66,13 +67,13 @@ class VolumeDiscountRange(RecordBase["VolumeDiscountRangeManager"]):
     this volume discount range.
     """
 
-    max: float | None
+    max: Decimal | None
     """Optional maximum charge for this volume discount range.
 
     Intended to be used when creating tiered volume discounts for customers.
     """
 
-    min: float
+    min: Decimal
     """Minimum charge for this volume discount range."""
 
     use_max: bool
@@ -85,7 +86,7 @@ class VolumeDiscountRangeManager(RecordManagerBase[VolumeDiscountRange]):
 
     def get_for_charge(
         self,
-        charge: float,
+        charge: Decimal,
         customer_group: int | CustomerGroup | None = None,
     ) -> VolumeDiscountRange | None:
         """Return the volume discount range to apply to a given charge.
@@ -100,7 +101,7 @@ class VolumeDiscountRangeManager(RecordManagerBase[VolumeDiscountRange]):
         ``None`` is returned.
 
         :param charge: The charge to find the applicable discount range for
-        :type charge: float
+        :type charge: Decimal
         :param customer_group: Get discount for a specific customer group
         :type customer_group: int | CustomerGroup | None, optional
         :return: Highest percentage applicable discount range (if found)

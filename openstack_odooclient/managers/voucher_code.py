@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 from datetime import date
+from decimal import Decimal
 from typing import Annotated, Literal
 
 from ..base.record import ModelRef, RecordBase
@@ -29,7 +30,7 @@ class VoucherCode(RecordBase["VoucherCodeManager"]):
     code: str
     """The code string for this voucher code."""
 
-    credit_amount: float | Literal[False]
+    credit_amount: Decimal | Literal[False]
     """The initial credit balance for the voucher code, if a credit is to be
     created by the voucher code.
     """
@@ -117,7 +118,7 @@ class VoucherCode(RecordBase["VoucherCodeManager"]):
     and caches it for subsequent accesses.
     """
 
-    grant_value: float | Literal[False]
+    grant_value: Decimal | Literal[False]
     """The value of the grant, if a grant is to be
     created by the voucher code.
     """

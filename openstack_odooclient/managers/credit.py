@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 from datetime import date
+from decimal import Decimal
 from typing import Annotated
 
 from ..base.record import ModelRef, RecordBase
@@ -36,13 +37,13 @@ class Credit(RecordBase["CreditManager"]):
     and caches it for subsequent accesses.
     """
 
-    current_balance: float
+    current_balance: Decimal
     """The current remaining balance on the credit."""
 
     expiry_date: date
     """The date the credit expires."""
 
-    initial_balance: float
+    initial_balance: Decimal
     """The initial balance this credit started off with."""
 
     name: str

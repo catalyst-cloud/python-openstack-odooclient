@@ -15,6 +15,7 @@
 
 from __future__ import annotations
 
+from decimal import Decimal
 from typing import TYPE_CHECKING, Annotated, Any, Literal, overload
 
 from ..base.record import ModelRef, RecordBase
@@ -72,7 +73,7 @@ class Product(RecordBase["ProductManager"]):
     display_name: str
     """The name of this product in OpenStack, and on invoices."""
 
-    list_price: float
+    list_price: Decimal
     """The list price of the product.
 
     This becomes the unit price of the product on invoices.

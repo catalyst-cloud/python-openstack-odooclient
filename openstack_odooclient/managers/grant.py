@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 from datetime import date
+from decimal import Decimal
 from typing import Annotated
 
 from ..base.record import ModelRef, RecordBase
@@ -45,7 +46,7 @@ class Grant(RecordBase["GrantManager"]):
     start_date: date
     """The start date of the grant."""
 
-    value: float
+    value: Decimal
     """The value of the grant."""
 
     voucher_code_id: Annotated[

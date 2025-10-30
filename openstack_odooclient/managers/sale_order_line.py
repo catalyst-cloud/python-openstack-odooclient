@@ -15,6 +15,7 @@
 
 from __future__ import annotations
 
+from decimal import Decimal
 from typing import Annotated, Literal
 
 from ..base.record import ModelRef, RecordBase
@@ -53,7 +54,7 @@ class SaleOrderLine(RecordBase["SaleOrderLineManager"]):
     and caches it for subsequent accesses.
     """
 
-    discount: float
+    discount: Decimal
     """Discount percentage on the sale order line (0-100)."""
 
     display_name: str
@@ -168,25 +169,25 @@ class SaleOrderLine(RecordBase["SaleOrderLineManager"]):
     by this sale order line.
     """
 
-    price_reduce: float
+    price_reduce: Decimal
     """Base unit price, less discount (see the ``discount`` field)."""
 
-    price_reduce_taxexcl: float
+    price_reduce_taxexcl: Decimal
     """Actual unit price, excluding tax."""
 
-    price_reduce_taxinc: float
+    price_reduce_taxinc: Decimal
     """Actual unit price, including tax."""
 
-    price_subtotal: float
+    price_subtotal: Decimal
     """Subtotal price for the sale order line, excluding tax."""
 
-    price_tax: float
+    price_tax: Decimal
     """Tax charged on the sale order line."""
 
-    price_total: float
+    price_total: Decimal
     """Total price for the sale order line, including tax."""
 
-    price_unit: float
+    price_unit: Decimal
     """Base unit price, excluding tax, before any discounts."""
 
     product_id: Annotated[int, ModelRef("product_id", Product)]
@@ -220,7 +221,7 @@ class SaleOrderLine(RecordBase["SaleOrderLineManager"]):
     and caches it for subsequent accesses.
     """
 
-    product_uom_qty: float
+    product_uom_qty: Decimal
     """The product quantity on the sale order line."""
 
     product_uom_readonly: bool
@@ -231,10 +232,10 @@ class SaleOrderLine(RecordBase["SaleOrderLineManager"]):
     product_updatable: bool
     """Whether or not the product can be edited on this sale order line."""
 
-    qty_invoiced: float
+    qty_invoiced: Decimal
     """The product quantity that has already been invoiced."""
 
-    qty_to_invoice: float
+    qty_to_invoice: Decimal
     """The product quantity that still needs to be invoiced."""
 
     salesman_id: Annotated[int, ModelRef("salesman_id", Partner)]
@@ -279,12 +280,12 @@ class SaleOrderLine(RecordBase["SaleOrderLineManager"]):
     and caches it for subsequent accesses.
     """
 
-    untaxed_amount_invoiced: float
+    untaxed_amount_invoiced: Decimal
     """The balance, excluding tax, on the sale order line that
     has already been invoiced.
     """
 
-    untaxed_amount_to_invoice: float
+    untaxed_amount_to_invoice: Decimal
     """The balance, excluding tax, on the sale order line that
     still needs to be invoiced.
     """
