@@ -47,7 +47,7 @@ from ..util import (
 from .record import FieldAlias, ModelRef, RecordBase
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Mapping, Sequence
+    from collections.abc import Generator, Iterable, Mapping, Sequence
 
     from odoorpc import ODOO  # type: ignore[import]
     from odoorpc.env import Environment  # type: ignore[import]
@@ -57,6 +57,142 @@ if TYPE_CHECKING:
     FilterCriterion = tuple[str, str, Any] | Sequence[Any] | str
 
 Record = TypeVar("Record", bound=RecordBase)
+
+
+class ListRecords(Generic[Record]):
+    def __init__(
+        self,
+        manager: RecordManagerBase[Record],
+        ids: int | Iterable[int],
+        fields: Iterable[str] | None,
+        optional: bool,
+    ) -> None:
+        self._manager = manager
+        self._ids = (ids,) if isinstance(ids, int) else tuple(ids)
+        self._fields = tuple(fields) if fields else None
+        self._optional = optional
+
+    @property
+    def ids(self) -> tuple[int, ...]:
+        return self._ids
+
+    @property
+    def fields(self) -> tuple[str, ...] | None:
+        return self._fields
+
+    @property
+    def optional(self) -> bool:
+        return self._optional
+
+    def as_dicts(self) -> Generator[dict[str, Any], None, None]:
+        yield from (
+            {
+                self._manager._get_local_field(field): value
+                for field, value in record.items()
+            }
+            for record in self._read()
+        )
+
+    def as_records(self) -> Generator[Record, None, None]:
+        yield from (self._as_record(record) for record in self._read())
+
+    def _read(self) -> Generator[dict[str, Any], None, None]:
+        if not self.ids:
+            yield from ()
+            return
+        record_ids: set[int] = set()
+        for record in self._manager._env.read(
+            self.ids,
+            fields=self.fields,
+        ):
+            record_ids.add(record["id"])
+            yield record
+        if not self.optional:
+            required_ids = set(self.ids)
+            missing_ids = required_ids - record_ids
+            if missing_ids:
+                raise RecordNotFoundError(
+                    (
+                        f"{self._manager.record_class.__name__} records "
+                        "with IDs not found: "
+                        f"{', '.join(str(i) for i in sorted(missing_ids))}"
+                    ),
+                )
+
+    def _as_record(self, record: dict[str, Any]) -> Record:
+        return self._manager.record_class(
+            client=self._manager._client,
+            record=record,
+            fields=self._fields,
+        )
+
+
+class SearchRecords(Generic[Record]):
+    def __init__(
+        self,
+        manager: RecordManagerBase[Record],
+        filters: Sequence[FilterCriterion] | None,
+        fields: Iterable[str] | None,
+        order: str | None,
+    ) -> None:
+        self._manager = manager
+        self._filters = (
+            tuple(self._manager._encode_filters(filters))
+            if filters
+            else tuple()
+        )
+        self._fields = tuple(fields) if fields else None
+        self._order = order
+
+    @property
+    def filters(self) -> tuple[FilterCriterion, ...]:
+        return self._filters
+
+    @property
+    def fields(self) -> tuple[str, ...] | None:
+        return self._fields
+
+    @property
+    def order(self) -> str | None:
+        return self._order
+
+    def as_ids(self) -> Generator[int, None, None]:
+        yield from self._search()
+
+    def as_dicts(self) -> Generator[dict[str, Any], None, None]:
+        yield from (
+            {
+                self._manager._get_local_field(field): value
+                for field, value in record.items()
+            }
+            for record in self._read(self._search())
+        )
+
+    def as_records(self) -> Generator[Record, None, None]:
+        yield from (
+            self._as_record(record) for record in self._read(self._search())
+        )
+
+    def _search(self) -> builtins.list[int]:
+        return self._manager._env.search(
+            self.filters,
+            order=self.order,
+        )
+
+    def _read(self, ids: builtins.list[int]) -> builtins.list[dict[str, Any]]:
+        if not ids:
+            return []
+        return self._manager._env.read(
+            ids,
+            fields=self._fields,
+        )
+
+    def _as_record(self, record: dict[str, Any]) -> Record:
+        return self._manager.record_class(
+            client=self._manager._client,
+            record=record,
+            fields=self._fields,
+        )
 
 
 class RecordManagerBase(Generic[Record]):
@@ -164,43 +300,12 @@ class RecordManagerBase(Generic[Record]):
         """The OdooRPC environment object this record manager uses."""
         return self._odoo.env[self.env_name]
 
-    @overload
-    def list(
-        self,
-        ids: int | Iterable[int],
-        *,
-        fields: Iterable[str] | None = ...,
-        as_dict: Literal[False] = ...,
-        optional: bool = ...,
-    ) -> builtins.list[Record]: ...
-
-    @overload
-    def list(
-        self,
-        ids: int | Iterable[int],
-        *,
-        fields: Iterable[str] | None = ...,
-        as_dict: Literal[True],
-        optional: bool = ...,
-    ) -> builtins.list[dict[str, Any]]: ...
-
-    @overload
-    def list(
-        self,
-        ids: int | Iterable[int],
-        *,
-        fields: Iterable[str] | None = ...,
-        as_dict: bool = ...,
-        optional: bool = ...,
-    ) -> builtins.list[Record] | builtins.list[dict[str, Any]]: ...
-
     def list(
         self,
         ids: int | Iterable[int],
         fields: Iterable[str] | None = None,
-        as_dict: bool = False,
         optional: bool = False,
-    ) -> builtins.list[Record] | builtins.list[dict[str, Any]]:
+    ) -> ListRecords[Record]:
         """Get one or more specific records by ID.
 
         By default all fields available on the record model
@@ -223,68 +328,18 @@ class RecordManagerBase(Generic[Record]):
         :type ids: int | Iterable[int]
         :param fields: Fields to select, defaults to ``None`` (select all)
         :type fields: Iterable[str] | None, optional
-        :param as_dict: Return records as dictionaries, defaults to ``False``
-        :type as_dict: bool, optional
         :param optional: Disable missing record errors, defaults to ``False``
         :type optional: bool, optional
         :raises RecordNotFoundError: If IDs are required but some are missing
-        :return: List of records
-        :rtype: list[Record] | list[dict[str, Any]]
+        :return: Iterable of records
+        :rtype: Iterable[Record] | Iterable[dict[str, Any]]
         """
-        if isinstance(ids, int):
-            _ids: int | list[int] = ids
-        else:
-            _ids = list(ids)
-            if not _ids:
-                return []  # type: ignore[return-value]
-        fields = fields or self.default_fields or None
-        _fields = (
-            list(
-                dict.fromkeys(
-                    (self._encode_field(f) for f in fields),
-                ).keys(),
-            )
-            if fields is not None
-            else None
+        return ListRecords(
+            manager=self,
+            ids=ids,
+            fields=fields,
+            optional=optional,
         )
-        records: Iterable[dict[str, Any]] = self._env.read(
-            _ids,
-            fields=_fields,
-        )
-        if as_dict:
-            res_dicts = [
-                {
-                    self._get_local_field(field): value
-                    for field, value in record_dict.items()
-                }
-                for record_dict in records
-            ]
-        else:
-            res_objs = [
-                self.record_class(
-                    client=self._client,
-                    record=record,
-                    fields=_fields,
-                )
-                for record in records
-            ]
-        if not optional:
-            required_ids = {_ids} if isinstance(_ids, int) else set(_ids)
-            found_ids: set[int] = (
-                set(record["id"] for record in res_dicts)
-                if as_dict
-                else set(record.id for record in res_objs)
-            )
-            missing_ids = required_ids - found_ids
-            if missing_ids:
-                raise RecordNotFoundError(
-                    (
-                        f"{self.record_class.__name__} records "
-                        "with IDs not found: "
-                        f"{', '.join(str(i) for i in sorted(missing_ids))}"
-                    ),
-                )
-        return res_dicts if as_dict else res_objs
 
     @overload
     def get(
@@ -364,13 +419,12 @@ class RecordManagerBase(Generic[Record]):
         :rtype: Record | dict[str, Any]
         """
         try:
-            return self.list(
-                id,
-                fields=fields,
-                as_dict=as_dict,
-                optional=True,
-            )[0]
-        except IndexError:
+            query = self.list(id, fields=fields, optional=True)
+            if as_dict:
+                return next(query.as_dicts())
+            else:
+                return next(query.as_records())
+        except StopIteration:
             if optional:
                 return None
             else:
@@ -381,75 +435,12 @@ class RecordManagerBase(Generic[Record]):
                     ),
                 ) from None
 
-    @overload
-    def search(
-        self,
-        filters: Sequence[FilterCriterion] | None = ...,
-        fields: Iterable[str] | None = ...,
-        order: str | None = ...,
-        as_id: Literal[False] = ...,
-        as_dict: Literal[False] = ...,
-    ) -> builtins.list[Record]: ...
-
-    @overload
-    def search(
-        self,
-        filters: Sequence[FilterCriterion] | None = ...,
-        fields: Iterable[str] | None = ...,
-        order: str | None = ...,
-        *,
-        as_id: Literal[True],
-        as_dict: Literal[False] = ...,
-    ) -> builtins.list[int]: ...
-
-    @overload
-    def search(
-        self,
-        filters: Sequence[FilterCriterion] | None = ...,
-        fields: Iterable[str] | None = ...,
-        order: str | None = ...,
-        as_id: Literal[False] = ...,
-        *,
-        as_dict: Literal[True],
-    ) -> builtins.list[dict[str, Any]]: ...
-
-    @overload
-    def search(
-        self,
-        filters: Sequence[FilterCriterion] | None = ...,
-        fields: Iterable[str] | None = ...,
-        order: str | None = ...,
-        *,
-        as_id: Literal[True],
-        as_dict: Literal[True],
-    ) -> builtins.list[int]: ...
-
-    @overload
-    def search(
-        self,
-        filters: Sequence[FilterCriterion] | None = ...,
-        fields: Iterable[str] | None = ...,
-        order: str | None = ...,
-        as_id: bool = ...,
-        as_dict: bool = ...,
-    ) -> (
-        builtins.list[Record]
-        | builtins.list[int]
-        | builtins.list[dict[str, Any]]
-    ): ...
-
     def search(
         self,
         filters: Sequence[FilterCriterion] | None = None,
         fields: Iterable[str] | None = None,
         order: str | None = None,
-        as_id: bool = False,
-        as_dict: bool = False,
-    ) -> (
-        builtins.list[Record]
-        | builtins.list[int]
-        | builtins.list[dict[str, Any]]
-    ):
+    ) -> SearchRecords[Record]:
         """Query the ERP for records, optionally defining
         filters to constrain the search and other parameters,
         and return the results.
@@ -521,30 +512,15 @@ class RecordManagerBase(Generic[Record]):
         :type fields: Iterable[str] or None, optional
         :param order: Order results by field name, defaults to ``None``
         :type order: str or None, optional
-        :param as_id: Return the record IDs only, defaults to ``False``
-        :type as_id: bool, optional
-        :param as_dict: Return records as dictionaries, defaults to ``False``
-        :type as_dict: bool, optional
         :return: List of records
         :rtype: list[Record] | list[int] | list[dict[str, Any]]
         """
-        ids: list[int] = self._env.search(
-            (self._encode_filters(filters) if filters else []),
+        return SearchRecords(
+            manager=self,
+            filters=filters,
+            fields=fields,
             order=order,
         )
-        if as_id:
-            return ids
-        if ids:
-            return self.list(
-                ids,
-                fields=fields,
-                as_dict=as_dict,
-                # A race condition might occur where a record is deleted
-                # after finding the ID but before querying the contents of it.
-                # If this happens, silently drop the record ID from the result.
-                optional=True,
-            )
-        return []  # type: ignore[return-value]
 
     def _encode_filters(
         self,

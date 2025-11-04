@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from .base.client import ClientBase
 from .base.record import FieldAlias, ModelRef, RecordBase
-from .base.record_manager import RecordManagerBase
+from .base.record_manager import ListRecords, RecordManagerBase, SearchRecords
 from .base.record_manager_coded import CodedRecordManagerBase
 from .base.record_manager_named import NamedRecordManagerBase
 from .base.record_manager_with_unique_field import (
@@ -112,6 +112,7 @@ __all__ = [
     "GrantManager",
     "GrantType",
     "GrantTypeManager",
+    "ListRecords",
     "ModelRef",
     "MultipleRecordsFoundError",
     "NamedRecordManagerBase",
@@ -143,6 +144,7 @@ __all__ = [
     "SaleOrderLine",
     "SaleOrderLineManager",
     "SaleOrderManager",
+    "SearchRecords",
     "SupportSubscription",
     "SupportSubscriptionManager",
     "SupportSubscriptionType",

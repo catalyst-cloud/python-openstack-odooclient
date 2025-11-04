@@ -108,7 +108,7 @@ class VolumeDiscountRangeManager(RecordManagerBase[VolumeDiscountRange]):
         """
         ranges = self.search(
             [("customer_group", "=", customer_group or False)],
-        )
+        ).as_records()
         found_ranges: list[VolumeDiscountRange] = []
         for vol_range in ranges:
             if charge < vol_range.min:

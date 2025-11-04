@@ -18,6 +18,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Annotated, Any, Literal, overload
 
 from ..base.record import ModelRef, RecordBase
+from ..base.record_manager import SearchRecords
 from ..base.record_manager_with_unique_field import (
     RecordManagerWithUniqueFieldBase,
 )
@@ -105,69 +106,12 @@ class ProductManager(RecordManagerWithUniqueFieldBase[Product, str]):
     env_name = "product.product"
     record_class = Product
 
-    @overload
-    def get_sellable_company_products(
-        self,
-        company: int | Company,
-        *,
-        fields: Iterable[str] | None = ...,
-        order: str | None = ...,
-        as_id: Literal[False] = ...,
-        as_dict: Literal[False] = ...,
-    ) -> list[Product]: ...
-
-    @overload
-    def get_sellable_company_products(
-        self,
-        company: int | Company,
-        *,
-        fields: Iterable[str] | None = ...,
-        order: str | None = ...,
-        as_id: Literal[True],
-        as_dict: Literal[False] = ...,
-    ) -> list[int]: ...
-
-    @overload
-    def get_sellable_company_products(
-        self,
-        company: int | Company,
-        fields: Iterable[str] | None = ...,
-        order: str | None = ...,
-        *,
-        as_id: Literal[True],
-        as_dict: Literal[True],
-    ) -> list[int]: ...
-
-    @overload
-    def get_sellable_company_products(
-        self,
-        company: int | Company,
-        *,
-        fields: Iterable[str] | None = ...,
-        order: str | None = ...,
-        as_id: Literal[False] = ...,
-        as_dict: Literal[True],
-    ) -> list[dict[str, Any]]: ...
-
-    @overload
-    def get_sellable_company_products(
-        self,
-        company: int | Company,
-        *,
-        fields: Iterable[str] | None = ...,
-        order: str | None = ...,
-        as_id: bool = ...,
-        as_dict: bool = ...,
-    ) -> list[Product] | list[int] | list[dict[str, Any]]: ...
-
     def get_sellable_company_products(
         self,
         company: int | Company,
         fields: Iterable[str] | None = None,
         order: str | None = None,
-        as_id: bool = False,
-        as_dict: bool = False,
-    ) -> list[Product] | list[int] | list[dict[str, Any]]:
+    ) -> SearchRecords[Product]:
         """Fetch a list of active and saleable products for the given company.
 
         :param company: The company to search for products (ID or object)
@@ -176,10 +120,6 @@ class ProductManager(RecordManagerWithUniqueFieldBase[Product, str]):
         :type fields: Iterable[str] | None, optional
         :param order: Order results by a specific field, defaults to None
         :type order: str | None, optional
-        :param as_id: Return the record IDs only, defaults to False
-        :type as_id: bool, optional
-        :param as_dict: Return records as dictionaries, defaults to False
-        :type as_dict: bool, optional
         :return: List of products
         :rtype: list[Product] | list[int] | list[dict[str, Any]]
         """
@@ -191,8 +131,6 @@ class ProductManager(RecordManagerWithUniqueFieldBase[Product, str]):
             ],
             fields=fields,
             order=order,
-            as_id=as_id,
-            as_dict=as_dict,
         )
 
     @overload

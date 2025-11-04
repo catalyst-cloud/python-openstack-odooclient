@@ -227,16 +227,22 @@ class RecordManagerWithUniqueFieldBase(
         """
         field_filter = [(field, "=", value)]
         try:
-            records = self.search(
+            query = self.search(
                 filters=(
                     list(itertools.chain(field_filter, filters))
                     if filters
                     else field_filter
                 ),
                 fields=fields,
-                as_id=as_id,
-                as_dict=as_dict,
             )
+            if as_id:
+                records: list[int | dict[str, Any] | Record] = list(
+                    query.as_ids(),
+                )
+            elif as_dict:
+                records = list(query.as_dicts())
+            else:
+                records = list(query.as_records())
             if len(records) > 1:
                 raise MultipleRecordsFoundError(
                     (
