@@ -629,7 +629,7 @@ class RecordManagerBase(Generic[Record]):
         type_hint = self._record_type_hints[local_field]
         return (type_hint, remote_field)
 
-    def create(self, **fields) -> int:
+    def create(self, **fields: Any) -> int:
         """Create a new record, using the specified keyword arguments
         as input fields.
 
@@ -806,6 +806,25 @@ class RecordManagerBase(Generic[Record]):
         return (
             remote_field,
             self._encode_value(type_hint=type_hint, value=value),
+        )
+
+    def update(self, record: int | Record, **fields: Any) -> None:
+        """Update one or more fields on the given record in place.
+
+        Field names are passed as keyword arguments.
+        This method has the same flexibility with regards to what
+        field names are used as when creating records; for example,
+        when updating a model ref, either its ID (e.g. ``user_id``)
+        or object (e.g. ``user``) field names can be used.
+
+        *Added in version 0.2.0.*
+
+        :param record: The record to update (object or ID)
+        :type record: int | Record
+        """
+        self._env.update(
+            record.id if isinstance(record, RecordBase) else record,
+            self._encode_create_fields(fields),
         )
 
     def unlink(

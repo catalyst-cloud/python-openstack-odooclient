@@ -265,7 +265,7 @@ Values:
 * ``reversed`` - Reversed
 * ``invoicing_legacy`` - Invoicing App Legacy
 
-### state
+### `state`
 
 ```python
 state: Literal["draft", "posted", "cancel"]
