@@ -54,6 +54,30 @@ class SaleOrder(RecordBase["SaleOrderManager"]):
     display_name: str
     """The display name of the sale order."""
 
+    invoice_count: int
+    """The number of invoices generated from the sale order.
+
+    *Added in version 0.2.0.*
+    """
+
+    invoice_ids: Annotated[list[int], ModelRef("invoice_ids", AccountMove)]
+    """A list of IDs for invoices generated from the sale order.
+
+    *Added in version 0.2.0.*
+    """
+
+    invoices: Annotated[
+        list[AccountMove],
+        ModelRef("invoice_ids", AccountMove),
+    ]
+    """The invoices generated from the sale order.
+
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+
+    *Added in version 0.2.0.*
+    """
+
     invoice_status: Literal["no", "to invoice", "invoiced", "upselling"]
     """The current invoicing status of this sale order.
 
@@ -188,6 +212,7 @@ class SaleOrderManager(NamedRecordManagerBase[SaleOrder]):
 
 
 # NOTE(callumdickinson): Import here to avoid circular imports.
+from .account_move import AccountMove  # noqa: E402
 from .currency import Currency  # noqa: E402
 from .partner import Partner  # noqa: E402
 from .project import Project  # noqa: E402

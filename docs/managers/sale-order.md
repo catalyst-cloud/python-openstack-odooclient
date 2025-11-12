@@ -187,6 +187,39 @@ display_name: str
 
 The display name of the sale order.
 
+### `invoice_count`
+
+```python
+invoice_count: int
+```
+
+The number of [invoices (account moves)](account-move.md) generated from the sale order.
+
+*Added in version 0.2.0.*
+
+### `invoice_ids`
+
+```python
+invoice_ids: list[int]
+```
+
+A list of IDs for [invoices (account moves)](account-move.md) generated from the sale order.
+
+*Added in version 0.2.0.*
+
+### `invoices`
+
+```python
+invoices: list[AccountMove]
+```
+
+The [invoices (account moves)](account-move.md) generated from the sale order.
+
+This fetches the full records from Odoo once,
+and caches them for subsequent accesses.
+
+*Added in version 0.2.0.*
+
 ### `invoice_status`
 
 ```python
