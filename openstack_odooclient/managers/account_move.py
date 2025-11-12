@@ -20,12 +20,13 @@ from typing import TYPE_CHECKING, Annotated, Any, Literal
 
 from ..base.record import ModelRef, RecordBase
 from ..base.record_manager_named import NamedRecordManagerBase
+from .attachment import AttachmentMixin
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping
 
 
-class AccountMove(RecordBase["AccountMoveManager"]):
+class AccountMove(AttachmentMixin, RecordBase["AccountMoveManager"]):
     amount_total: float
     """Total (taxed) amount charged on the account move (invoice)."""
 
