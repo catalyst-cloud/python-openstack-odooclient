@@ -17,11 +17,16 @@ from __future__ import annotations
 
 from typing import Annotated, Literal
 
-from ..base.record import ModelRef, RecordBase
-from ..base.record_manager_named import NamedRecordManagerBase
+from ..base.record.base import RecordBase
+from ..base.record.types import ModelRef
+from ..base.record_manager.base import RecordManagerBase
+from ..mixins.named_record import NamedRecordManagerMixin, NamedRecordMixin
 
 
-class Pricelist(RecordBase["PricelistManager"]):
+class Pricelist(
+    RecordBase["PricelistManager"],
+    NamedRecordMixin["PricelistManager"],
+):
     active: bool
     """Whether or not the pricelist is active."""
 
@@ -60,9 +65,6 @@ class Pricelist(RecordBase["PricelistManager"]):
     * ``without_discount`` - Show public price & discount to the customer
     """
 
-    name: str
-    """The name of this pricelist."""
-
     def get_price(self, product: int | Product, qty: float) -> float:
         """Get the price to charge for a given product and quantity.
 
@@ -81,7 +83,10 @@ class Pricelist(RecordBase["PricelistManager"]):
         )
 
 
-class PricelistManager(NamedRecordManagerBase[Pricelist]):
+class PricelistManager(
+    RecordManagerBase[Pricelist],
+    NamedRecordManagerMixin[Pricelist],
+):
     env_name = "product.pricelist"
     record_class = Pricelist
 

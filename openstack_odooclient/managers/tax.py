@@ -17,11 +17,13 @@ from __future__ import annotations
 
 from typing import Annotated, Literal
 
-from ..base.record import ModelRef, RecordBase
-from ..base.record_manager_named import NamedRecordManagerBase
+from ..base.record.base import RecordBase
+from ..base.record.types import ModelRef
+from ..base.record_manager.base import RecordManagerBase
+from ..mixins.named_record import NamedRecordManagerMixin, NamedRecordMixin
 
 
-class Tax(RecordBase["TaxManager"]):
+class Tax(RecordBase["TaxManager"], NamedRecordMixin["TaxManager"]):
     active: bool
     """Whether or not this tax is active (enabled)."""
 
@@ -68,9 +70,6 @@ class Tax(RecordBase["TaxManager"]):
     based on the price with this tax included.
     """
 
-    name: str
-    """Name of the tax."""
-
     price_include: bool
     """Whether or not prices included in invoices should include this tax."""
 
@@ -97,7 +96,7 @@ class Tax(RecordBase["TaxManager"]):
     """
 
 
-class TaxManager(NamedRecordManagerBase[Tax]):
+class TaxManager(RecordManagerBase[Tax], NamedRecordManagerMixin[Tax]):
     env_name = "account.tax"
     record_class = Tax
 

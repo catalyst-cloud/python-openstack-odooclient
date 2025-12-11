@@ -17,11 +17,16 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from ..base.record import ModelRef, RecordBase
-from ..base.record_manager_named import NamedRecordManagerBase
+from ..base.record.base import RecordBase
+from ..base.record.types import ModelRef
+from ..base.record_manager.base import RecordManagerBase
+from ..mixins.named_record import NamedRecordManagerMixin, NamedRecordMixin
 
 
-class GrantType(RecordBase["GrantTypeManager"]):
+class GrantType(
+    RecordBase["GrantTypeManager"],
+    NamedRecordMixin["GrantTypeManager"],
+):
     grant_ids: Annotated[list[int], ModelRef("grants", Grant)]
     """A list of IDs for the grants which are of this grant type."""
 
@@ -31,9 +36,6 @@ class GrantType(RecordBase["GrantTypeManager"]):
     This fetches the full records from Odoo once,
     and caches them for subsequent accesses.
     """
-
-    name: str
-    """Name of the Grant Type."""
 
     only_for_product_ids: Annotated[
         list[int],
@@ -112,7 +114,10 @@ class GrantType(RecordBase["GrantTypeManager"]):
     """
 
 
-class GrantTypeManager(NamedRecordManagerBase[GrantType]):
+class GrantTypeManager(
+    RecordManagerBase[GrantType],
+    NamedRecordManagerMixin[GrantType],
+):
     env_name = "openstack.grant.type"
     record_class = GrantType
 

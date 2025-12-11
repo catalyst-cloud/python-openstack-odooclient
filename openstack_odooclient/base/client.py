@@ -26,8 +26,8 @@ from packaging.version import Version
 from typing_extensions import get_type_hints  # 3.11 and later
 
 from ..util import is_subclass
-from .record import RecordBase
-from .record_manager import RecordManagerBase
+from .record.base import RecordBase
+from .record_manager.base import RecordManagerBase
 
 if TYPE_CHECKING:
     from odoorpc.db import DB  # type: ignore[import]

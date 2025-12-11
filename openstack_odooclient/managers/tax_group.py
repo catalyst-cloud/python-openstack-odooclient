@@ -15,15 +15,21 @@
 
 from __future__ import annotations
 
-from ..base.record import RecordBase
-from ..base.record_manager_named import NamedRecordManagerBase
+from ..base.record.base import RecordBase
+from ..base.record_manager.base import RecordManagerBase
+from ..mixins.named_record import NamedRecordManagerMixin, NamedRecordMixin
 
 
-class TaxGroup(RecordBase["TaxGroupManager"]):
-    name: str
-    """Name of the tax group."""
+class TaxGroup(
+    RecordBase["TaxGroupManager"],
+    NamedRecordMixin["TaxGroupManager"],
+):
+    pass
 
 
-class TaxGroupManager(NamedRecordManagerBase[TaxGroup]):
+class TaxGroupManager(
+    RecordManagerBase[TaxGroup],
+    NamedRecordManagerMixin[TaxGroup],
+):
     env_name = "account.tax.group"
     record_class = TaxGroup

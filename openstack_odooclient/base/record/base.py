@@ -1,4 +1,4 @@
-# Copyright (C) 2024 Catalyst Cloud Limited
+# Copyright (C) 2025 Catalyst Cloud Limited
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import copy
 
-from dataclasses import dataclass
 from datetime import date, datetime
 from types import MappingProxyType, UnionType
 from typing import (
@@ -26,6 +25,7 @@ from typing import (
     Any,
     Generic,
     Literal,
+    Protocol,
     Type,
     TypeVar,
     Union,
@@ -37,7 +37,8 @@ from typing_extensions import (
     get_origin as get_type_origin,
 )
 
-from ..util import is_subclass
+from ...util import is_subclass
+from .types import FieldAlias, ModelRef
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
@@ -45,96 +46,37 @@ if TYPE_CHECKING:
     from odoorpc import ODOO  # type: ignore[import]
     from odoorpc.env import Environment  # type: ignore[import]
 
-    from .client import ClientBase
+    from ..client import ClientBase
 
-RecordManager = TypeVar("RecordManager", bound="RecordManagerBase")
+RM = TypeVar("RM", bound="RecordManagerBase")
+"""An invariant type variable for a record manager class.
 
+To be used when defining record mixins,
+or generic base classes operating on record managers.
+"""
 
-class AnnotationBase:
-    @classmethod
-    def get(cls, type_hint: Any) -> Self | None:
-        """Return the annotation applied to the given type hint,
-        if the type hint is annotated with this type of annotation.
+RM_co = TypeVar("RM_co", bound="RecordManagerBase", covariant=True)
+"""A covariant type variable for a record manager class.
 
-        If multiple matching annotations are found, the last occurrence
-        is returned.
-
-        :param type_hint: The type hint to parse
-        :type type_hint: Any
-        :return: Applied annotation, or ``None`` if no annotation was found
-        :rtype: Self | None
-        """
-        if get_type_origin(type_hint) is not Annotated:
-            return None
-        matching_annotation: Self | None = None
-        for annotation in get_type_args(type_hint)[1:]:
-            if isinstance(annotation, cls):
-                matching_annotation = annotation
-        return matching_annotation
-
-    @classmethod
-    def is_annotated(cls, type_hint: Any) -> bool:
-        """Checks whether or not the given type hint is annotated
-        with an annotation of this type.
-
-        :param type_hint: The type hint to parse
-        :type type_hint: Any
-        :return: ``True`` if annotated, otherwise ``False``
-        :rtype: bool
-        """
-        return bool(cls.get(type_hint))
+To be used when defining generic protocols, or parameters/return values
+that allow ``Record`` objects using a ``RecordManager`` class that is
+a subclass of the ``Record`` type within the given content.
+"""
 
 
-@dataclass(frozen=True)
-class FieldAlias(AnnotationBase):
-    """An annotation for defining field aliases
-    (fields that point to other fields).
+class RecordProtocol(Protocol[RM]):
+    """The protocol for a record class.
 
-    Aliases are automatically resolved to the target field
-    when searching or creating records, or referencing field values
-    on record objects.
+    This defines all common attributes and methods available for
+    implementations of records to use.
 
-    >>> from typing import Annotated
-    >>> from openstack_odooclient import FieldAlias, RecordBase
-    >>> class CustomRecord(RecordBase["CustomRecordManager"]):
-    ...     name: str
-    ...     name_alias: Annotated[str, FieldAlias("name")]
-    """
+    The primary use of this class is to be subclassed by mixins, to provide
+    type hinting for common attributes and methods available on the
+    ``RecordBase`` class.
 
-    field: str
-
-
-@dataclass(frozen=True)
-class ModelRef(AnnotationBase):
-    """An annotation for defining model refs
-    (fields that provide an interface to a model reference on a record).
-
-    Model refs are used to express relationships between record types.
-    The first argument is the name of the relationship field in Odoo,
-    the second argument is the record class that type is represented by
-    in the OpenStack Odoo Client library.
-
-    >>> from typing import Annotated
-    >>> from openstack_odooclient import ModelRef, RecordBase, User
-    >>> class CustomRecord(RecordBase["CustomRecordManager"]):
-    ...     user_id: Annotated[int, ModelRef("user_id", User)]
-    ...     user_name: Annotated[str, ModelRef("user_id", User)]
-    ...     user: Annotated[User, ModelRef("user_id", User)]
-
-    For more information, check the OpenStack Odoo Client
-    library documentation.
-    """
-
-    field: str
-    record_class: Any
-
-
-class RecordBase(Generic[RecordManager]):
-    """The generic base class for records.
-
-    Subclass this class to implement the record class for custom record types,
-    specifying the name of the manager class (string), as available in the
-    Python source file, as the generic type argument.
+    ``RecordBase`` is the base class that provides the core functionality
+    of a record object, and that is what should be subclassed to make a new
+    record class.
     """
 
     id: int
@@ -185,43 +127,28 @@ class RecordBase(Generic[RecordManager]):
     to their Odoo equivalent.
     """
 
-    def __init__(
-        self,
-        client: ClientBase,
-        record: Mapping[str, Any],
-        fields: Sequence[str] | None,
-    ) -> None:
-        self._client = client
+    @property
+    def _client(self) -> ClientBase:
         """The Odoo client that created this record object."""
-        self._record = MappingProxyType(record)
-        """The raw record fields from OdooRPC."""
-        self._fields = tuple(fields) if fields else None
-        """The fields selected in the query that created this record object."""
-        self._values: dict[str, Any] = {}
-        """The cache for the processed record field values."""
+        ...
 
     @property
-    def _manager(self) -> RecordManager:
+    def _manager(self) -> RM:
         """The manager object responsible for this record."""
-        mapping = self._client._record_manager_mapping
-        return mapping[type(self)]  # type: ignore[return-value]
+        ...
 
     @property
     def _odoo(self) -> ODOO:
         """The OdooRPC connection object this record was created from."""
-        return self._client._odoo
+        ...
 
     @property
     def _env(self) -> Environment:
         """The OdooRPC environment object this record was created from."""
-        return self._manager._env
-
-    @property
-    def _type_hints(self) -> MappingProxyType[str, Any]:
-        return self._manager._record_type_hints
+        ...
 
     @classmethod
-    def from_record_obj(cls, record_obj: RecordBase) -> Self:
+    def from_record_obj(cls, record_obj: RecordBase[RM]) -> Self:
         """Create a record object of this class's type
         from another record object.
 
@@ -230,15 +157,11 @@ class RecordBase(Generic[RecordManager]):
         of a model class).
 
         :param record_obj: Record to use to create the new object
-        :type record_obj: RecordBase
+        :type record_obj: RecordBase[RM]
         :return: Record object of the implementing class's type
         :rtype: Self
         """
-        return cls(
-            client=record_obj._client,
-            record=record_obj._record,
-            fields=record_obj._fields,
-        )
+        ...
 
     def as_dict(self, raw: bool = False) -> dict[str, Any]:
         """Convert this record object to a dictionary.
@@ -257,14 +180,7 @@ class RecordBase(Generic[RecordManager]):
         :return: Record dictionary
         :rtype: dict[str, Any]
         """
-        return (
-            copy.deepcopy(dict(self._record))
-            if raw
-            else {
-                self._manager._get_local_field(field): copy.deepcopy(value)
-                for field, value in self._record.items()
-            }
-        )
+        ...
 
     def update(self, **fields: Any) -> None:
         """Update one or more fields on this record in place.
@@ -281,7 +197,7 @@ class RecordBase(Generic[RecordManager]):
 
         *Added in version 0.2.0.*
         """
-        self._manager.update(self.id, **fields)
+        ...
 
     def refresh(self) -> Self:
         """Fetch the latest version of this record from Odoo.
@@ -292,6 +208,82 @@ class RecordBase(Generic[RecordManager]):
         :return: Latest version of the record object
         :rtype: Self
         """
+        ...
+
+    def unlink(self) -> None:
+        """Delete this record from Odoo."""
+        ...
+
+    def delete(self) -> None:
+        """Delete this record from Odoo."""
+        ...
+
+
+class RecordBase(RecordProtocol[RM], Generic[RM]):
+    """The generic base class for records.
+
+    Subclass this class to implement the record class for custom record types,
+    specifying the name of the manager class (string), as available in the
+    Python source file, as the generic type argument.
+    """
+
+    def __init__(
+        self,
+        client: ClientBase,
+        record: Mapping[str, Any],
+        fields: Sequence[str] | None,
+    ) -> None:
+        self._client_ = client
+        self._record = MappingProxyType(record)
+        """The raw record fields from OdooRPC."""
+        self._fields = tuple(fields) if fields else None
+        """The fields selected in the query that created this record object."""
+        self._values: dict[str, Any] = {}
+        """The cache for the processed record field values."""
+
+    @property
+    def _client(self) -> ClientBase:
+        return self._client_
+
+    @property
+    def _manager(self) -> RM:
+        mapping = self._client._record_manager_mapping
+        return mapping[type(self)]  # type: ignore[return-value]
+
+    @property
+    def _odoo(self) -> ODOO:
+        return self._client._odoo
+
+    @property
+    def _env(self) -> Environment:
+        return self._manager._env
+
+    @property
+    def _type_hints(self) -> MappingProxyType[str, Any]:
+        return self._manager._record_type_hints
+
+    @classmethod
+    def from_record_obj(cls, record_obj: RecordBase[RM_co]) -> Self:
+        return cls(
+            client=record_obj._client,
+            record=record_obj._record,
+            fields=record_obj._fields,
+        )
+
+    def as_dict(self, raw: bool = False) -> dict[str, Any]:
+        return (
+            copy.deepcopy(dict(self._record))
+            if raw
+            else {
+                self._manager._get_local_field(field): copy.deepcopy(value)
+                for field, value in self._record.items()
+            }
+        )
+
+    def update(self, **fields: Any) -> None:
+        self._manager.update(self.id, **fields)
+
+    def refresh(self) -> Self:
         return type(self)(
             client=self._client,
             record=self._env.read(
@@ -302,11 +294,9 @@ class RecordBase(Generic[RecordManager]):
         )
 
     def unlink(self) -> None:
-        """Delete this record from Odoo."""
         self._manager.unlink(self)
 
     def delete(self) -> None:
-        """Delete this record from Odoo."""
         self._manager.delete(self)
 
     def _get_remote_field(self, field: str) -> str:
@@ -507,5 +497,5 @@ class RecordBase(Generic[RecordManager]):
 
 
 # NOTE(callumdickinson): Import here to avoid circular imports.
-from ..managers.user import User  # noqa: E402
-from .record_manager import RecordManagerBase  # noqa: E402
+from ...managers.user import User  # noqa: E402
+from ..record_manager.base import RecordManagerBase  # noqa: E402

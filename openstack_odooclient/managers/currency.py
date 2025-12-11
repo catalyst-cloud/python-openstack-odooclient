@@ -18,11 +18,15 @@ from __future__ import annotations
 from datetime import date as datetime_date
 from typing import Literal
 
-from ..base.record import RecordBase
-from ..base.record_manager_named import NamedRecordManagerBase
+from ..base.record.base import RecordBase
+from ..base.record_manager.base import RecordManagerBase
+from ..mixins.named_record import NamedRecordManagerMixin, NamedRecordMixin
 
 
-class Currency(RecordBase["CurrencyManager"]):
+class Currency(
+    RecordBase["CurrencyManager"],
+    NamedRecordMixin["CurrencyManager"],
+):
     active: bool
     """Whether or not this currency is active (enabled)."""
 
@@ -41,9 +45,6 @@ class Currency(RecordBase["CurrencyManager"]):
 
     It is determined by the rounding factor (``rounding`` field).
     """
-
-    name: str
-    """The ISO-4217 currency code for the currency."""
 
     position: Literal["before", "after"]
     """The position of the currency unit relative to the amount.
@@ -64,6 +65,9 @@ class Currency(RecordBase["CurrencyManager"]):
     """The currency sign to be used when printing amounts."""
 
 
-class CurrencyManager(NamedRecordManagerBase[Currency]):
+class CurrencyManager(
+    RecordManagerBase[Currency],
+    NamedRecordManagerMixin[Currency],
+):
     env_name = "res.currency"
     record_class = Currency

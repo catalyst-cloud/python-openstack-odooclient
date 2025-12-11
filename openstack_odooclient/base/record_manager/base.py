@@ -1,4 +1,4 @@
-# Copyright (C) 2024 Catalyst Cloud Limited
+# Copyright (C) 2025 Catalyst Cloud Limited
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,9 @@
 from __future__ import annotations
 
 import builtins
+import itertools
 
+from collections.abc import Iterable, Mapping, Sequence
 from datetime import date, datetime
 from types import MappingProxyType, UnionType
 from typing import (
@@ -26,7 +28,6 @@ from typing import (
     Generic,
     Literal,
     Type,
-    TypeVar,
     Union,
     overload,
 )
@@ -38,28 +39,25 @@ from typing_extensions import (
     get_type_hints,
 )
 
-from ..exceptions import RecordNotFoundError
-from ..util import (
+from ...exceptions import MultipleRecordsFoundError, RecordNotFoundError
+from ...util import (
     DEFAULT_SERVER_DATE_FORMAT,
     DEFAULT_SERVER_DATETIME_FORMAT,
     get_mapped_field,
 )
-from .record import FieldAlias, ModelRef, RecordBase
+from ..record.base import RecordBase
+from ..record.types import FieldAlias, ModelRef
+from .protocol import R, RecordManagerProtocol
+from .types import FilterCriterion
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Mapping, Sequence
-
     from odoorpc import ODOO  # type: ignore[import]
     from odoorpc.env import Environment  # type: ignore[import]
 
-    from .client import ClientBase
-
-    FilterCriterion = tuple[str, str, Any] | Sequence[Any] | str
-
-Record = TypeVar("Record", bound=RecordBase)
+    from ..client import ClientBase
 
 
-class RecordManagerBase(Generic[Record]):
+class RecordManagerBase(RecordManagerProtocol[R], Generic[R]):
     """A generic record manager base class.
 
     This is the class that is subclassed create a record manager
@@ -78,7 +76,7 @@ class RecordManagerBase(Generic[Record]):
     >>> from openstack_odooclient import Client, RecordBase, RecordManagerBase
     >>> class CustomRecord(RecordBase["CustomRecordManager"]):
     ...     name: str
-    >>> class CustomRecordManager(RecordManager[CustomRecord]):
+    >>> class CustomRecordManager(RecordManagerBase[CustomRecord]):
     ...     env_name = "custom.record"
     ...     record_class = CustomRecord
 
@@ -91,22 +89,8 @@ class RecordManagerBase(Generic[Record]):
     ...     custom_records: CustomRecordManager
     """
 
-    env_name: str
-    """The Odoo environment (model) name to manage."""
-
-    record_class: Type[Record]
-    """The record object type to instantiate using this manager."""
-
-    default_fields: tuple[str, ...] | None = None
-    """List of fields to fetch by default if a field list is not supplied
-    in queries.
-
-    By default, all fields on the model will be fetched.
-    """
-
     def __init__(self, client: ClientBase) -> None:
-        self._client = client
-        """The Odoo client object the manager uses."""
+        self._client_ = client
         # Assign this record manager object as the manager
         # responsible for the configured record class in the client.
         self._client._record_manager_mapping[self.record_class] = self
@@ -154,6 +138,11 @@ class RecordManagerBase(Generic[Record]):
                     pass
 
     @property
+    def _client(self) -> ClientBase:
+        """The Odoo client object the manager uses."""
+        return self._client_
+
+    @property
     def _odoo(self) -> ODOO:
         """The OdooRPC connection object this record manager uses."""
         return self._client._odoo
@@ -171,7 +160,7 @@ class RecordManagerBase(Generic[Record]):
         fields: Iterable[str] | None = ...,
         as_dict: Literal[False] = ...,
         optional: bool = ...,
-    ) -> builtins.list[Record]: ...
+    ) -> builtins.list[R]: ...
 
     @overload
     def list(
@@ -191,7 +180,7 @@ class RecordManagerBase(Generic[Record]):
         fields: Iterable[str] | None = ...,
         as_dict: bool = ...,
         optional: bool = ...,
-    ) -> builtins.list[Record] | builtins.list[dict[str, Any]]: ...
+    ) -> builtins.list[R] | builtins.list[dict[str, Any]]: ...
 
     def list(
         self,
@@ -199,37 +188,7 @@ class RecordManagerBase(Generic[Record]):
         fields: Iterable[str] | None = None,
         as_dict: bool = False,
         optional: bool = False,
-    ) -> builtins.list[Record] | builtins.list[dict[str, Any]]:
-        """Get one or more specific records by ID.
-
-        By default all fields available on the record model
-        will be selected, but this can be filtered using the
-        ``fields`` parameter.
-
-        Use the ``as_dict`` parameter to return records as ``dict``
-        objects, instead of record objects.
-
-        By default, the method checks that all provided IDs
-        were found and returned (and will raise an error if any are missing),
-        at the cost of a small performance hit.
-        To instead return the list of records that were found
-        without raising an error, set ``optional`` to ``True``.
-
-        If ``ids`` is given an empty iterator, this method
-        returns an empty list.
-
-        :param ids: Record ID, or list of record IDs
-        :type ids: int | Iterable[int]
-        :param fields: Fields to select, defaults to ``None`` (select all)
-        :type fields: Iterable[str] | None, optional
-        :param as_dict: Return records as dictionaries, defaults to ``False``
-        :type as_dict: bool, optional
-        :param optional: Disable missing record errors, defaults to ``False``
-        :type optional: bool, optional
-        :raises RecordNotFoundError: If IDs are required but some are missing
-        :return: List of records
-        :rtype: list[Record] | list[dict[str, Any]]
-        """
+    ) -> builtins.list[R] | builtins.list[dict[str, Any]]:
         if isinstance(ids, int):
             _ids: int | list[int] = ids
         else:
@@ -293,7 +252,7 @@ class RecordManagerBase(Generic[Record]):
         fields: Iterable[str] | None = ...,
         as_dict: Literal[False] = ...,
         optional: Literal[False] = ...,
-    ) -> Record: ...
+    ) -> R: ...
 
     @overload
     def get(
@@ -313,7 +272,7 @@ class RecordManagerBase(Generic[Record]):
         fields: Iterable[str] | None = ...,
         as_dict: Literal[False] = ...,
         optional: Literal[True],
-    ) -> Record | None: ...
+    ) -> R | None: ...
 
     @overload
     def get(
@@ -333,7 +292,7 @@ class RecordManagerBase(Generic[Record]):
         fields: Iterable[str] | None = ...,
         as_dict: bool = ...,
         optional: bool = ...,
-    ) -> Record | dict[str, Any] | None: ...
+    ) -> R | dict[str, Any] | None: ...
 
     def get(
         self,
@@ -341,27 +300,7 @@ class RecordManagerBase(Generic[Record]):
         fields: Iterable[str] | None = None,
         as_dict: bool = False,
         optional: bool = False,
-    ) -> Record | dict[str, Any] | None:
-        """Get a single record by ID.
-
-        By default all fields available on the record model
-        will be selected, but this can be filtered using the
-        ``fields`` parameter.
-
-        Use the ``as_dict`` parameter to return the record as
-        a ``dict`` object, instead of a record object.
-
-        :param ids: Record ID
-        :type ids: int
-        :param fields: Fields to select, defaults to ``None`` (select all)
-        :type fields: Iterable[str] or None, optional
-        :param as_dict: Return record as a dictionary, defaults to ``False``
-        :type as_dict: bool, optional
-        :param optional: Return ``None`` if not found, defaults to ``False``
-        :raises RecordNotFoundError: Record with the given ID not found
-        :return: List of records
-        :rtype: Record | dict[str, Any]
-        """
+    ) -> R | dict[str, Any] | None:
         try:
             return self.list(
                 id,
@@ -381,6 +320,166 @@ class RecordManagerBase(Generic[Record]):
                 ) from None
 
     @overload
+    def get_by_unique_field(
+        self,
+        field: str,
+        value: Any,
+        *,
+        filters: Iterable[FilterCriterion] | None = ...,
+        fields: Iterable[str] | None = ...,
+        as_id: Literal[True],
+        as_dict: Literal[True],
+        optional: Literal[True],
+    ) -> int: ...
+
+    @overload
+    def get_by_unique_field(
+        self,
+        field: str,
+        value: Any,
+        *,
+        filters: Iterable[FilterCriterion] | None = ...,
+        fields: Iterable[str] | None = ...,
+        as_id: Literal[True],
+        as_dict: Literal[False] = ...,
+        optional: Literal[True],
+    ) -> int | None: ...
+
+    @overload
+    def get_by_unique_field(
+        self,
+        field: str,
+        value: Any,
+        *,
+        filters: Iterable[FilterCriterion] | None = ...,
+        fields: Iterable[str] | None = ...,
+        as_id: Literal[True],
+        as_dict: Literal[True],
+        optional: Literal[False] = ...,
+    ) -> int: ...
+
+    @overload
+    def get_by_unique_field(
+        self,
+        field: str,
+        value: Any,
+        *,
+        filters: Iterable[FilterCriterion] | None = ...,
+        fields: Iterable[str] | None = ...,
+        as_id: Literal[True],
+        as_dict: Literal[False] = ...,
+        optional: Literal[False] = ...,
+    ) -> int: ...
+
+    @overload
+    def get_by_unique_field(
+        self,
+        field: str,
+        value: Any,
+        *,
+        filters: Iterable[FilterCriterion] | None = ...,
+        fields: Iterable[str] | None = ...,
+        as_id: Literal[False] = ...,
+        as_dict: Literal[True],
+        optional: Literal[True],
+    ) -> dict[str, Any] | None: ...
+
+    @overload
+    def get_by_unique_field(
+        self,
+        field: str,
+        value: Any,
+        *,
+        filters: Iterable[FilterCriterion] | None = ...,
+        fields: Iterable[str] | None = ...,
+        as_id: Literal[False] = ...,
+        as_dict: Literal[True],
+        optional: Literal[False] = ...,
+    ) -> dict[str, Any]: ...
+
+    @overload
+    def get_by_unique_field(
+        self,
+        field: str,
+        value: Any,
+        *,
+        filters: Iterable[FilterCriterion] | None = ...,
+        fields: Iterable[str] | None = ...,
+        as_id: Literal[False] = ...,
+        as_dict: Literal[False] = ...,
+        optional: Literal[True],
+    ) -> R | None: ...
+
+    @overload
+    def get_by_unique_field(
+        self,
+        field: str,
+        value: Any,
+        *,
+        filters: Iterable[FilterCriterion] | None = ...,
+        fields: Iterable[str] | None = ...,
+        as_id: Literal[False] = ...,
+        as_dict: Literal[False] = ...,
+        optional: Literal[False] = ...,
+    ) -> R: ...
+
+    @overload
+    def get_by_unique_field(
+        self,
+        field: str,
+        value: Any,
+        *,
+        filters: Iterable[FilterCriterion] | None = ...,
+        fields: Iterable[str] | None = ...,
+        as_id: bool = ...,
+        as_dict: bool = ...,
+        optional: bool = ...,
+    ) -> R | int | dict[str, Any] | None: ...
+
+    def get_by_unique_field(
+        self,
+        field: str,
+        value: Any,
+        filters: Iterable[FilterCriterion] | None = None,
+        fields: Iterable[str] | None = None,
+        as_id: bool = False,
+        as_dict: bool = False,
+        optional: bool = False,
+    ) -> R | int | dict[str, Any] | None:
+        field_filter = [(field, "=", value)]
+        try:
+            records = self.search(
+                filters=(
+                    list(itertools.chain(field_filter, filters))
+                    if filters
+                    else field_filter
+                ),
+                fields=fields,
+                as_id=as_id,
+                as_dict=as_dict,
+            )
+            if len(records) > 1:
+                raise MultipleRecordsFoundError(
+                    (
+                        f"Multiple {self.record_class.__name__} records "
+                        f"found with {field!r} value {value!r} "
+                        "when only one was expected: "
+                        f"{', '.join(str(r) for r in records)}"
+                    ),
+                )
+            return records[0]
+        except IndexError:
+            if optional:
+                return None
+            else:
+                raise RecordNotFoundError(
+                    (
+                        f"{self.record_class.__name__} record not found "
+                        f"with {field!r} value: {value}"
+                    ),
+                ) from None
+
+    @overload
     def search(
         self,
         filters: Sequence[FilterCriterion] | None = ...,
@@ -388,7 +487,7 @@ class RecordManagerBase(Generic[Record]):
         order: str | None = ...,
         as_id: Literal[False] = ...,
         as_dict: Literal[False] = ...,
-    ) -> builtins.list[Record]: ...
+    ) -> builtins.list[R]: ...
 
     @overload
     def search(
@@ -432,9 +531,7 @@ class RecordManagerBase(Generic[Record]):
         as_id: bool = ...,
         as_dict: bool = ...,
     ) -> (
-        builtins.list[Record]
-        | builtins.list[int]
-        | builtins.list[dict[str, Any]]
+        builtins.list[R] | builtins.list[int] | builtins.list[dict[str, Any]]
     ): ...
 
     def search(
@@ -444,89 +541,7 @@ class RecordManagerBase(Generic[Record]):
         order: str | None = None,
         as_id: bool = False,
         as_dict: bool = False,
-    ) -> (
-        builtins.list[Record]
-        | builtins.list[int]
-        | builtins.list[dict[str, Any]]
-    ):
-        """Query the ERP for records, optionally defining
-        filters to constrain the search and other parameters,
-        and return the results.
-
-        Query filters should be defined using the ORM API search domain
-        format. For more information on the ORM API search domain format:
-
-        https://www.odoo.com/documentation/14.0/developer/reference/addons/orm.html#search-domains
-
-        Filters are a sequence of criteria, where each criterion
-        is one of the following types of values:
-
-        * A 3-tuple or 3-element sequence in ``(field_name, operator, value)``
-        format, where:
-
-          * ``field_name`` (``str``) is the the name of the field to filter by.
-          * ``operator`` (`str`) is the comparison operator to use (for more
-            information on the available operators, check the ORM API
-            search domain documentation).
-          * ``value`` (`Any`) is the value to compare records against.
-
-        * A logical operator which prefixes the following filter criteria
-        to form a **criteria combination**:
-
-          * ``&`` is a logical AND. Records only match if **both** of the
-            following **two** criteria match.
-          * ``|`` is a logical OR. Records match if **either** of the
-            following **two** criteria match.
-          * ``!`` is a logical NOT (negation). Records match if the
-            following **one** criterion does **NOT** match.
-
-        Every criteria combination is implicitly combined using a logical AND
-        to form the overall filter to use to query records.
-
-        For the field value, this method accepts the same types as defined
-        on the record objects.
-
-        In addition to the native Odoo field names, field aliases
-        and model ref field names can be specified as the field name
-        in the search filter. Record objects can also be directly
-        passed as the value on a filter, not just record IDs.
-
-        When specifying a range of possible values, lists, tuples
-        and sets are supported.
-
-        Search criteria using nested field references can be defined
-        by using the dot-notation (``.``) to specify what field on what
-        record reference to check.
-        Field names and values for nested field references are
-        validated and encoded just like criteria for standard
-        field references.
-
-        To search *all* records, leave ``filters`` unset
-        (or set it to ``None``).
-
-        By default all fields available on the record model
-        will be selected, but this can be filtered using the
-        ``fields`` parameter.
-
-        Use the ``as_id`` parameter to return the record as
-        a list of IDs, instead of record objects.
-
-        Use the ``as_dict`` parameter to return the record as
-        a list of ``dict`` objects, instead of record objects.
-
-        :param filters: Filters to query by, defaults to ``None`` (no filters)
-        :type filters: tuple[str, str, Any] | Sequence[Any] | str | None
-        :param fields: Fields to select, defaults to ``None`` (select all)
-        :type fields: Iterable[str] or None, optional
-        :param order: Order results by field name, defaults to ``None``
-        :type order: str or None, optional
-        :param as_id: Return the record IDs only, defaults to ``False``
-        :type as_id: bool, optional
-        :param as_dict: Return records as dictionaries, defaults to ``False``
-        :type as_dict: bool, optional
-        :return: List of records
-        :rtype: list[Record] | list[int] | list[dict[str, Any]]
-        """
+    ) -> builtins.list[R] | builtins.list[int] | builtins.list[dict[str, Any]]:
         ids: list[int] = self._env.search(
             (self._encode_filters(filters) if filters else []),
             order=order,
@@ -630,52 +645,9 @@ class RecordManagerBase(Generic[Record]):
         return (type_hint, remote_field)
 
     def create(self, **fields: Any) -> int:
-        """Create a new record, using the specified keyword arguments
-        as input fields.
-
-        This method allows a lot of flexibility in how input fields
-        should be defined.
-
-        The fields passed to this method should use the same field names
-        and value types that are defined on the record classes.
-        The Odoo Client library will convert the values to the formats
-        that the Odoo API expects.
-
-        For example, when defining references to another record,
-        you can either pass the record ID, or the record object.
-        The field name can also either be for the ID or the object.
-
-        Field aliases are also resolved to their target field names.
-
-        When creating a record with a list of references to another record
-        (a ``One2many`` or ``Many2many`` relation), it is possible to nest
-        record mappings where an ID or object would normally go.
-        New records will be created for those mappings, and linked
-        to the parent record. Nested record mappings are recursively validated
-        and processed in the same way as the parent record.
-
-        To fetch the newly created record object,
-        pass the returned ID to the ``get`` method.
-
-        :return: The ID of the newly created record
-        :rtype: int
-        """
         return self._env.create(self._encode_create_fields(fields))
 
     def create_multi(self, *records: Mapping[str, Any]) -> builtins.list[int]:
-        """Create one or more new records in a single request,
-        passing in the mappings containing the record's input fields
-        as positional arguments.
-
-        The record mappings should be in the same format as with
-        the ``create`` method.
-
-        To fetch the newly created record objects,
-        pass the returned IDs to the ``list`` method.
-
-        :return: The IDs of the newly created records
-        :rtype: list[int]
-        """
         res: int | list[int] = self._env.create(
             [self._encode_create_fields(record) for record in records],
         )
@@ -808,39 +780,13 @@ class RecordManagerBase(Generic[Record]):
             self._encode_value(type_hint=type_hint, value=value),
         )
 
-    def update(self, record: int | Record, **fields: Any) -> None:
-        """Update one or more fields on the given record in place.
-
-        Field names are passed as keyword arguments.
-        This method has the same flexibility with regards to what
-        field names are used as when creating records; for example,
-        when updating a model ref, either its ID (e.g. ``user_id``)
-        or object (e.g. ``user``) field names can be used.
-
-        *Added in version 0.2.0.*
-
-        :param record: The record to update (object or ID)
-        :type record: int | Record
-        """
+    def update(self, record: int | R, **fields: Any) -> None:
         self._env.update(
             record.id if isinstance(record, RecordBase) else record,
             self._encode_create_fields(fields),
         )
 
-    def unlink(
-        self,
-        *records: int | Record | Iterable[int | Record],
-    ) -> None:
-        """Delete one or more records from Odoo.
-
-        This method accepts either a record object or ID, or an iterable of
-        either of those types. Multiple positional arguments are allowed.
-
-        All specified records will be deleted in a single request.
-
-        :param records: The records to delete (object, ID, or record/ID list)
-        :type records: Record | int | Iterable[Record | int]
-        """
+    def unlink(self, *records: int | R | Iterable[int | R]) -> None:
         _ids: list[int] = []
         for ids in records:
             if isinstance(ids, int):
@@ -853,20 +799,7 @@ class RecordManagerBase(Generic[Record]):
                 )
         self._env.unlink(_ids)
 
-    def delete(
-        self,
-        *records: Record | int | Iterable[Record | int],
-    ) -> None:
-        """Delete one or more records from Odoo.
-
-        This method accepts either a record object or ID, or an iterable of
-        either of those types. Multiple positional arguments are allowed.
-
-        All specified records will be deleted in a single request.
-
-        :param records: The records to delete (object, ID, or record/ID list)
-        :type records: Record | int | Iterable[Record | int]
-        """
+    def delete(self, *records: R | int | Iterable[R | int]) -> None:
         self.unlink(*records)
 
     def _get_remote_field(self, field: str) -> str:

@@ -17,8 +17,9 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from ..base.record import ModelRef, RecordBase
-from ..base.record_manager import RecordManagerBase
+from ..base.record.base import RecordBase
+from ..base.record.types import ModelRef
+from ..base.record_manager.base import RecordManagerBase
 
 
 class VolumeDiscountRange(RecordBase["VolumeDiscountRangeManager"]):

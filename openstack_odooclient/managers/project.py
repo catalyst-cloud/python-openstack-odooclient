@@ -19,10 +19,9 @@ from typing import TYPE_CHECKING, Annotated, Any, Literal, overload
 
 from typing_extensions import Self
 
-from ..base.record import ModelRef, RecordBase
-from ..base.record_manager_with_unique_field import (
-    RecordManagerWithUniqueFieldBase,
-)
+from ..base.record.base import RecordBase
+from ..base.record.types import ModelRef
+from ..base.record_manager.base import RecordManagerBase
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -195,7 +194,7 @@ class Project(RecordBase["ProjectManager"]):
     """
 
 
-class ProjectManager(RecordManagerWithUniqueFieldBase[Project, str]):
+class ProjectManager(RecordManagerBase[Project]):
     env_name = "openstack.project"
     record_class = Project
 
@@ -339,7 +338,7 @@ class ProjectManager(RecordManagerWithUniqueFieldBase[Project, str]):
         :return: Query result (or ``None`` if record not found and optional)
         :rtype: Project | int | dict[str, Any] | None
         """
-        return self._get_by_unique_field(
+        return self.get_by_unique_field(
             field="os_id",
             value=os_id,
             fields=fields,

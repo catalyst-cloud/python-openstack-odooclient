@@ -17,11 +17,16 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from ..base.record import ModelRef, RecordBase
-from ..base.record_manager_coded import CodedRecordManagerBase
+from ..base.record.base import RecordBase
+from ..base.record.types import ModelRef
+from ..base.record_manager.base import RecordManagerBase
+from ..mixins.coded_record import CodedRecordManagerMixin, CodedRecordMixin
 
 
-class ReferralCode(RecordBase["ReferralCodeManager"]):
+class ReferralCode(
+    RecordBase["ReferralCodeManager"],
+    CodedRecordMixin["ReferralCodeManager"],
+):
     allowed_uses: int
     """The number of allowed uses of this referral code.
 
@@ -32,9 +37,6 @@ class ReferralCode(RecordBase["ReferralCodeManager"]):
     """The amount of usage that must be recorded by the new sign-up
     before the reward credit is awarded to the referrer.
     """
-
-    code: str
-    """The unique referral code."""
 
     name: str
     """Automatically generated name for the referral code."""
@@ -108,7 +110,10 @@ class ReferralCode(RecordBase["ReferralCodeManager"]):
     """
 
 
-class ReferralCodeManager(CodedRecordManagerBase[ReferralCode]):
+class ReferralCodeManager(
+    RecordManagerBase[ReferralCode],
+    CodedRecordManagerMixin[ReferralCode],
+):
     env_name = "openstack.referral_code"
     record_class = ReferralCode
 

@@ -30,6 +30,34 @@ jobs:
       - name: Run pre-commit hooks
         uses: pre-commit/action@v3.0.1
 
+  test:
+    needs: pre-commit
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        python_version:
+          - "3.10"
+          - "3.11"
+          - "3.12"
+          - "3.13"
+          - "3.14"
+    steps:
+      - name: Clone full tree, and checkout branch
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "${{ matrix.python_version }}"
+          cache: "pip"
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.9.17"
+      - name: Run tests
+        run: uv run poe test
+
   build:
     needs: pre-commit
     runs-on: ubuntu-24.04
@@ -46,7 +74,7 @@ jobs:
       - name: Setup uv
         uses: astral-sh/setup-uv@v7
         with:
-          version: "0.9.2"
+          version: "0.9.17"
       - name: Build source dist and wheels
         run: uv build
       - name: Upload source dist and wheels to artifacts

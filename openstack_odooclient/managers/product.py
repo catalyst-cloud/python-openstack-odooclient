@@ -17,10 +17,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Annotated, Any, Literal, overload
 
-from ..base.record import ModelRef, RecordBase
-from ..base.record_manager_with_unique_field import (
-    RecordManagerWithUniqueFieldBase,
-)
+from ..base.record.base import RecordBase
+from ..base.record.types import ModelRef
+from ..base.record_manager.base import RecordManagerBase
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -103,7 +102,7 @@ class Product(RecordBase["ProductManager"]):
     """
 
 
-class ProductManager(RecordManagerWithUniqueFieldBase[Product, str]):
+class ProductManager(RecordManagerBase[Product]):
     env_name = "product.product"
     record_class = Product
 
@@ -349,7 +348,7 @@ class ProductManager(RecordManagerWithUniqueFieldBase[Product, str]):
         :return: Product (or ``None`` if record not found and optional)
         :rtype: Record | int | dict[str, Any] | None
         """
-        return self._get_by_unique_field(
+        return self.get_by_unique_field(
             field="name",
             value=name,
             filters=[
