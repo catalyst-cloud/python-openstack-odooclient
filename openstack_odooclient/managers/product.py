@@ -27,6 +27,12 @@ if TYPE_CHECKING:
 
 
 class Product(RecordBase["ProductManager"]):
+    active: bool
+    """Whether or not this product is active (enabled).
+
+    *Added in version 0.2.0.*
+    """
+
     categ_id: Annotated[int, ModelRef("categ_id", ProductCategory)]
     """The ID for the category this product is under."""
 
@@ -53,11 +59,13 @@ class Product(RecordBase["ProductManager"]):
     and caches it for subsequent accesses.
     """
 
-    default_code: str
-    """The Default Code for this product.
+    default_code: str | Literal[False]
+    """The Default Code for this product, if set.
 
     In the OpenStack Integration add-on, this is used to store
     the rated unit for the service product.
+
+    *Changed in version 0.2.0*: Made `default_code` optional.
     """
 
     description: str
@@ -74,6 +82,12 @@ class Product(RecordBase["ProductManager"]):
 
     name: str
     """The name of the product."""
+
+    sale_ok: bool
+    """Whether or not this product is sellable.
+
+    *Added in version 0.2.0.*
+    """
 
     uom_id: Annotated[int, ModelRef("uom_id", Uom)]
     """The ID for the Unit of Measure for this product."""

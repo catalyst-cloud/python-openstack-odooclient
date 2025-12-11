@@ -254,6 +254,16 @@ The record class currently implements the following fields and methods.
 For more information on attributes and methods common to all record types,
 see [Record Attributes and Methods](index.md#attributes-and-methods).
 
+### `active`
+
+```python
+active: bool
+```
+
+Whether or not this product is active (enabled).
+
+*Added in version 0.2.0.*
+
 ### `categ_id`
 
 ```python
@@ -311,14 +321,15 @@ and caches it for subsequent accesses.
 ### `default_code`
 
 ```python
-default_code: str
+default_code: str | Literal[False]
 ```
 
-The Default Code for this product.
+The Default Code for this product, if set.
 
 In the OpenStack Integration add-on, this is used to store
 the rated unit for the service product.
 
+*Changed in version 0.2.0*: Made `default_code` optional.
 
 ### `description`
 
@@ -346,7 +357,6 @@ The list price of the product.
 
 This becomes the unit price of the product on invoices.
 
-
 ### `name`
 
 ```python
@@ -354,6 +364,16 @@ name: str
 ```
 
 The name of the product.
+
+### `sale_ok`
+
+```python
+sale_ok: bool
+```
+
+Whether or not this product is sellable.
+
+*Added in version 0.2.0.*
 
 ### `uom_id`
 

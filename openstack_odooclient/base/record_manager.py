@@ -360,7 +360,7 @@ class RecordManagerBase(Generic[Record]):
         :param optional: Return ``None`` if not found, defaults to ``False``
         :raises RecordNotFoundError: Record with the given ID not found
         :return: List of records
-        :rtype: Record | list[str, Any]
+        :rtype: Record | dict[str, Any]
         """
         try:
             return self.list(

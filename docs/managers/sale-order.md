@@ -35,6 +35,39 @@ For more information on how to use managers, refer to [Managers](index.md).
 
 The following manager methods are also available, in addition to the standard methods.
 
+### `action_cancel`
+
+```python
+action_cancel(
+    sale_order: int | SaleOrder,
+) -> None
+```
+
+Cancel the given sale order.
+
+```python
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> odoo_client.sale_orders.action_cancel(
+...     sale_order=1234,  # ID or object
+... )
+```
+
+*Added in version 0.2.0.*
+
+#### Parameters
+
+| Name         | Type              | Description              | Default    |
+|--------------|-------------------|--------------------------|------------|
+| `sale_order` | `int | SaleOrder` | The sale order to cancel | (required) |
+
 ### `action_confirm`
 
 ```python
@@ -187,6 +220,39 @@ display_name: str
 
 The display name of the sale order.
 
+### `invoice_count`
+
+```python
+invoice_count: int
+```
+
+The number of [invoices (account moves)](account-move.md) generated from the sale order.
+
+*Added in version 0.2.0.*
+
+### `invoice_ids`
+
+```python
+invoice_ids: list[int]
+```
+
+A list of IDs for [invoices (account moves)](account-move.md) generated from the sale order.
+
+*Added in version 0.2.0.*
+
+### `invoices`
+
+```python
+invoices: list[AccountMove]
+```
+
+The [invoices (account moves)](account-move.md) generated from the sale order.
+
+This fetches the full records from Odoo once,
+and caches them for subsequent accesses.
+
+*Added in version 0.2.0.*
+
 ### `invoice_status`
 
 ```python
@@ -336,6 +402,30 @@ Values:
 * ``sale`` - Finalised sale order, cannot be modified
 * ``done`` - Finalised and settled sale order, cannot be modified
 * ``cancel`` - Cancelled sale order, can be deleted in most cases
+
+### `action_cancel`
+
+```python
+action_cancel() -> None
+```
+
+Cancel this sale order.
+
+```python
+>>> from openstack_odooclient import Client as OdooClient
+>>> odoo_client = OdooClient(
+...     hostname="localhost",
+...     port=8069,
+...     protocol="jsonrpc",
+...     database="odoodb",
+...     user="test-user",
+...     password="<password>",
+... )
+>>> sale_order = odoo_client.sale_orders.get(1234)
+>>> sale_order.action_cancel()
+```
+
+*Added in version 0.2.0.*
 
 ### `action_confirm`
 

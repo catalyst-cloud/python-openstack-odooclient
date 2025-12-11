@@ -54,6 +54,30 @@ class SaleOrder(RecordBase["SaleOrderManager"]):
     display_name: str
     """The display name of the sale order."""
 
+    invoice_count: int
+    """The number of invoices generated from the sale order.
+
+    *Added in version 0.2.0.*
+    """
+
+    invoice_ids: Annotated[list[int], ModelRef("invoice_ids", AccountMove)]
+    """A list of IDs for invoices generated from the sale order.
+
+    *Added in version 0.2.0.*
+    """
+
+    invoices: Annotated[
+        list[AccountMove],
+        ModelRef("invoice_ids", AccountMove),
+    ]
+    """The invoices generated from the sale order.
+
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+
+    *Added in version 0.2.0.*
+    """
+
     invoice_status: Literal["no", "to invoice", "invoiced", "upselling"]
     """The current invoicing status of this sale order.
 
@@ -145,6 +169,13 @@ class SaleOrder(RecordBase["SaleOrderManager"]):
     * ``cancel`` - Cancelled sale order, can be deleted in most cases
     """
 
+    def action_cancel(self) -> None:
+        """Cancel this sale order.
+
+        *Added in version 0.2.0.*
+        """
+        self._env.action_cancel(self.id)
+
     def action_confirm(self) -> None:
         """Confirm this sale order."""
         self._env.action_confirm(self.id)
@@ -157,6 +188,22 @@ class SaleOrder(RecordBase["SaleOrderManager"]):
 class SaleOrderManager(NamedRecordManagerBase[SaleOrder]):
     env_name = "sale.order"
     record_class = SaleOrder
+
+    def action_cancel(self, sale_order: int | SaleOrder) -> None:
+        """Cancel the given sale order.
+
+        *Added in version 0.2.0.*
+
+        :param sale_order: The sale order to cancel
+        :type sale_order: int | SaleOrder
+        """
+        self._env.action_cancel(
+            (
+                sale_order.id
+                if isinstance(sale_order, SaleOrder)
+                else sale_order
+            ),
+        )
 
     def action_confirm(self, sale_order: int | SaleOrder) -> None:
         """Confirm the given sale order.
@@ -188,6 +235,7 @@ class SaleOrderManager(NamedRecordManagerBase[SaleOrder]):
 
 
 # NOTE(callumdickinson): Import here to avoid circular imports.
+from .account_move import AccountMove  # noqa: E402
 from .currency import Currency  # noqa: E402
 from .partner import Partner  # noqa: E402
 from .project import Project  # noqa: E402
