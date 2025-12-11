@@ -986,6 +986,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#active" class="md-nav__link">
+    <span class="md-ellipsis">
+      active
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#categ_id" class="md-nav__link">
     <span class="md-ellipsis">
       categ_id
@@ -1079,6 +1088,15 @@
   <a href="#name" class="md-nav__link">
     <span class="md-ellipsis">
       name
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sale_ok" class="md-nav__link">
+    <span class="md-ellipsis">
+      sale_ok
     </span>
   </a>
   
@@ -1774,6 +1792,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#active" class="md-nav__link">
+    <span class="md-ellipsis">
+      active
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#categ_id" class="md-nav__link">
     <span class="md-ellipsis">
       categ_id
@@ -1867,6 +1894,15 @@
   <a href="#name" class="md-nav__link">
     <span class="md-ellipsis">
       name
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sale_ok" class="md-nav__link">
+    <span class="md-ellipsis">
+      sale_ok
     </span>
   </a>
   
@@ -2267,67 +2303,78 @@ with the given name does not exist, instead of raising an error.</p>
 <p>The record class currently implements the following fields and methods.</p>
 <p>For more information on attributes and methods common to all record types,
 see <a href="index.html#attributes-and-methods">Record Attributes and Methods</a>.</p>
+<h3 id="active"><code>active</code><a class="headerlink" href="#active" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">active</span><span class="p">:</span> <span class="nb">bool</span>
+</span></code></pre></div>
+<p>Whether or not this product is active (enabled).</p>
+<p><em>Added in version 0.2.0.</em></p>
 <h3 id="categ_id"><code>categ_id</code><a class="headerlink" href="#categ_id" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">categ_id</span><span class="p">:</span> <span class="nb">int</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">categ_id</span><span class="p">:</span> <span class="nb">int</span>
 </span></code></pre></div>
 <p>The ID for the <a href="product-category.html">category</a> this product is under.</p>
 <h3 id="categ_name"><code>categ_name</code><a class="headerlink" href="#categ_name" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">categ_name</span><span class="p">:</span> <span class="nb">str</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">categ_name</span><span class="p">:</span> <span class="nb">str</span>
 </span></code></pre></div>
 <p>The name of the <a href="product-category.html">category</a> this product is under.</p>
 <h3 id="categ"><code>categ</code><a class="headerlink" href="#categ" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">categ</span><span class="p">:</span> <span class="n">ProductCategory</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="n">categ</span><span class="p">:</span> <span class="n">ProductCategory</span>
 </span></code></pre></div>
 <p>The <a href="product-category.html">category</a> this product is under.</p>
 <p>This fetches the full record from Odoo once,
 and caches it for subsequent accesses.</p>
 <h3 id="company_id"><code>company_id</code><a class="headerlink" href="#company_id" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="n">company_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">company_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
 </span></code></pre></div>
 <p>The ID for the <a href="company.html">company</a> that owns this product, if set.</p>
 <h3 id="company_name"><code>company_name</code><a class="headerlink" href="#company_name" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">company_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="n">company_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
 </span></code></pre></div>
 <p>The name of the <a href="company.html">company</a> that owns this product, if set.</p>
 <h3 id="company"><code>company</code><a class="headerlink" href="#company" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="n">company</span><span class="p">:</span> <span class="n">Company</span> <span class="o">|</span> <span class="kc">None</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">company</span><span class="p">:</span> <span class="n">Company</span> <span class="o">|</span> <span class="kc">None</span>
 </span></code></pre></div>
 <p>The <a href="company.html">company</a> that owns this product, if set.</p>
 <p>This fetches the full record from Odoo once,
 and caches it for subsequent accesses.</p>
 <h3 id="default_code"><code>default_code</code><a class="headerlink" href="#default_code" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">default_code</span><span class="p">:</span> <span class="nb">str</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="n">default_code</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]</span>
 </span></code></pre></div>
-<p>The Default Code for this product.</p>
+<p>The Default Code for this product, if set.</p>
 <p>In the OpenStack Integration add-on, this is used to store
 the rated unit for the service product.</p>
+<p><em>Changed in version 0.2.0</em>: Made <code>default_code</code> optional.</p>
 <h3 id="description"><code>description</code><a class="headerlink" href="#description" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
 </span></code></pre></div>
 <p>A short description of this product.</p>
 <h3 id="display_name"><code>display_name</code><a class="headerlink" href="#display_name" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="n">display_name</span><span class="p">:</span> <span class="nb">str</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="n">display_name</span><span class="p">:</span> <span class="nb">str</span>
 </span></code></pre></div>
 <p>The name of this product in OpenStack, and on invoices.</p>
 <h3 id="list_price"><code>list_price</code><a class="headerlink" href="#list_price" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="n">list_price</span><span class="p">:</span> <span class="nb">float</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="n">list_price</span><span class="p">:</span> <span class="nb">float</span>
 </span></code></pre></div>
 <p>The list price of the product.</p>
 <p>This becomes the unit price of the product on invoices.</p>
 <h3 id="name"><code>name</code><a class="headerlink" href="#name" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
 </span></code></pre></div>
 <p>The name of the product.</p>
+<h3 id="sale_ok"><code>sale_ok</code><a class="headerlink" href="#sale_ok" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="n">sale_ok</span><span class="p">:</span> <span class="nb">bool</span>
+</span></code></pre></div>
+<p>Whether or not this product is sellable.</p>
+<p><em>Added in version 0.2.0.</em></p>
 <h3 id="uom_id"><code>uom_id</code><a class="headerlink" href="#uom_id" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="n">uom_id</span><span class="p">:</span> <span class="nb">int</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="n">uom_id</span><span class="p">:</span> <span class="nb">int</span>
 </span></code></pre></div>
 <p>The ID for the <a href="uom.html">Unit of Measure</a> for this product.</p>
 <h3 id="uom_name"><code>uom_name</code><a class="headerlink" href="#uom_name" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="n">uom_name</span><span class="p">:</span> <span class="nb">str</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="n">uom_name</span><span class="p">:</span> <span class="nb">str</span>
 </span></code></pre></div>
 <p>The name of the <a href="uom.html">Unit of Measure</a> for this product.</p>
 <h3 id="uom"><code>uom</code><a class="headerlink" href="#uom" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="n">uom</span><span class="p">:</span> <span class="n">Uom</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="n">uom</span><span class="p">:</span> <span class="n">Uom</span>
 </span></code></pre></div>
 <p>The <a href="uom.html">Unit of Measure</a> for this product.</p>
 <p>This fetches the full record from Odoo once,
