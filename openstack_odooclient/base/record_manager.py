@@ -18,7 +18,7 @@ from __future__ import annotations
 import builtins
 
 from datetime import date, datetime
-from types import MappingProxyType
+from types import MappingProxyType, UnionType
 from typing import (
     TYPE_CHECKING,
     Annotated,
@@ -961,25 +961,32 @@ class RecordManagerBase(Generic[Record]):
             return value
         # For every other field type, parse the possible value types
         # from the type hint.
+        # First, remove Annotated to get the actual attribute type.
         type_hint_origin = get_type_origin(type_hint) or type_hint
         attr_type = (
             get_type_args(type_hint)[0]
             if type_hint_origin is Annotated
-            else type_hint_origin
+            else type_hint
         )
+        # Next, get a list of allowed values types from the attribute type.
+        # If there is only one, create a list containing only that type.
         attr_type_origin = get_type_origin(attr_type) or attr_type
         value_types = (
             get_type_args(attr_type)
-            if attr_type_origin is Union
-            else [attr_type_origin]
+            if attr_type_origin is Union or attr_type_origin is UnionType
+            else [attr_type]
         )
         # Recursively handle the types that need to be serialised.
         for value_type in value_types:
+            value_type_origin = get_type_origin(value_type) or value_type
             if value_type is date and isinstance(value, date):
                 return value.strftime(DEFAULT_SERVER_DATE_FORMAT)
             if value_type is datetime and isinstance(value, datetime):
                 return value.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
-            if value_type is list and isinstance(value, (list, set, tuple)):
-                v_type = get_type_args(type_hint)[0]
+            if value_type_origin is list and isinstance(
+                value,
+                (list, set, tuple),
+            ):
+                v_type = get_type_args(value_type)[0]
                 return [self._encode_value(v_type, v) for v in value]
         return value

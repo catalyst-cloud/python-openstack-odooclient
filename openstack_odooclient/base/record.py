@@ -395,10 +395,9 @@ class RecordBase(Generic[RecordManager]):
         attr_type_origin = get_type_origin(attr_type)
         if attr_type_origin is Union or attr_type_origin is UnionType:
             unsupported_union = (
-                "Only unions of the format Optional[T], "
-                "Union[T, type(None)] or Union[T, Literal[False]] "
-                "are supported for singular model refs, "
-                f"found type hint: {attr_type}"
+                "Only unions of the format 'T | None' "
+                "or 'T | Literal[False]' are supported for singular "
+                f"model refs, found type hint: {attr_type}"
             )
             union_types = set(get_type_args(attr_type))
             if len(union_types) > 2:  # noqa: PLR2004
@@ -465,7 +464,7 @@ class RecordBase(Generic[RecordManager]):
         # Not suitable for handling complicated union structures.
         # TODO(callumdickinson): Find a way to handle complicated
         # union structures more smartly.
-        if value_type is Union:
+        if value_type is Union or value_type is UnionType:
             attr_union_types = get_type_args(type_hint)
             if len(attr_union_types) == 2:  # noqa: PLR2004
                 # T | None
