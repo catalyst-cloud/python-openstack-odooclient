@@ -19,11 +19,16 @@ from typing import Annotated, Literal
 
 from typing_extensions import Self
 
-from ..base.record import ModelRef, RecordBase
-from ..base.record_manager_named import NamedRecordManagerBase
+from ..base.record.base import RecordBase
+from ..base.record.types import ModelRef
+from ..base.record_manager.base import RecordManagerBase
+from ..mixins.named_record import NamedRecordManagerMixin, NamedRecordMixin
 
 
-class Company(RecordBase["CompanyManager"]):
+class Company(
+    RecordBase["CompanyManager"],
+    NamedRecordMixin["CompanyManager"],
+):
     active: bool
     """Whether or not this company is active (enabled)."""
 
@@ -36,9 +41,6 @@ class Company(RecordBase["CompanyManager"]):
     This fetches the full records from Odoo once,
     and caches them for subsequent accesses.
     """
-
-    name: str
-    """Company name, set from the partner name."""
 
     parent_id: Annotated[int | None, ModelRef("parent_id", Self)]
     """The ID for the parent company, if this company
@@ -75,7 +77,10 @@ class Company(RecordBase["CompanyManager"]):
     """
 
 
-class CompanyManager(NamedRecordManagerBase[Company]):
+class CompanyManager(
+    RecordManagerBase[Company],
+    NamedRecordManagerMixin[Company],
+):
     env_name = "res.company"
     record_class = Company
 

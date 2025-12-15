@@ -40,12 +40,15 @@ dynamic = ["version"]
 
 [dependency-groups]
 dev = [
-    "mike>=2.1.2",
-    "mkdocs-material>=9.5.27",
-    "mypy==1.18.2",
-    "poethepoet>=0.37.0",
-    "ruff==0.14.0",
-    "towncrier>=23.11.0",
+    "mike>=2.1.3",
+    "mkdocs-material>=9.7.0",
+    "mypy==1.19.0",
+    "poethepoet>=0.38.0",
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "pytest-mock>=3.15.1",
+    "ruff==0.14.9",
+    "towncrier>=25.8.0",
 ]
 
 [project.urls]
@@ -64,6 +67,8 @@ packages = ["openstack_odooclient"]
 lint = "ruff check"
 format = "ruff format"
 type-check = "mypy openstack_odooclient"
+test = "pytest"
+unit-test = "pytest tests/unit"
 
 [tool.ruff]
 fix = true
@@ -131,6 +136,22 @@ required-imports = [
 
 [tool.mypy]
 pretty = true
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "--color=yes --cov=openstack_odooclient --cov-config=pyproject.toml --cov-report=term --cov-report=html:cover --cov-report=xml:cover/coverage.xml --junit-xml=rspec.xml --log-level=DEBUG -r A --showlocals --verbosity=3"
+testpaths = [
+    "tests/unit",
+]
+
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+exclude_also = [
+    "if TYPE_CHECKING:",
+]
+skip_empty = true
 
 [tool.towncrier]
 directory = "changelog.d"

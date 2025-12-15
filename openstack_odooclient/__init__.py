@@ -16,13 +16,10 @@
 from __future__ import annotations
 
 from .base.client import ClientBase
-from .base.record import FieldAlias, ModelRef, RecordBase
-from .base.record_manager import RecordManagerBase
-from .base.record_manager_coded import CodedRecordManagerBase
-from .base.record_manager_named import NamedRecordManagerBase
-from .base.record_manager_with_unique_field import (
-    RecordManagerWithUniqueFieldBase,
-)
+from .base.record.base import RM, RecordBase, RecordProtocol, RM_co
+from .base.record.types import FieldAlias, ModelRef
+from .base.record_manager.base import R, RecordManagerBase
+from .base.record_manager.protocol import RecordManagerProtocol
 from .client import Client
 from .exceptions import (
     ClientError,
@@ -77,8 +74,11 @@ from .managers.volume_discount_range import (
     VolumeDiscountRangeManager,
 )
 from .managers.voucher_code import VoucherCode, VoucherCodeManager
+from .mixins.coded_record import CodedRecordManagerMixin, CodedRecordMixin
+from .mixins.named_record import NamedRecordManagerMixin, NamedRecordMixin
 
 __all__ = [
+    "RM",
     "AccountMove",
     "AccountMoveLine",
     "AccountMoveLineManager",
@@ -86,7 +86,8 @@ __all__ = [
     "Client",
     "ClientBase",
     "ClientError",
-    "CodedRecordManagerBase",
+    "CodedRecordManagerMixin",
+    "CodedRecordMixin",
     "Company",
     "CompanyManager",
     "Credit",
@@ -106,7 +107,8 @@ __all__ = [
     "GrantTypeManager",
     "ModelRef",
     "MultipleRecordsFoundError",
-    "NamedRecordManagerBase",
+    "NamedRecordManagerMixin",
+    "NamedRecordMixin",
     "Partner",
     "PartnerCategory",
     "PartnerCategoryManager",
@@ -121,10 +123,13 @@ __all__ = [
     "ProjectContact",
     "ProjectContactManager",
     "ProjectManager",
+    "R",
+    "RM_co",
     "RecordBase",
     "RecordManagerBase",
-    "RecordManagerWithUniqueFieldBase",
+    "RecordManagerProtocol",
     "RecordNotFoundError",
+    "RecordProtocol",
     "ReferralCode",
     "ReferralCodeManager",
     "Reseller",

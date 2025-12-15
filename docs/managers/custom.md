@@ -138,7 +138,7 @@ from datetime import datetime
 from openstack_odooclient import RecordBase
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
-    custom_field: date
+    custom_field: datetime
     """Description of the field."""
 ```
 
@@ -790,6 +790,230 @@ The following internal attributes are also available for use in methods:
 * `_client` ([`Client`](../index.md#connecting-to-odoo)) - The Odoo client object the record manager uses
 * `_odoo` (`odoorpc.ODOO`) - The OdooRPC connection object
 * `_env` (`odoorpc.env.Environment`) - The OdooRPC environment object for the model
+
+## Mixins
+
+Python supports [multiple inheritance](https://docs.python.org/3/tutorial/classes.html#multiple-inheritance)
+when creating new classes. A common use case for multiple inheritance is to extend
+functionality of a class through the use of *mixin classes*, which are minimal
+classes that only consist of supplementary attributes and methods, that get added
+to other classes through subclassing.
+
+The OpenStack Odoo Client library for Python supports the use of mixin classes
+to add functionality to custom record and manager classes in a modular way.
+Multiple mixins can be added to record and manager classes to allow mixing and
+matching additional functionality as required.
+
+### Using Mixins
+
+To extend the functionality of your custom record and manager classes,
+append the mixins for the record class and/or record manager class
+**AFTER** the inheritance for `RecordBase` and `RecordManagerBase`.
+You also need to specify the **same** type arguments to the mixins as
+is already being done for `RecordBase` and `RecordManagerBase`.
+
+```python
+from __future__ import annotations
+
+from openstack_odooclient import (
+    NamedRecordManagerMixin,
+    NamedRecordMixin,
+    RecordBase,
+    RecordManagerBase,
+)
+
+class CustomRecord(
+    RecordBase["CustomRecordManager"],
+    NamedRecordMixin["CustomRecordManager"],
+):
+    custom_field: str
+    """Description of the field."""
+
+class CustomRecordManager(
+    RecordManagerBase[CustomRecord],
+    NamedRecordManagerMixin[CustomRecord],
+):
+    env_name = "custom.record"
+    record_class = CustomRecord
+```
+
+That's all that needs to be done. The additional attributes and/or methods
+should now be available on your record and manager objects.
+
+The following mixins are provided with the Odoo Client library.
+
+#### Named Records
+
+If your record model has a unique `name` field on it (of `str` type),
+you can use the `NamedRecordMixin` and `NamedRecordManagerMixin` mixins
+to define the `name` field on the record class, and add the
+`get_by_name` method to your custom record manager class.
+
+```python
+from __future__ import annotations
+
+from openstack_odooclient import (
+    NamedRecordManagerMixin,
+    NamedRecordMixin,
+    RecordBase,
+    RecordManagerBase,
+)
+
+class CustomRecord(
+    RecordBase["CustomRecordManager"],
+    NamedRecordMixin["CustomRecordManager"],
+):
+    custom_field: str
+    """Description of the field."""
+
+    # Added by NamedRecordMixin:
+    #
+    # name: str
+    # """The unique name of the record."""
+
+class CustomRecordManager(
+    RecordManagerBase[CustomRecord],
+    NamedRecordManagerMixin[CustomRecord],
+):
+    env_name = "custom.record"
+    record_class = CustomRecord
+
+    # Added by NamedRecordManagerMixin:
+    #
+    # def get_by_name(...):
+    #     ...
+```
+
+For more information on using record managers with unique `name` fields,
+see [Named Record Managers](index.md#named-record-managers).
+
+#### Coded Records
+
+If your record model has a unique `code` field on it (of `str` type),
+you can use the `CodedRecordMixin` and `CodedRecordManagerMixin` mixins
+to define the `code` field on the record class, and add the
+`get_by_code` method to your custom record manager class.
+
+```python
+from __future__ import annotations
+
+from openstack_odooclient import (
+    CodedRecordManagerMixin,
+    CodedRecordMixin,
+    RecordBase,
+    RecordManagerBase,
+)
+
+class CustomRecord(
+    RecordBase["CustomRecordManager"],
+    CodedRecordMixin["CustomRecordManager"],
+):
+    custom_field: str
+    """Description of the field."""
+
+    # Added by CodedRecordMixin:
+    #
+    # code: str
+    # """The unique name for this record."""
+
+class CustomRecordManager(
+    RecordManagerBase[CustomRecord],
+    CodedRecordManagerMixin[CustomRecord],
+):
+    env_name = "custom.record"
+    record_class = CustomRecord
+
+    # Added by CodedRecordManagerMixin:
+    #
+    # def get_by_code(...):
+    #     ...
+```
+
+For more information on using record managers with unique `code` fields,
+see [Coded Record Managers](index.md#coded-record-managers).
+
+### Creating Mixins
+
+It is possible to create your own custom mixins to incorporate into
+custom record and manager classes.
+
+There are two mixin types: **record mixins** and **record manager mixins**.
+
+#### Record Mixins
+
+Record mixins are used to add custom fields and methods to record classes.
+
+Here is the full implementation of `NamedRecordMixin` as an example
+of a mixin for a record class, that simply adds the `name` field:
+
+```python
+from __future__ import annotations
+
+from typing import Generic
+
+from openstack_odooclient import RM, RecordProtocol
+
+class NamedRecordMixin(RecordProtocol[RM], Generic[RM]):
+    name: str
+    """The unique name of the record."""
+```
+
+A record mixin consists of a class that subclasses `RecordProtocol[RM]`
+(where `RM` is the type variable for a record manager class) to get the type
+hints for a record class' common fields and methods. `Generic[RM]` is also
+subclassed to make the mixin itself a generic class, to allow `RM` to be
+passed when creating a record class with the mixin.
+
+Once you have the class, simply define any fields and methods you'd like
+to add.
+
+You can then use the mixin as shown in [Using Mixins](#using-mixins).
+
+When defining custom methods, in addition to accessing fields/methods
+defined within the mixin, fields/methods from the `RecordBase` class
+are also available:
+
+```python
+from __future__ import annotations
+
+from typing import Generic
+
+from openstack_odooclient import RM, RecordProtocol
+
+class NamedRecordMixin(RecordProtocol[RM], Generic[RM]):
+    name: str
+    """The unique name of the record."""
+
+    def custom_method(self) -> None:
+        self.name  # str
+        self._env.custom_method(self.id)
+```
+
+#### Record Manager Mixins
+
+Record manager mixins are expected to be mainly used to add custom methods
+to a record manager class.
+
+```python
+from __future__ import annotations
+
+from typing import Generic
+
+from openstack_odooclient import R, RecordManagerProtocol
+
+class NamedRecordManagerMixin(RecordManagerProtocol[R], Generic[R]):
+    def custom_method(self, record: int | R) -> None:
+        self._env.custom_method(  # self._env available from RecordManagerBase
+            record if isinstance(record, int) else record.id,
+        )
+```
+
+A record manager mixin consists of a class that subclasses
+`RecordManagerProtocol[R]` (where `R` is the type variable for a record class)
+to get the type hints for a record manager class' common attributes and
+methods. `Generic[R]` is also subclassed to make the mixin itself a generic
+class, to allow `R` to be passed when creating a record manager class
+with the mixin.
 
 ## Extending Existing Record Types
 

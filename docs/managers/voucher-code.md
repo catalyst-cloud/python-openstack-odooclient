@@ -212,7 +212,7 @@ until it expires.
 name: str
 ```
 
-The unique name of this voucher code.
+The automatically generated name of this voucher code.
 
 This uses the code specified in the record as-is.
 

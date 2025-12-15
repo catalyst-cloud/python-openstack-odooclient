@@ -99,6 +99,8 @@ name: str
 
 The name of the partner category.
 
+Not guaranteed to be unique, even under the same parent category.
+
 ### `parent_id`
 
 ```python

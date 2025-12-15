@@ -89,7 +89,9 @@ The complete product category tree.
 name: str
 ```
 
-Name of the product category.
+The name of the product category.
+
+Not guaranteed to be unique, even under the same parent category.
 
 ### `parent_id`
 

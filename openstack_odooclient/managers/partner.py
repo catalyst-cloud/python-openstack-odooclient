@@ -19,8 +19,9 @@ from typing import Annotated, Literal
 
 from typing_extensions import Self
 
-from ..base.record import ModelRef, RecordBase
-from ..base.record_manager import RecordManagerBase
+from ..base.record.base import RecordBase
+from ..base.record.types import ModelRef
+from ..base.record_manager.base import RecordManagerBase
 
 
 class Partner(RecordBase["PartnerManager"]):

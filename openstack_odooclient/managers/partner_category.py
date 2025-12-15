@@ -19,8 +19,9 @@ from typing import Annotated, Literal
 
 from typing_extensions import Self
 
-from ..base.record import FieldAlias, ModelRef, RecordBase
-from ..base.record_manager_named import NamedRecordManagerBase
+from ..base.record.base import RecordBase
+from ..base.record.types import FieldAlias, ModelRef
+from ..base.record_manager.base import RecordManagerBase
 
 
 class PartnerCategory(RecordBase["PartnerCategoryManager"]):
@@ -44,7 +45,10 @@ class PartnerCategory(RecordBase["PartnerCategoryManager"]):
     """Alias for ``color``."""
 
     name: str
-    """The name of the partner category."""
+    """The name of the partner category.
+
+    Not guaranteed to be unique, even under the same parent category.
+    """
 
     parent_id: Annotated[int | None, ModelRef("parent_id", Self)]
     """The ID for the parent partner category, if this category
@@ -78,7 +82,7 @@ class PartnerCategory(RecordBase["PartnerCategoryManager"]):
     """
 
 
-class PartnerCategoryManager(NamedRecordManagerBase[PartnerCategory]):
+class PartnerCategoryManager(RecordManagerBase[PartnerCategory]):
     env_name = "res.partner.category"
     record_class = PartnerCategory
 

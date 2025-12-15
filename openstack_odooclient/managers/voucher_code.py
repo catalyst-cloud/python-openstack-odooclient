@@ -18,16 +18,18 @@ from __future__ import annotations
 from datetime import date
 from typing import Annotated, Literal
 
-from ..base.record import ModelRef, RecordBase
-from ..base.record_manager_named import NamedRecordManagerBase
+from ..base.record.base import RecordBase
+from ..base.record.types import ModelRef
+from ..base.record_manager.base import RecordManagerBase
+from ..mixins.coded_record import CodedRecordManagerMixin, CodedRecordMixin
 
 
-class VoucherCode(RecordBase["VoucherCodeManager"]):
+class VoucherCode(
+    RecordBase["VoucherCodeManager"],
+    CodedRecordMixin["VoucherCodeManager"],
+):
     claimed: bool
     """Whether or not this voucher code has been claimed."""
-
-    code: str
-    """The code string for this voucher code."""
 
     credit_amount: float | Literal[False]
     """The initial credit balance for the voucher code, if a credit is to be
@@ -130,7 +132,7 @@ class VoucherCode(RecordBase["VoucherCodeManager"]):
     """
 
     name: str
-    """The unique name of this voucher code.
+    """The automatically generated name of this voucher code.
 
     This uses the code specified in the record as-is.
     """
@@ -183,7 +185,10 @@ class VoucherCode(RecordBase["VoucherCodeManager"]):
     """
 
 
-class VoucherCodeManager(NamedRecordManagerBase[VoucherCode]):
+class VoucherCodeManager(
+    RecordManagerBase[VoucherCode],
+    CodedRecordManagerMixin[VoucherCode],
+):
     env_name = "openstack.voucher_code"
     record_class = VoucherCode
 

@@ -17,11 +17,16 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from ..base.record import ModelRef, RecordBase
-from ..base.record_manager_named import NamedRecordManagerBase
+from ..base.record.base import RecordBase
+from ..base.record.types import ModelRef
+from ..base.record_manager.base import RecordManagerBase
+from ..mixins.named_record import NamedRecordManagerMixin, NamedRecordMixin
 
 
-class CreditType(RecordBase["CreditTypeManager"]):
+class CreditType(
+    RecordBase["CreditTypeManager"],
+    NamedRecordMixin["CreditTypeManager"],
+):
     credit_ids: Annotated[list[int], ModelRef("credits", Credit)]
     """A list of IDs for the credits which are of this credit type."""
 
@@ -31,9 +36,6 @@ class CreditType(RecordBase["CreditTypeManager"]):
     This fetches the full records from Odoo once,
     and caches them for subsequent accesses.
     """
-
-    name: str
-    """Name of the Credit Type."""
 
     only_for_product_ids: Annotated[
         list[int],
@@ -104,7 +106,10 @@ class CreditType(RecordBase["CreditTypeManager"]):
     """Whether or not the credit is refundable."""
 
 
-class CreditTypeManager(NamedRecordManagerBase[CreditType]):
+class CreditTypeManager(
+    RecordManagerBase[CreditType],
+    NamedRecordManagerMixin[CreditType],
+):
     env_name = "openstack.credit.type"
     record_class = CreditType
 

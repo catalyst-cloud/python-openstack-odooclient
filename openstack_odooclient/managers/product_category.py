@@ -19,8 +19,9 @@ from typing import Annotated, Literal
 
 from typing_extensions import Self
 
-from ..base.record import FieldAlias, ModelRef, RecordBase
-from ..base.record_manager_named import NamedRecordManagerBase
+from ..base.record.base import RecordBase
+from ..base.record.types import FieldAlias, ModelRef
+from ..base.record_manager.base import RecordManagerBase
 
 
 class ProductCategory(RecordBase["ProductCategoryManager"]):
@@ -41,7 +42,10 @@ class ProductCategory(RecordBase["ProductCategoryManager"]):
     """The complete product category tree."""
 
     name: str
-    """Name of the product category."""
+    """The name of the product category.
+
+    Not guaranteed to be unique, even under the same parent category.
+    """
 
     parent_id: Annotated[int | None, ModelRef("parent_id", Self)]
     """The ID for the parent product category, if this category
@@ -68,6 +72,6 @@ class ProductCategory(RecordBase["ProductCategoryManager"]):
     """The number of products under this category."""
 
 
-class ProductCategoryManager(NamedRecordManagerBase[ProductCategory]):
+class ProductCategoryManager(RecordManagerBase[ProductCategory]):
     env_name = "product.category"
     record_class = ProductCategory

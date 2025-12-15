@@ -18,14 +18,19 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Annotated, Any, Literal
 
-from ..base.record import ModelRef, RecordBase
-from ..base.record_manager_named import NamedRecordManagerBase
+from ..base.record.base import RecordBase
+from ..base.record.types import ModelRef
+from ..base.record_manager.base import RecordManagerBase
+from ..mixins.named_record import NamedRecordManagerMixin, NamedRecordMixin
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping
 
 
-class AccountMove(RecordBase["AccountMoveManager"]):
+class AccountMove(
+    RecordBase["AccountMoveManager"],
+    NamedRecordMixin["AccountMoveManager"],
+):
     amount_total: float
     """Total (taxed) amount charged on the account move (invoice)."""
 
@@ -94,9 +99,6 @@ class AccountMove(RecordBase["AccountMoveManager"]):
     * ``out_receipt`` - Sales Receipt
     * ``in_receipt`` - Purchase Receipt
     """
-
-    name: str | Literal[False]
-    """Name assigned to the account move (invoice), if posted."""
 
     os_project_id: Annotated[int | None, ModelRef("os_project", Project)]
     """The ID of the OpenStack project this account move (invoice)
@@ -176,7 +178,10 @@ class AccountMove(RecordBase["AccountMoveManager"]):
         )
 
 
-class AccountMoveManager(NamedRecordManagerBase[AccountMove]):
+class AccountMoveManager(
+    RecordManagerBase[AccountMove],
+    NamedRecordManagerMixin[AccountMove],
+):
     env_name = "account.move"
     record_class = AccountMove
 

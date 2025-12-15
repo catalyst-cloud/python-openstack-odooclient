@@ -18,11 +18,16 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import Annotated, Literal
 
-from ..base.record import FieldAlias, ModelRef, RecordBase
-from ..base.record_manager_named import NamedRecordManagerBase
+from ..base.record.base import RecordBase
+from ..base.record.types import FieldAlias, ModelRef
+from ..base.record_manager.base import RecordManagerBase
+from ..mixins.named_record import NamedRecordManagerMixin, NamedRecordMixin
 
 
-class SaleOrder(RecordBase["SaleOrderManager"]):
+class SaleOrder(
+    RecordBase["SaleOrderManager"],
+    NamedRecordMixin["SaleOrderManager"],
+):
     amount_untaxed: float
     """The untaxed total cost of the sale order."""
 
@@ -88,9 +93,6 @@ class SaleOrder(RecordBase["SaleOrderManager"]):
     * ``invoiced`` - Fully invoiced
     * ``upselling`` - Upselling opportunity
     """
-
-    name: str
-    """The name assigned to the sale order."""
 
     note: str
     """A note attached to the sale order.
@@ -185,7 +187,10 @@ class SaleOrder(RecordBase["SaleOrderManager"]):
         self._env.create_invoices(self.id)
 
 
-class SaleOrderManager(NamedRecordManagerBase[SaleOrder]):
+class SaleOrderManager(
+    RecordManagerBase[SaleOrder],
+    NamedRecordManagerMixin[SaleOrder],
+):
     env_name = "sale.order"
     record_class = SaleOrder
 

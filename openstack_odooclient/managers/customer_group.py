@@ -17,14 +17,16 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from ..base.record import ModelRef, RecordBase
-from ..base.record_manager_named import NamedRecordManagerBase
+from ..base.record.base import RecordBase
+from ..base.record.types import ModelRef
+from ..base.record_manager.base import RecordManagerBase
+from ..mixins.named_record import NamedRecordManagerMixin, NamedRecordMixin
 
 
-class CustomerGroup(RecordBase["CustomerGroupManager"]):
-    name: str
-    """The name of the customer group."""
-
+class CustomerGroup(
+    RecordBase["CustomerGroupManager"],
+    NamedRecordMixin["CustomerGroupManager"],
+):
     partner_ids: Annotated[list[int], ModelRef("partners", Partner)]
     """A list of IDs for the partners that are part
     of this customer group.
@@ -55,7 +57,10 @@ class CustomerGroup(RecordBase["CustomerGroupManager"]):
     """
 
 
-class CustomerGroupManager(NamedRecordManagerBase[CustomerGroup]):
+class CustomerGroupManager(
+    RecordManagerBase[CustomerGroup],
+    NamedRecordManagerMixin[CustomerGroup],
+):
     env_name = "openstack.customer_group"
     record_class = CustomerGroup
 
