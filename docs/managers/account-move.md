@@ -186,7 +186,7 @@ message_main_attachment_id: int | None
 The ID of the main [attachment](attachment.md) on the account move (invoice),
 if there is one.
 
-*Added in version 0.2.0.*
+*Added in version 0.2.1.*
 
 ### `message_main_attachment_name`
 
@@ -197,7 +197,7 @@ message_main_attachment_name: str | None
 The name of the main [attachment](attachment.md) on the account move (invoice),
 if there is one.
 
-*Added in version 0.2.0.*
+*Added in version 0.2.1.*
 
 ### `message_main_attachment`
 
@@ -209,7 +209,7 @@ The main [attachment](attachment.md) on the account move (invoice), if there is 
 This fetches the full record from Odoo once,
 and caches it for subsequent accesses.
 
-*Added in version 0.2.0.*
+*Added in version 0.2.1.*
 
 ### `move_type`
 

@@ -262,7 +262,7 @@ active: bool
 
 Whether or not this product is active (enabled).
 
-*Added in version 0.2.0.*
+*Added in version 0.2.1.*
 
 ### `categ_id`
 
@@ -329,7 +329,7 @@ The Default Code for this product, if set.
 In the OpenStack Integration add-on, this is used to store
 the rated unit for the service product.
 
-*Changed in version 0.2.0*: Made `default_code` optional.
+*Changed in version 0.2.1*: Made `default_code` optional.
 
 ### `description`
 
@@ -373,7 +373,7 @@ sale_ok: bool
 
 Whether or not this product is sellable.
 
-*Added in version 0.2.0.*
+*Added in version 0.2.1.*
 
 ### `uom_id`
 

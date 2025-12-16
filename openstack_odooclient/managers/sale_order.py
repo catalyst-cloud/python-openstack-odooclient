@@ -62,13 +62,13 @@ class SaleOrder(
     invoice_count: int
     """The number of invoices generated from the sale order.
 
-    *Added in version 0.2.0.*
+    *Added in version 0.2.1.*
     """
 
     invoice_ids: Annotated[list[int], ModelRef("invoice_ids", AccountMove)]
     """A list of IDs for invoices generated from the sale order.
 
-    *Added in version 0.2.0.*
+    *Added in version 0.2.1.*
     """
 
     invoices: Annotated[
@@ -80,7 +80,7 @@ class SaleOrder(
     This fetches the full records from Odoo once,
     and caches them for subsequent accesses.
 
-    *Added in version 0.2.0.*
+    *Added in version 0.2.1.*
     """
 
     invoice_status: Literal["no", "to invoice", "invoiced", "upselling"]
@@ -174,7 +174,7 @@ class SaleOrder(
     def action_cancel(self) -> None:
         """Cancel this sale order.
 
-        *Added in version 0.2.0.*
+        *Added in version 0.2.1.*
         """
         self._env.action_cancel(self.id)
 
@@ -197,7 +197,7 @@ class SaleOrderManager(
     def action_cancel(self, sale_order: int | SaleOrder) -> None:
         """Cancel the given sale order.
 
-        *Added in version 0.2.0.*
+        *Added in version 0.2.1.*
 
         :param sale_order: The sale order to cancel
         :type sale_order: int | SaleOrder

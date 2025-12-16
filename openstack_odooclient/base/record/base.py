@@ -195,7 +195,7 @@ class RecordProtocol(Protocol[RM]):
         this method. If you need an updated version of the record
         object, use the `refresh` method to fetch the latest version.
 
-        *Added in version 0.2.0.*
+        *Added in version 0.2.1.*
         """
         ...
 
