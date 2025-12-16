@@ -2707,7 +2707,7 @@ attribute on the Odoo client object.</p>
 </span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="o">...</span>     <span class="n">sale_order</span><span class="o">=</span><span class="mi">1234</span><span class="p">,</span>  <span class="c1"># ID or object</span>
 </span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="o">...</span> <span class="p">)</span>
 </span></code></pre></div>
-<p><em>Added in version 0.2.0.</em></p>
+<p><em>Added in version 0.2.1.</em></p>
 <h4 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h4>
 <table>
 <thead>
@@ -2853,19 +2853,19 @@ and caches it for subsequent accesses.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">invoice_count</span><span class="p">:</span> <span class="nb">int</span>
 </span></code></pre></div>
 <p>The number of <a href="account-move.html">invoices (account moves)</a> generated from the sale order.</p>
-<p><em>Added in version 0.2.0.</em></p>
+<p><em>Added in version 0.2.1.</em></p>
 <h3 id="invoice_ids"><code>invoice_ids</code><a class="headerlink" href="#invoice_ids" title="Permanent link">&para;</a></h3>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="n">invoice_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
 </span></code></pre></div>
 <p>A list of IDs for <a href="account-move.html">invoices (account moves)</a> generated from the sale order.</p>
-<p><em>Added in version 0.2.0.</em></p>
+<p><em>Added in version 0.2.1.</em></p>
 <h3 id="invoices"><code>invoices</code><a class="headerlink" href="#invoices" title="Permanent link">&para;</a></h3>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">invoices</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AccountMove</span><span class="p">]</span>
 </span></code></pre></div>
 <p>The <a href="account-move.html">invoices (account moves)</a> generated from the sale order.</p>
 <p>This fetches the full records from Odoo once,
 and caches them for subsequent accesses.</p>
-<p><em>Added in version 0.2.0.</em></p>
+<p><em>Added in version 0.2.1.</em></p>
 <h3 id="invoice_status"><code>invoice_status</code><a class="headerlink" href="#invoice_status" title="Permanent link">&para;</a></h3>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="n">invoice_status</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="s2">&quot;to invoice&quot;</span><span class="p">,</span> <span class="s2">&quot;invoiced&quot;</span><span class="p">,</span> <span class="s2">&quot;upselling&quot;</span><span class="p">]</span>
 </span></code></pre></div>
@@ -2968,7 +2968,7 @@ and caches it for subsequent accesses.</p>
 </span><span id="__span-36-10"><a id="__codelineno-36-10" name="__codelineno-36-10" href="#__codelineno-36-10"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">sale_order</span> <span class="o">=</span> <span class="n">odoo_client</span><span class="o">.</span><span class="n">sale_orders</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
 </span><span id="__span-36-11"><a id="__codelineno-36-11" name="__codelineno-36-11" href="#__codelineno-36-11"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">sale_order</span><span class="o">.</span><span class="n">action_cancel</span><span class="p">()</span>
 </span></code></pre></div>
-<p><em>Added in version 0.2.0.</em></p>
+<p><em>Added in version 0.2.1.</em></p>
 <h3 id="action_confirm_1"><code>action_confirm</code><a class="headerlink" href="#action_confirm_1" title="Permanent link">&para;</a></h3>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a><span class="n">action_confirm</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </span></code></pre></div>
