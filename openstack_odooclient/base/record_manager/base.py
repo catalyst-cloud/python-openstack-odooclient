@@ -93,6 +93,7 @@ class RecordManagerBase(RecordManagerProtocol[R], Generic[R]):
         self._client_ = client
         # Assign this record manager object as the manager
         # responsible for the configured record class in the client.
+        self._client._env_manager_mapping[self.env_name] = self
         self._client._record_manager_mapping[self.record_class] = self
         self._record_type_hints = MappingProxyType(
             get_type_hints(

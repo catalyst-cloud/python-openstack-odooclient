@@ -932,6 +932,60 @@ class CustomRecordManager(
 For more information on using record managers with unique `code` fields,
 see [Coded Record Managers](index.md#coded-record-managers).
 
+#### Records with Attachments
+
+If your record can have [attachments](attachment.md) associated with it,
+you can use the `RecordWithAttachmentMixin` mixin to define the associated
+fields used to reference the attachment record.
+
+```python
+from __future__ import annotations
+
+from openstack_odooclient import (
+    RecordBase,
+    RecordManagerBase,
+    RecordWithAttachmentMixin,
+)
+
+class CustomRecord(
+    RecordBase["CustomRecordManager"],
+    RecordWithAttachmentMixin["CustomRecordManager"],
+):
+    custom_field: str
+    """Description of the field."""
+
+    # Added by RecordWithAttachmentMixin:
+    #
+    # message_main_attachment_id: Annotated[
+    #     int | None,
+    #     ModelRef("message_main_attachment_id", Attachment),
+    # ]
+    # """The ID of the main attachment on the record, if there is one."""
+    #
+    # message_main_attachment_name: Annotated[
+    #     str | None,
+    #     ModelRef("message_main_attachment_name", Attachment),
+    # ]
+    # """The name of the main attachment on the record, if there is one."""
+    #
+    # message_main_attachment: Annotated[
+    #     Attachment | None,
+    #     ModelRef("message_main_attachment", Attachment),
+    # ]
+    # """The main attachment on the record, if there is one.
+    #
+    # This fetches the full record from Odoo once,
+    # and caches it for subsequent accesses.
+    # """
+
+class CustomRecordManager(RecordManagerBase[CustomRecord]):
+    env_name = "custom.record"
+    record_class = CustomRecord
+```
+
+For more information on using attachments,
+see [Records with Attachments](index.md#records-with-attachments).
+
 ### Creating Mixins
 
 It is possible to create your own custom mixins to incorporate into
