@@ -113,6 +113,6 @@ jobs:
       - name: Create virtual environment
         run: uv sync --only-dev
       - name: Publish the docs to GitHub Pages
-        run: uv run mike deploy --push develop
+        run: uv run mike deploy --push --update-aliases "${{ github.ref_name }}" latest
       - name: List available docs versions
         run: uv run mike list
