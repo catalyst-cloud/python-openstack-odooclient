@@ -480,6 +480,8 @@
       
         
       
+        
+      
     
     
     
@@ -578,6 +580,34 @@
     
   
     Account Move (Invoice) Lines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="attachment.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Attachments
   
 
     
@@ -2251,6 +2281,117 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#records-with-attachments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Records with Attachments
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Records with Attachments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#downloading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Downloading
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uploading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Uploading
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluating-checksums" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evaluating checksums
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#in-place-updates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        In-place updates
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#attributes-and-methods_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Attributes and Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Attributes and Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#message_main_attachment_id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        message_main_attachment_id
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#message_main_attachment_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        message_main_attachment_name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#message_main_attachment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        message_main_attachment
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#custom-managers-and-record-types" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2349,6 +2490,7 @@ used to query specific record types, or create one or more new records of that t
 <ul>
 <li><a href="account-move.html">Account Moves (Invoices)</a></li>
 <li><a href="account-move-line.html">Account Move (Invoice) Lines</a></li>
+<li><a href="attachment.html">Attachments</a></li>
 <li><a href="company.html">Companies</a></li>
 <li><a href="credit.html">OpenStack Credits</a></li>
 <li><a href="credit-transaction.html">OpenStack Credit Transactions</a></li>
@@ -3938,6 +4080,148 @@ a new object is returned with the up-to-date field values.</p>
 </span><span id="__span-83-6"><a id="__codelineno-83-6" name="__codelineno-83-6" href="#__codelineno-83-6"></a><span class="o">...</span>
 </span><span id="__span-83-7"><a id="__codelineno-83-7" name="__codelineno-83-7" href="#__codelineno-83-7"></a><span class="n">openstack_odooclient</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">RecordNotFoundError</span><span class="p">:</span> <span class="n">User</span> <span class="n">record</span> <span class="ow">not</span> <span class="n">found</span> <span class="k">with</span> <span class="n">ID</span><span class="p">:</span> <span class="mi">1234</span>
 </span></code></pre></div>
+<h2 id="records-with-attachments">Records with Attachments<a class="headerlink" href="#records-with-attachments" title="Permanent link">&para;</a></h2>
+<p>Some records can have <a href="attachment.html">attachments</a> uploaded and associated with them.</p>
+<ul>
+<li><a href="account-move.html">Account Moves (Invoices)</a></li>
+</ul>
+<p>When fetching an attachment record from Odoo, the contents of the attachment
+(available using the <code>datas</code> field) are not fetched by default. This is to
+ensure that downloading only takes place when requested, preventing
+unexpected large downloads.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-84-1"><a id="__codelineno-84-1" name="__codelineno-84-1" href="#__codelineno-84-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">openstack_odooclient</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span> <span class="k">as</span> <span class="n">OdooClient</span>
+</span><span id="__span-84-2"><a id="__codelineno-84-2" name="__codelineno-84-2" href="#__codelineno-84-2"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">odoo_client</span> <span class="o">=</span> <span class="n">OdooClient</span><span class="p">(</span>
+</span><span id="__span-84-3"><a id="__codelineno-84-3" name="__codelineno-84-3" href="#__codelineno-84-3"></a><span class="o">...</span>     <span class="n">hostname</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+</span><span id="__span-84-4"><a id="__codelineno-84-4" name="__codelineno-84-4" href="#__codelineno-84-4"></a><span class="o">...</span>     <span class="n">port</span><span class="o">=</span><span class="mi">8069</span><span class="p">,</span>
+</span><span id="__span-84-5"><a id="__codelineno-84-5" name="__codelineno-84-5" href="#__codelineno-84-5"></a><span class="o">...</span>     <span class="n">protocol</span><span class="o">=</span><span class="s2">&quot;jsonrpc&quot;</span><span class="p">,</span>
+</span><span id="__span-84-6"><a id="__codelineno-84-6" name="__codelineno-84-6" href="#__codelineno-84-6"></a><span class="o">...</span>     <span class="n">database</span><span class="o">=</span><span class="s2">&quot;odoodb&quot;</span><span class="p">,</span>
+</span><span id="__span-84-7"><a id="__codelineno-84-7" name="__codelineno-84-7" href="#__codelineno-84-7"></a><span class="o">...</span>     <span class="n">user</span><span class="o">=</span><span class="s2">&quot;test-user&quot;</span><span class="p">,</span>
+</span><span id="__span-84-8"><a id="__codelineno-84-8" name="__codelineno-84-8" href="#__codelineno-84-8"></a><span class="o">...</span>     <span class="n">password</span><span class="o">=</span><span class="s2">&quot;&lt;password&gt;&quot;</span><span class="p">,</span>
+</span><span id="__span-84-9"><a id="__codelineno-84-9" name="__codelineno-84-9" href="#__codelineno-84-9"></a><span class="o">...</span> <span class="p">)</span>
+</span><span id="__span-84-10"><a id="__codelineno-84-10" name="__codelineno-84-10" href="#__codelineno-84-10"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">account_move</span> <span class="o">=</span> <span class="n">odoo_client</span><span class="o">.</span><span class="n">account_moves</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+</span><span id="__span-84-11"><a id="__codelineno-84-11" name="__codelineno-84-11" href="#__codelineno-84-11"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">attachment</span> <span class="o">=</span> <span class="n">odoo_client</span><span class="o">.</span><span class="n">attachments</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+</span><span id="__span-84-12"><a id="__codelineno-84-12" name="__codelineno-84-12" href="#__codelineno-84-12"></a><span class="o">...</span>     <span class="n">account_move</span><span class="o">.</span><span class="n">message_main_attachment_id</span><span class="p">,</span>
+</span><span id="__span-84-13"><a id="__codelineno-84-13" name="__codelineno-84-13" href="#__codelineno-84-13"></a><span class="o">...</span> <span class="p">)</span>
+</span><span id="__span-84-14"><a id="__codelineno-84-14" name="__codelineno-84-14" href="#__codelineno-84-14"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">attachment</span>
+</span><span id="__span-84-15"><a id="__codelineno-84-15" name="__codelineno-84-15" href="#__codelineno-84-15"></a><span class="n">Attachment</span><span class="p">(</span><span class="n">record</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="mi">5678</span><span class="p">,</span> <span class="o">...</span><span class="p">},</span> <span class="n">fields</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</span><span id="__span-84-16"><a id="__codelineno-84-16" name="__codelineno-84-16" href="#__codelineno-84-16"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">attachment</span><span class="o">.</span><span class="n">datas</span>  <span class="c1"># AttributeError</span>
+</span></code></pre></div>
+<p>Common attachment operations for binary attachments
+(attachments with a <code>type</code> of <code>binary</code>) are documented below.</p>
+<p>In addition to regular binary attachments, Odoo
+also supports URL-referenced attachments and a number
+of other useful fields; for more information see the
+manager page for <a href="attachment.html">attachments</a>.</p>
+<h3 id="downloading">Downloading<a class="headerlink" href="#downloading" title="Permanent link">&para;</a></h3>
+<p>Attachments can be downloaded by simply calling the <code>download</code> method
+on an attachment object.</p>
+<p>The contents of the attachment will be returned as a <code>bytes</code> object.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-85-1"><a id="__codelineno-85-1" name="__codelineno-85-1" href="#__codelineno-85-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">openstack_odooclient</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span> <span class="k">as</span> <span class="n">OdooClient</span>
+</span><span id="__span-85-2"><a id="__codelineno-85-2" name="__codelineno-85-2" href="#__codelineno-85-2"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">odoo_client</span> <span class="o">=</span> <span class="n">OdooClient</span><span class="p">(</span>
+</span><span id="__span-85-3"><a id="__codelineno-85-3" name="__codelineno-85-3" href="#__codelineno-85-3"></a><span class="o">...</span>     <span class="n">hostname</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+</span><span id="__span-85-4"><a id="__codelineno-85-4" name="__codelineno-85-4" href="#__codelineno-85-4"></a><span class="o">...</span>     <span class="n">port</span><span class="o">=</span><span class="mi">8069</span><span class="p">,</span>
+</span><span id="__span-85-5"><a id="__codelineno-85-5" name="__codelineno-85-5" href="#__codelineno-85-5"></a><span class="o">...</span>     <span class="n">protocol</span><span class="o">=</span><span class="s2">&quot;jsonrpc&quot;</span><span class="p">,</span>
+</span><span id="__span-85-6"><a id="__codelineno-85-6" name="__codelineno-85-6" href="#__codelineno-85-6"></a><span class="o">...</span>     <span class="n">database</span><span class="o">=</span><span class="s2">&quot;odoodb&quot;</span><span class="p">,</span>
+</span><span id="__span-85-7"><a id="__codelineno-85-7" name="__codelineno-85-7" href="#__codelineno-85-7"></a><span class="o">...</span>     <span class="n">user</span><span class="o">=</span><span class="s2">&quot;test-user&quot;</span><span class="p">,</span>
+</span><span id="__span-85-8"><a id="__codelineno-85-8" name="__codelineno-85-8" href="#__codelineno-85-8"></a><span class="o">...</span>     <span class="n">password</span><span class="o">=</span><span class="s2">&quot;&lt;password&gt;&quot;</span><span class="p">,</span>
+</span><span id="__span-85-9"><a id="__codelineno-85-9" name="__codelineno-85-9" href="#__codelineno-85-9"></a><span class="o">...</span> <span class="p">)</span>
+</span><span id="__span-85-10"><a id="__codelineno-85-10" name="__codelineno-85-10" href="#__codelineno-85-10"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">account_move</span> <span class="o">=</span> <span class="n">odoo_client</span><span class="o">.</span><span class="n">account_moves</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+</span><span id="__span-85-11"><a id="__codelineno-85-11" name="__codelineno-85-11" href="#__codelineno-85-11"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">attachment</span> <span class="o">=</span> <span class="n">odoo_client</span><span class="o">.</span><span class="n">attachments</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+</span><span id="__span-85-12"><a id="__codelineno-85-12" name="__codelineno-85-12" href="#__codelineno-85-12"></a><span class="o">...</span>     <span class="n">account_move</span><span class="o">.</span><span class="n">message_main_attachment_id</span><span class="p">,</span>
+</span><span id="__span-85-13"><a id="__codelineno-85-13" name="__codelineno-85-13" href="#__codelineno-85-13"></a><span class="o">...</span> <span class="p">)</span>
+</span><span id="__span-85-14"><a id="__codelineno-85-14" name="__codelineno-85-14" href="#__codelineno-85-14"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">attachment</span><span class="o">.</span><span class="n">download</span><span class="p">()</span>
+</span><span id="__span-85-15"><a id="__codelineno-85-15" name="__codelineno-85-15" href="#__codelineno-85-15"></a><span class="sa">b</span><span class="s1">&#39;Hello, world!&#39;</span>
+</span></code></pre></div>
+<h3 id="uploading">Uploading<a class="headerlink" href="#uploading" title="Permanent link">&para;</a></h3>
+<p>New attachments can be uploaded and associated with a record
+using the <code>upload</code> method.</p>
+<p>For more information, see the documentation for the
+<a href="attachment.html#upload"><code>upload</code></a> method.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-86-1"><a id="__codelineno-86-1" name="__codelineno-86-1" href="#__codelineno-86-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">openstack_odooclient</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span> <span class="k">as</span> <span class="n">OdooClient</span>
+</span><span id="__span-86-2"><a id="__codelineno-86-2" name="__codelineno-86-2" href="#__codelineno-86-2"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">odoo_client</span> <span class="o">=</span> <span class="n">OdooClient</span><span class="p">(</span>
+</span><span id="__span-86-3"><a id="__codelineno-86-3" name="__codelineno-86-3" href="#__codelineno-86-3"></a><span class="o">...</span>     <span class="n">hostname</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+</span><span id="__span-86-4"><a id="__codelineno-86-4" name="__codelineno-86-4" href="#__codelineno-86-4"></a><span class="o">...</span>     <span class="n">port</span><span class="o">=</span><span class="mi">8069</span><span class="p">,</span>
+</span><span id="__span-86-5"><a id="__codelineno-86-5" name="__codelineno-86-5" href="#__codelineno-86-5"></a><span class="o">...</span>     <span class="n">protocol</span><span class="o">=</span><span class="s2">&quot;jsonrpc&quot;</span><span class="p">,</span>
+</span><span id="__span-86-6"><a id="__codelineno-86-6" name="__codelineno-86-6" href="#__codelineno-86-6"></a><span class="o">...</span>     <span class="n">database</span><span class="o">=</span><span class="s2">&quot;odoodb&quot;</span><span class="p">,</span>
+</span><span id="__span-86-7"><a id="__codelineno-86-7" name="__codelineno-86-7" href="#__codelineno-86-7"></a><span class="o">...</span>     <span class="n">user</span><span class="o">=</span><span class="s2">&quot;test-user&quot;</span><span class="p">,</span>
+</span><span id="__span-86-8"><a id="__codelineno-86-8" name="__codelineno-86-8" href="#__codelineno-86-8"></a><span class="o">...</span>     <span class="n">password</span><span class="o">=</span><span class="s2">&quot;&lt;password&gt;&quot;</span><span class="p">,</span>
+</span><span id="__span-86-9"><a id="__codelineno-86-9" name="__codelineno-86-9" href="#__codelineno-86-9"></a><span class="o">...</span> <span class="p">)</span>
+</span><span id="__span-86-10"><a id="__codelineno-86-10" name="__codelineno-86-10" href="#__codelineno-86-10"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">contents</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;Hello, world!&quot;</span>
+</span><span id="__span-86-11"><a id="__codelineno-86-11" name="__codelineno-86-11" href="#__codelineno-86-11"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">account_move</span> <span class="o">=</span> <span class="n">odoo_client</span><span class="o">.</span><span class="n">account_moves</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+</span><span id="__span-86-12"><a id="__codelineno-86-12" name="__codelineno-86-12" href="#__codelineno-86-12"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">odoo_client</span><span class="o">.</span><span class="n">attachments</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span>
+</span><span id="__span-86-13"><a id="__codelineno-86-13" name="__codelineno-86-13" href="#__codelineno-86-13"></a><span class="o">...</span>     <span class="s2">&quot;example.txt&quot;</span><span class="p">,</span>
+</span><span id="__span-86-14"><a id="__codelineno-86-14" name="__codelineno-86-14" href="#__codelineno-86-14"></a><span class="o">...</span>     <span class="n">contents</span><span class="p">,</span>
+</span><span id="__span-86-15"><a id="__codelineno-86-15" name="__codelineno-86-15" href="#__codelineno-86-15"></a><span class="o">...</span>     <span class="n">record</span><span class="o">=</span><span class="n">account_move</span><span class="p">,</span>
+</span><span id="__span-86-16"><a id="__codelineno-86-16" name="__codelineno-86-16" href="#__codelineno-86-16"></a><span class="o">...</span> <span class="p">)</span>
+</span><span id="__span-86-17"><a id="__codelineno-86-17" name="__codelineno-86-17" href="#__codelineno-86-17"></a><span class="mi">5678</span>
+</span></code></pre></div>
+<h3 id="evaluating-checksums">Evaluating checksums<a class="headerlink" href="#evaluating-checksums" title="Permanent link">&para;</a></h3>
+<p>Attachments have a <code>checksum</code> field, which is a SHA-1 hash of the attachment
+stored by Odoo that can be used to efficiently verify the integrity of the
+uploaded attachment without redownloading the contents.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-87-1"><a id="__codelineno-87-1" name="__codelineno-87-1" href="#__codelineno-87-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+</span><span id="__span-87-2"><a id="__codelineno-87-2" name="__codelineno-87-2" href="#__codelineno-87-2"></a><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">openstack_odooclient</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span> <span class="k">as</span> <span class="n">OdooClient</span>
+</span><span id="__span-87-3"><a id="__codelineno-87-3" name="__codelineno-87-3" href="#__codelineno-87-3"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">odoo_client</span> <span class="o">=</span> <span class="n">OdooClient</span><span class="p">(</span>
+</span><span id="__span-87-4"><a id="__codelineno-87-4" name="__codelineno-87-4" href="#__codelineno-87-4"></a><span class="o">...</span>     <span class="n">hostname</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+</span><span id="__span-87-5"><a id="__codelineno-87-5" name="__codelineno-87-5" href="#__codelineno-87-5"></a><span class="o">...</span>     <span class="n">port</span><span class="o">=</span><span class="mi">8069</span><span class="p">,</span>
+</span><span id="__span-87-6"><a id="__codelineno-87-6" name="__codelineno-87-6" href="#__codelineno-87-6"></a><span class="o">...</span>     <span class="n">protocol</span><span class="o">=</span><span class="s2">&quot;jsonrpc&quot;</span><span class="p">,</span>
+</span><span id="__span-87-7"><a id="__codelineno-87-7" name="__codelineno-87-7" href="#__codelineno-87-7"></a><span class="o">...</span>     <span class="n">database</span><span class="o">=</span><span class="s2">&quot;odoodb&quot;</span><span class="p">,</span>
+</span><span id="__span-87-8"><a id="__codelineno-87-8" name="__codelineno-87-8" href="#__codelineno-87-8"></a><span class="o">...</span>     <span class="n">user</span><span class="o">=</span><span class="s2">&quot;test-user&quot;</span><span class="p">,</span>
+</span><span id="__span-87-9"><a id="__codelineno-87-9" name="__codelineno-87-9" href="#__codelineno-87-9"></a><span class="o">...</span>     <span class="n">password</span><span class="o">=</span><span class="s2">&quot;&lt;password&gt;&quot;</span><span class="p">,</span>
+</span><span id="__span-87-10"><a id="__codelineno-87-10" name="__codelineno-87-10" href="#__codelineno-87-10"></a><span class="o">...</span> <span class="p">)</span>
+</span><span id="__span-87-11"><a id="__codelineno-87-11" name="__codelineno-87-11" href="#__codelineno-87-11"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">contents</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;Hello, world!&quot;</span>
+</span><span id="__span-87-12"><a id="__codelineno-87-12" name="__codelineno-87-12" href="#__codelineno-87-12"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">account_move</span> <span class="o">=</span> <span class="n">odoo_client</span><span class="o">.</span><span class="n">account_moves</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+</span><span id="__span-87-13"><a id="__codelineno-87-13" name="__codelineno-87-13" href="#__codelineno-87-13"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">attachment_id</span> <span class="o">=</span> <span class="n">odoo_client</span><span class="o">.</span><span class="n">attachments</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span>
+</span><span id="__span-87-14"><a id="__codelineno-87-14" name="__codelineno-87-14" href="#__codelineno-87-14"></a><span class="o">...</span>     <span class="s2">&quot;example.txt&quot;</span><span class="p">,</span>
+</span><span id="__span-87-15"><a id="__codelineno-87-15" name="__codelineno-87-15" href="#__codelineno-87-15"></a><span class="o">...</span>     <span class="n">contents</span><span class="p">,</span>
+</span><span id="__span-87-16"><a id="__codelineno-87-16" name="__codelineno-87-16" href="#__codelineno-87-16"></a><span class="o">...</span>     <span class="n">record</span><span class="o">=</span><span class="n">account_move</span><span class="p">,</span>
+</span><span id="__span-87-17"><a id="__codelineno-87-17" name="__codelineno-87-17" href="#__codelineno-87-17"></a><span class="o">...</span> <span class="p">)</span>
+</span><span id="__span-87-18"><a id="__codelineno-87-18" name="__codelineno-87-18" href="#__codelineno-87-18"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">attachment</span><span class="o">.</span><span class="n">checksum</span> <span class="o">==</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+</span><span id="__span-87-19"><a id="__codelineno-87-19" name="__codelineno-87-19" href="#__codelineno-87-19"></a><span class="kc">True</span>
+</span></code></pre></div>
+<h3 id="in-place-updates">In-place updates<a class="headerlink" href="#in-place-updates" title="Permanent link">&para;</a></h3>
+<p>If you'd like to update an attachment in-place without creating
+a new record (and then having to delete the old one), this can
+be done using the <code>reupload</code> method on the attachment object.</p>
+<p>For more information, see the documentation for the
+<a href="attachment.html#reupload_1"><code>reupload</code></a> method.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-88-1"><a id="__codelineno-88-1" name="__codelineno-88-1" href="#__codelineno-88-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">openstack_odooclient</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span> <span class="k">as</span> <span class="n">OdooClient</span>
+</span><span id="__span-88-2"><a id="__codelineno-88-2" name="__codelineno-88-2" href="#__codelineno-88-2"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">odoo_client</span> <span class="o">=</span> <span class="n">OdooClient</span><span class="p">(</span>
+</span><span id="__span-88-3"><a id="__codelineno-88-3" name="__codelineno-88-3" href="#__codelineno-88-3"></a><span class="o">...</span>     <span class="n">hostname</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+</span><span id="__span-88-4"><a id="__codelineno-88-4" name="__codelineno-88-4" href="#__codelineno-88-4"></a><span class="o">...</span>     <span class="n">port</span><span class="o">=</span><span class="mi">8069</span><span class="p">,</span>
+</span><span id="__span-88-5"><a id="__codelineno-88-5" name="__codelineno-88-5" href="#__codelineno-88-5"></a><span class="o">...</span>     <span class="n">protocol</span><span class="o">=</span><span class="s2">&quot;jsonrpc&quot;</span><span class="p">,</span>
+</span><span id="__span-88-6"><a id="__codelineno-88-6" name="__codelineno-88-6" href="#__codelineno-88-6"></a><span class="o">...</span>     <span class="n">database</span><span class="o">=</span><span class="s2">&quot;odoodb&quot;</span><span class="p">,</span>
+</span><span id="__span-88-7"><a id="__codelineno-88-7" name="__codelineno-88-7" href="#__codelineno-88-7"></a><span class="o">...</span>     <span class="n">user</span><span class="o">=</span><span class="s2">&quot;test-user&quot;</span><span class="p">,</span>
+</span><span id="__span-88-8"><a id="__codelineno-88-8" name="__codelineno-88-8" href="#__codelineno-88-8"></a><span class="o">...</span>     <span class="n">password</span><span class="o">=</span><span class="s2">&quot;&lt;password&gt;&quot;</span><span class="p">,</span>
+</span><span id="__span-88-9"><a id="__codelineno-88-9" name="__codelineno-88-9" href="#__codelineno-88-9"></a><span class="o">...</span> <span class="p">)</span>
+</span><span id="__span-88-10"><a id="__codelineno-88-10" name="__codelineno-88-10" href="#__codelineno-88-10"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">account_move</span> <span class="o">=</span> <span class="n">odoo_client</span><span class="o">.</span><span class="n">account_moves</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+</span><span id="__span-88-11"><a id="__codelineno-88-11" name="__codelineno-88-11" href="#__codelineno-88-11"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">attachment</span> <span class="o">=</span> <span class="n">odoo_client</span><span class="o">.</span><span class="n">attachments</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+</span><span id="__span-88-12"><a id="__codelineno-88-12" name="__codelineno-88-12" href="#__codelineno-88-12"></a><span class="o">...</span>     <span class="n">account_move</span><span class="o">.</span><span class="n">message_main_attachment_id</span><span class="p">,</span>
+</span><span id="__span-88-13"><a id="__codelineno-88-13" name="__codelineno-88-13" href="#__codelineno-88-13"></a><span class="o">...</span> <span class="p">)</span>
+</span><span id="__span-88-14"><a id="__codelineno-88-14" name="__codelineno-88-14" href="#__codelineno-88-14"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">attachment</span><span class="o">.</span><span class="n">download</span><span class="p">()</span>
+</span><span id="__span-88-15"><a id="__codelineno-88-15" name="__codelineno-88-15" href="#__codelineno-88-15"></a><span class="sa">b</span><span class="s1">&#39;Hello, world!&#39;</span>
+</span><span id="__span-88-16"><a id="__codelineno-88-16" name="__codelineno-88-16" href="#__codelineno-88-16"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">attachment</span><span class="o">.</span><span class="n">reupload</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;Goodbye, world!&quot;</span><span class="p">)</span>
+</span><span id="__span-88-17"><a id="__codelineno-88-17" name="__codelineno-88-17" href="#__codelineno-88-17"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">attachment</span> <span class="o">=</span> <span class="n">attachment</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+</span><span id="__span-88-18"><a id="__codelineno-88-18" name="__codelineno-88-18" href="#__codelineno-88-18"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">attachment</span><span class="o">.</span><span class="n">download</span><span class="p">()</span>
+</span><span id="__span-88-19"><a id="__codelineno-88-19" name="__codelineno-88-19" href="#__codelineno-88-19"></a><span class="sa">b</span><span class="s1">&#39;Goodbye, world!&#39;</span>
+</span></code></pre></div>
+<h3 id="attributes-and-methods_1">Attributes and Methods<a class="headerlink" href="#attributes-and-methods_1" title="Permanent link">&para;</a></h3>
+<p>Record types that can have attachments associated with them
+have the following fields added.</p>
+<h4 id="message_main_attachment_id"><code>message_main_attachment_id</code><a class="headerlink" href="#message_main_attachment_id" title="Permanent link">&para;</a></h4>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-89-1"><a id="__codelineno-89-1" name="__codelineno-89-1" href="#__codelineno-89-1"></a><span class="n">message_main_attachment_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
+</span></code></pre></div>
+<p>The ID of the main <a href="attachment.html">attachment</a> on the record, if there is one.</p>
+<h4 id="message_main_attachment_name"><code>message_main_attachment_name</code><a class="headerlink" href="#message_main_attachment_name" title="Permanent link">&para;</a></h4>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-90-1"><a id="__codelineno-90-1" name="__codelineno-90-1" href="#__codelineno-90-1"></a><span class="n">message_main_attachment_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+</span></code></pre></div>
+<p>The name of the main <a href="attachment.html">attachment</a> on the record, if there is one.</p>
+<h4 id="message_main_attachment"><code>message_main_attachment</code><a class="headerlink" href="#message_main_attachment" title="Permanent link">&para;</a></h4>
+<p><div class="language-python highlight"><pre><span></span><code><span id="__span-91-1"><a id="__codelineno-91-1" name="__codelineno-91-1" href="#__codelineno-91-1"></a><span class="n">message_main_attachment</span><span class="p">:</span> <span class="n">Attachment</span> <span class="o">|</span> <span class="kc">None</span>
+</span></code></pre></div>
+The main <a href="attachment.html">attachment</a> on the record, if there is one.</p>
+<p>This fetches the full record from Odoo once,
+and caches it for subsequent accesses.</p>
 <h2 id="custom-managers-and-record-types">Custom Managers and Record Types<a class="headerlink" href="#custom-managers-and-record-types" title="Permanent link">&para;</a></h2>
 <p>The OpenStack Odoo Client library supports defining new record types and adding
 managers for them to the Odoo client object, allowing for adding support for custom Odoo add-ons.</p>
