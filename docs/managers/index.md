@@ -803,7 +803,7 @@ for example, when updating a model ref, either its ID
 (e.g. ``user_id``) or object (e.g. ``user``) field names
 can be used.
 
-*Added in version 0.2.0.*
+*Added in version 0.2.1.*
 
 #### Parameters
 
@@ -1427,7 +1427,7 @@ can be used.
     If you need an updated version of the record object,
     use the [`refresh`](#refresh) method to fetch the latest version.
 
-*Added in version 0.2.0.*
+*Added in version 0.2.1.*
 
 ##### Parameters
 

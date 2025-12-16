@@ -173,7 +173,7 @@ class ClientBase:
         This is populated by the manager classes themselves when created,
         and used by the ``Attachment.res_model_manager`` field.
 
-        *Added in version 0.2.0.*
+        *Added in version 0.2.1.*
         """
         self._record_manager_mapping: dict[
             Type[RecordBase[Any]],

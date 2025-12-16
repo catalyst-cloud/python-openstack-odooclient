@@ -1,6 +1,6 @@
 # Attachments
 
-*Added in version 0.2.0.*
+*Added in version 0.2.1.*
 
 This page documents how to use the manager and record objects
 for attachments.

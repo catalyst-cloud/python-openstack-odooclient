@@ -380,7 +380,7 @@ class RecordManagerProtocol(Protocol[R]):
         When ``optional`` is ``True``, ``None`` is returned if a record
         with the given name does not exist, instead of raising an error.
 
-        *Added in version 0.2.0.*
+        *Added in version 0.2.1.*
 
         :param field: The unique field name to query by
         :type field: str
@@ -604,7 +604,7 @@ class RecordManagerProtocol(Protocol[R]):
         when updating a model ref, either its ID (e.g. ``user_id``)
         or object (e.g. ``user``) field names can be used.
 
-        *Added in version 0.2.0.*
+        *Added in version 0.2.1.*
 
         :param record: The record to update (object or ID)
         :type record: int | R

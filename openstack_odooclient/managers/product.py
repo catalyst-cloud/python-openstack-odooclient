@@ -29,7 +29,7 @@ class Product(RecordBase["ProductManager"]):
     active: bool
     """Whether or not this product is active (enabled).
 
-    *Added in version 0.2.0.*
+    *Added in version 0.2.1.*
     """
 
     categ_id: Annotated[int, ModelRef("categ_id", ProductCategory)]
@@ -64,7 +64,7 @@ class Product(RecordBase["ProductManager"]):
     In the OpenStack Integration add-on, this is used to store
     the rated unit for the service product.
 
-    *Changed in version 0.2.0*: Made `default_code` optional.
+    *Changed in version 0.2.1*: Made `default_code` optional.
     """
 
     description: str
@@ -85,7 +85,7 @@ class Product(RecordBase["ProductManager"]):
     sale_ok: bool
     """Whether or not this product is sellable.
 
-    *Added in version 0.2.0.*
+    *Added in version 0.2.1.*
     """
 
     uom_id: Annotated[int, ModelRef("uom_id", Uom)]
