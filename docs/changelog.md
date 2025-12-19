@@ -2,6 +2,13 @@
 
 <!-- towncrier release notes start -->
 
+## [0.2.2](https://github.com/catalyst-cloud/python-openstack-odooclient/releases/tag/0.2.2) - 2025-12-19
+
+### Changed
+
+- Update dependencies ([#18](https://github.com/catalyst-cloud/python-openstack-odooclient/pull/18))
+
+
 ## [0.2.1](https://github.com/catalyst-cloud/python-openstack-odooclient/releases/tag/0.2.1) - 2025-12-16
 
 ### Removed
