@@ -1,7 +1,7 @@
 ---
 name: Release
 about: Tag a new release
-title: 'Tag v<version>'
+title: Tag v<version>
 labels: ''
 assignees: ''
 
@@ -43,6 +43,6 @@ assignees: ''
    ```bash
    git tag ${VERSION} && git push origin ${VERSION}
    ```
-1. [ ] Confirm that the new version was released to PyPI: https://pypi.org/project/python-openstack-odooclient
+1. [ ] Confirm that the new version was released to PyPI: https://pypi.org/project/openstack-odooclient
 1. [ ] Confirm that a new release was created on GitHub, and that the release notes are correct: https://github.com/catalyst-cloud/python-openstack-odooclient/releases
 1. [ ] Confirm that the docs website has been updated, and the Changelog page has the latest changes: https://catalyst-cloud.github.io/python-openstack-odooclient
