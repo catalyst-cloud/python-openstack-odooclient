@@ -375,6 +375,40 @@ Whether or not this product is sellable.
 
 *Added in version 0.2.1.*
 
+### `tax_ids`
+
+```python
+tax_ids: list[int]
+```
+
+An alias for [``taxes_id``](#taxes_id).
+
+*Added in version 0.2.3.*
+
+### `taxes_id`
+
+```python
+taxes_id: list[int]
+```
+
+The list of IDs for the default taxes that are used
+when selling this product.
+
+*Added in version 0.2.3.*
+
+### `taxes`
+
+```python
+taxes: list[Tax]
+```
+
+The list of default taxes used when selling this product.
+
+This fetches the full records from Odoo once,
+and caches them for subsequent accesses.
+
+*Added in version 0.2.3.*
+
 ### `uom_id`
 
 ```python

@@ -18,7 +18,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Annotated, Any, Literal, overload
 
 from ..base.record.base import RecordBase
-from ..base.record.types import ModelRef
+from ..base.record.types import FieldAlias, ModelRef
 from ..base.record_manager.base import RecordManagerBase
 
 if TYPE_CHECKING:
@@ -86,6 +86,28 @@ class Product(RecordBase["ProductManager"]):
     """Whether or not this product is sellable.
 
     *Added in version 0.2.1.*
+    """
+
+    tax_ids: Annotated[list[int], FieldAlias("taxes_id")]
+    """An alias for ``taxes_id``.
+
+    *Added in version 0.2.3.*
+    """
+
+    taxes_id: Annotated[list[int], ModelRef("taxes_id", Tax)]
+    """The list of IDs for the default taxes that are used
+    when selling this product.
+
+    *Added in version 0.2.3.*
+    """
+
+    taxes: Annotated[list[Tax], ModelRef("taxes_id", Tax)]
+    """The list of default taxes used when selling this product.
+
+    This fetches the full records from Odoo once,
+    and caches them for subsequent accesses.
+
+    *Added in version 0.2.3.*
     """
 
     uom_id: Annotated[int, ModelRef("uom_id", Uom)]
@@ -366,4 +388,5 @@ class ProductManager(RecordManagerBase[Product]):
 # NOTE(callumdickinson): Import here to make sure circular imports work.
 from .company import Company  # noqa: E402
 from .product_category import ProductCategory  # noqa: E402
+from .tax import Tax  # noqa: E402
 from .uom import Uom  # noqa: E402
