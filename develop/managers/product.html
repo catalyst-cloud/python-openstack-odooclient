@@ -1270,6 +1270,39 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#tax_ids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tax_ids
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taxes_id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        taxes_id
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taxes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        taxes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#uom_id" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2238,6 +2271,39 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#tax_ids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tax_ids
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taxes_id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        taxes_id
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taxes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        taxes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#uom_id" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2749,16 +2815,34 @@ the rated unit for the service product.</p>
 </span></code></pre></div>
 <p>Whether or not this product is sellable.</p>
 <p><em>Added in version 0.2.1.</em></p>
+<h3 id="tax_ids"><code>tax_ids</code><a class="headerlink" href="#tax_ids" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="n">tax_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+</span></code></pre></div>
+<p>An alias for <a href="#taxes_id"><code>taxes_id</code></a>.</p>
+<p><em>Added in version 0.2.3.</em></p>
+<h3 id="taxes_id"><code>taxes_id</code><a class="headerlink" href="#taxes_id" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="n">taxes_id</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+</span></code></pre></div>
+<p>The list of IDs for the default taxes that are used
+when selling this product.</p>
+<p><em>Added in version 0.2.3.</em></p>
+<h3 id="taxes"><code>taxes</code><a class="headerlink" href="#taxes" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="n">taxes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tax</span><span class="p">]</span>
+</span></code></pre></div>
+<p>The list of default taxes used when selling this product.</p>
+<p>This fetches the full records from Odoo once,
+and caches them for subsequent accesses.</p>
+<p><em>Added in version 0.2.3.</em></p>
 <h3 id="uom_id"><code>uom_id</code><a class="headerlink" href="#uom_id" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="n">uom_id</span><span class="p">:</span> <span class="nb">int</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="n">uom_id</span><span class="p">:</span> <span class="nb">int</span>
 </span></code></pre></div>
 <p>The ID for the <a href="uom.html">Unit of Measure</a> for this product.</p>
 <h3 id="uom_name"><code>uom_name</code><a class="headerlink" href="#uom_name" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="n">uom_name</span><span class="p">:</span> <span class="nb">str</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="n">uom_name</span><span class="p">:</span> <span class="nb">str</span>
 </span></code></pre></div>
 <p>The name of the <a href="uom.html">Unit of Measure</a> for this product.</p>
 <h3 id="uom"><code>uom</code><a class="headerlink" href="#uom" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="n">uom</span><span class="p">:</span> <span class="n">Uom</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="n">uom</span><span class="p">:</span> <span class="n">Uom</span>
 </span></code></pre></div>
 <p>The <a href="uom.html">Unit of Measure</a> for this product.</p>
 <p>This fetches the full record from Odoo once,

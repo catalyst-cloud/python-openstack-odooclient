@@ -898,6 +898,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#tax_ids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tax_ids
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taxes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        taxes
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2190,6 +2212,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#tax_ids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tax_ids
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taxes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        taxes
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2422,6 +2466,19 @@ and caches it for subsequent accesses.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="n">quantity</span><span class="p">:</span> <span class="nb">float</span>
 </span></code></pre></div>
 <p>Quantity of product charged on the account move (invoice) line.</p>
+<h3 id="tax_ids"><code>tax_ids</code><a class="headerlink" href="#tax_ids" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="n">tax_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+</span></code></pre></div>
+<p>The list of IDs for the taxes that are applied
+on this account move (invoice) line.</p>
+<p><em>Added in version 0.2.3.</em></p>
+<h3 id="taxes"><code>taxes</code><a class="headerlink" href="#taxes" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="n">taxes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tax</span><span class="p">]</span>
+</span></code></pre></div>
+<p>The list of taxes that are applied on this account move (invoice) line.</p>
+<p>This fetches the full records from Odoo once,
+and caches them for subsequent accesses.</p>
+<p><em>Added in version 0.2.3.</em></p>
 
 
 
