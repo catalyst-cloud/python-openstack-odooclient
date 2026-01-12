@@ -2,6 +2,13 @@
 
 <!-- towncrier release notes start -->
 
+## [0.2.3](https://github.com/catalyst-cloud/python-openstack-odooclient/releases/tag/0.2.3) - 2026-01-12
+
+### Added
+
+- Add tax fields to record types ([#22](https://github.com/catalyst-cloud/python-openstack-odooclient/pull/22))
+
+
 ## [0.2.2](https://github.com/catalyst-cloud/python-openstack-odooclient/releases/tag/0.2.2) - 2025-12-19
 
 ### Changed
