@@ -241,3 +241,27 @@ quantity: float
 ```
 
 Quantity of product charged on the account move (invoice) line.
+
+### `tax_ids`
+
+```python
+tax_ids: list[int]
+```
+
+The list of IDs for the taxes that are applied
+on this account move (invoice) line.
+
+*Added in version 0.2.3.*
+
+### `taxes`
+
+```python
+taxes: list[Tax]
+```
+
+The list of taxes that are applied on this account move (invoice) line.
+
+This fetches the full records from Odoo once,
+and caches them for subsequent accesses.
+
+*Added in version 0.2.3.*
