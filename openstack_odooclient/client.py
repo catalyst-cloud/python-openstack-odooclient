@@ -25,6 +25,10 @@ from .managers.credit_transaction import CreditTransactionManager
 from .managers.credit_type import CreditTypeManager
 from .managers.currency import CurrencyManager
 from .managers.customer_group import CustomerGroupManager
+from .managers.fiscal_position import FiscalPositionManager
+from .managers.fiscal_position_tax_mapping import (
+    FiscalPositionTaxMappingManager,
+)
 from .managers.grant import GrantManager
 from .managers.grant_type import GrantTypeManager
 from .managers.partner import PartnerManager
@@ -111,6 +115,12 @@ class Client(ClientBase):
 
     customer_groups: CustomerGroupManager
     """OpenStack customer group manager."""
+
+    fiscal_positions: FiscalPositionManager
+    """Fiscal position manager."""
+
+    fiscal_position_tax_mappings: FiscalPositionTaxMappingManager
+    """Fiscal position tax mapping manager."""
 
     grants: GrantManager
     """OpenStack grant manager."""

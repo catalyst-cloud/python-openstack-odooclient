@@ -44,6 +44,11 @@ from .managers.credit_transaction import (
 from .managers.credit_type import CreditType, CreditTypeManager
 from .managers.currency import Currency, CurrencyManager
 from .managers.customer_group import CustomerGroup, CustomerGroupManager
+from .managers.fiscal_position import FiscalPosition, FiscalPositionManager
+from .managers.fiscal_position_tax_mapping import (
+    FiscalPositionTaxMapping,
+    FiscalPositionTaxMappingManager,
+)
 from .managers.grant import Grant, GrantManager
 from .managers.grant_type import GrantType, GrantTypeManager
 from .managers.partner import Partner, PartnerManager
@@ -108,6 +113,10 @@ __all__ = [
     "CustomerGroup",
     "CustomerGroupManager",
     "FieldAlias",
+    "FiscalPosition",
+    "FiscalPositionManager",
+    "FiscalPositionTaxMapping",
+    "FiscalPositionTaxMappingManager",
     "Grant",
     "GrantManager",
     "GrantType",

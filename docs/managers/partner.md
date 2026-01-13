@@ -307,6 +307,39 @@ if it has a parent.
 This fetches the full record from Odoo once,
 and caches it for subsequent accesses.
 
+### `property_account_position_id`
+
+```python
+property_account_position_id: int | None
+```
+
+The ID for the [fiscal position](fiscal-position.md) this partner uses, if it uses one.
+
+*Added in version 0.2.4.*
+
+### `property_account_position_name`
+
+```python
+property_account_position_name: str | None
+```
+
+The name of the [fiscal position](fiscal-position.md) this partner uses, if it uses one.
+
+*Added in version 0.2.4.*
+
+### `property_account_position`
+
+```python
+property_account_position: FiscalPosition | None
+```
+
+The [fiscal position](fiscal-position.md) this partner uses, if it uses one.
+
+This fetches the full record from Odoo once,
+and caches it for subsequent accesses.
+
+*Added in version 0.2.4.*
+
 ### `property_product_pricelist_id`
 
 ```python
