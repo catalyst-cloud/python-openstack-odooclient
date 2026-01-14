@@ -2,6 +2,13 @@
 
 <!-- towncrier release notes start -->
 
+## [0.2.4](https://github.com/catalyst-cloud/python-openstack-odooclient/releases/tag/0.2.4) - 2026-01-14
+
+### Added
+
+- Add support for fiscal positions ([#25](https://github.com/catalyst-cloud/python-openstack-odooclient/pull/25))
+
+
 ## [0.2.3](https://github.com/catalyst-cloud/python-openstack-odooclient/releases/tag/0.2.3) - 2026-01-12
 
 ### Added
