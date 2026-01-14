@@ -215,6 +215,36 @@ class Partner(RecordBase["PartnerManager"]):
     and caches it for subsequent accesses.
     """
 
+    property_account_position_id: Annotated[
+        int | None,
+        ModelRef("property_account_position_id", FiscalPosition),
+    ]
+    """The ID for the fiscal position this partner uses, if it uses one.
+
+    *Added in version 0.2.4.*
+    """
+
+    property_account_position_name: Annotated[
+        str | None,
+        ModelRef("property_account_position_id", FiscalPosition),
+    ]
+    """The name of the fiscal position this partner uses, if it uses one.
+
+    *Added in version 0.2.4.*
+    """
+
+    property_account_position: Annotated[
+        FiscalPosition | None,
+        ModelRef("property_account_position_id", FiscalPosition),
+    ]
+    """The fiscal position this partner uses, if it uses one.
+
+    This fetches the full record from Odoo once,
+    and caches it for subsequent accesses.
+
+    *Added in version 0.2.4.*
+    """
+
     property_product_pricelist_id: Annotated[
         int | None,
         ModelRef("property_product_pricelist", Pricelist),
@@ -281,6 +311,7 @@ class PartnerManager(RecordManagerBase[Partner]):
 # NOTE(callumdickinson): Import here to make sure circular imports work.
 from .company import Company  # noqa: E402
 from .customer_group import CustomerGroup  # noqa: E402
+from .fiscal_position import FiscalPosition  # noqa: E402
 from .pricelist import Pricelist  # noqa: E402
 from .project import Project  # noqa: E402
 from .project_contact import ProjectContact  # noqa: E402

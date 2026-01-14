@@ -41,6 +41,8 @@ nav:
     - managers/credit-transaction.md
     - managers/currency.md
     - managers/customer-group.md
+    - managers/fiscal-position.md
+    - managers/fiscal-position-tax-mapping.md
     - managers/grant.md
     - managers/grant-type.md
     - managers/partner.md
