@@ -482,6 +482,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -776,6 +780,62 @@
     
   
     OpenStack Customer Groups
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="fiscal-position.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fiscal Positions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="fiscal-position-tax-mapping.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fiscal Position Tax Mappings
   
 
     
@@ -1238,6 +1298,39 @@
     <span class="md-ellipsis">
       
         parent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#property_account_position_id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        property_account_position_id
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#property_account_position_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        property_account_position_name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#property_account_position" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        property_account_position
       
     </span>
   </a>
@@ -2400,6 +2493,39 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#property_account_position_id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        property_account_position_id
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#property_account_position_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        property_account_position_name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#property_account_position" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        property_account_position
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#property_product_pricelist_id" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2745,22 +2871,39 @@ if it has a parent.</p>
 if it has a parent.</p>
 <p>This fetches the full record from Odoo once,
 and caches it for subsequent accesses.</p>
+<h3 id="property_account_position_id"><code>property_account_position_id</code><a class="headerlink" href="#property_account_position_id" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="n">property_account_position_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
+</span></code></pre></div>
+<p>The ID for the <a href="fiscal-position.html">fiscal position</a> this partner uses, if it uses one.</p>
+<p><em>Added in version 0.2.4.</em></p>
+<h3 id="property_account_position_name"><code>property_account_position_name</code><a class="headerlink" href="#property_account_position_name" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="n">property_account_position_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+</span></code></pre></div>
+<p>The name of the <a href="fiscal-position.html">fiscal position</a> this partner uses, if it uses one.</p>
+<p><em>Added in version 0.2.4.</em></p>
+<h3 id="property_account_position"><code>property_account_position</code><a class="headerlink" href="#property_account_position" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="n">property_account_position</span><span class="p">:</span> <span class="n">FiscalPosition</span> <span class="o">|</span> <span class="kc">None</span>
+</span></code></pre></div>
+<p>The <a href="fiscal-position.html">fiscal position</a> this partner uses, if it uses one.</p>
+<p>This fetches the full record from Odoo once,
+and caches it for subsequent accesses.</p>
+<p><em>Added in version 0.2.4.</em></p>
 <h3 id="property_product_pricelist_id"><code>property_product_pricelist_id</code><a class="headerlink" href="#property_product_pricelist_id" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="n">property_product_pricelist_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="n">property_product_pricelist_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
 </span></code></pre></div>
 <p>The ID for the <a href="pricelist.html">pricelist</a> this partner uses, if explicitly set.</p>
 <p>If not set, the pricelist set for the customer group
 is used (and if that is not set, the global default
 pricelist is used).</p>
 <h3 id="property_product_pricelist_name"><code>property_product_pricelist_name</code><a class="headerlink" href="#property_product_pricelist_name" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="n">property_product_pricelist_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="n">property_product_pricelist_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
 </span></code></pre></div>
 <p>The name of the <a href="pricelist.html">pricelist</a> this partner uses, if explicitly set.</p>
 <p>If not set, the pricelist set for the customer group
 is used (and if that is not set, the global default
 pricelist is used).</p>
 <h3 id="property_product_pricelist"><code>property_product_pricelist</code><a class="headerlink" href="#property_product_pricelist" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="n">property_product_pricelist</span><span class="p">:</span> <span class="n">Pricelist</span> <span class="o">|</span> <span class="kc">None</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="n">property_product_pricelist</span><span class="p">:</span> <span class="n">Pricelist</span> <span class="o">|</span> <span class="kc">None</span>
 </span></code></pre></div>
 <p>The <a href="pricelist.html">pricelist</a> this partner uses, if explicitly set.</p>
 <p>If not set, the pricelist set for the customer group
@@ -2769,21 +2912,21 @@ pricelist is used).</p>
 <p>This fetches the full record from Odoo once,
 and caches it for subsequent accesses.</p>
 <h3 id="stripe_customer_id"><code>stripe_customer_id</code><a class="headerlink" href="#stripe_customer_id" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="n">stripe_customer_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a><span class="n">stripe_customer_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]</span>
 </span></code></pre></div>
 <p>Stripe customer ID for this partner, if one has been assigned.</p>
 <h3 id="user_id"><code>user_id</code><a class="headerlink" href="#user_id" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a><span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
 </span></code></pre></div>
 <p>The ID of the internal <a href="user.html">user</a> associated with this partner,
 if one is assigned.</p>
 <h3 id="user_name"><code>user_name</code><a class="headerlink" href="#user_name" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="n">user_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a><span class="n">user_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
 </span></code></pre></div>
 <p>The name of the internal <a href="user.html">user</a> associated with this partner,
 if one is assigned.</p>
 <h3 id="user"><code>user</code><a class="headerlink" href="#user" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a><span class="n">user</span><span class="p">:</span> <span class="n">User</span> <span class="o">|</span> <span class="kc">None</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a><span class="n">user</span><span class="p">:</span> <span class="n">User</span> <span class="o">|</span> <span class="kc">None</span>
 </span></code></pre></div>
 <p>The internal <a href="user.html">user</a> associated with this partner,
 if one is assigned.</p>
