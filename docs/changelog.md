@@ -2,6 +2,13 @@
 
 <!-- towncrier release notes start -->
 
+## [0.2.5](https://github.com/catalyst-cloud/python-openstack-odooclient/releases/tag/0.2.5) - 2026-02-17
+
+### Fixed
+
+- Fix attachment model refs ([#28](https://github.com/catalyst-cloud/python-openstack-odooclient/pull/28))
+
+
 ## [0.2.4](https://github.com/catalyst-cloud/python-openstack-odooclient/releases/tag/0.2.4) - 2026-01-14
 
 ### Added
