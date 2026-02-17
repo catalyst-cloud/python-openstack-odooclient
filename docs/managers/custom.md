@@ -964,13 +964,13 @@ class CustomRecord(
     #
     # message_main_attachment_name: Annotated[
     #     str | None,
-    #     ModelRef("message_main_attachment_name", Attachment),
+    #     ModelRef("message_main_attachment_id", Attachment),
     # ]
     # """The name of the main attachment on the record, if there is one."""
     #
     # message_main_attachment: Annotated[
     #     Attachment | None,
-    #     ModelRef("message_main_attachment", Attachment),
+    #     ModelRef("message_main_attachment_id", Attachment),
     # ]
     # """The main attachment on the record, if there is one.
     #
