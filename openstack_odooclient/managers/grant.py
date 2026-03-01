@@ -16,7 +16,7 @@
 from __future__ import annotations
 
 from datetime import date
-from typing import Annotated
+from typing import Annotated, Literal
 
 from ..base.record.base import RecordBase
 from ..base.record.types import ModelRef
@@ -24,8 +24,8 @@ from ..base.record_manager.base import RecordManagerBase
 
 
 class Grant(RecordBase["GrantManager"]):
-    expiry_date: date
-    """The date the grant expires."""
+    expiry_date: date | Literal[False]
+    """The date the grant expires, if an expiry date is set."""
 
     grant_type_id: Annotated[int, ModelRef("grant_type", GrantType)]
     """The ID of the type of this grant."""

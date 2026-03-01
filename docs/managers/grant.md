@@ -51,10 +51,10 @@ see [Record Attributes and Methods](index.md#attributes-and-methods).
 ### `expiry_date`
 
 ```python
-expiry_date: date
+expiry_date: date | Literal[False]
 ```
 
-The date the grant expires.
+The date the grant expires, if an expiry date is set.
 
 ### `grant_type_id`
 
