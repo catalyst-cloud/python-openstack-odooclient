@@ -91,7 +91,7 @@ class VoucherCode(
     """
 
     expiry_date: date | Literal[False]
-    """The date the voucher code expires."""
+    """The date the voucher code expires, if an expiry date is set."""
 
     grant_duration: int | Literal[False]
     """The duration of the grant, in days, if a grant is to be

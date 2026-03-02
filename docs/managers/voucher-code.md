@@ -145,7 +145,7 @@ and caches it for subsequent accesses.
 expiry_date: date | Literal[False]
 ```
 
-The date the voucher code expires.
+The date the voucher code expires, if an expiry date is set.
 
 ### `grant_duration`
 

@@ -16,7 +16,7 @@
 from __future__ import annotations
 
 from datetime import date
-from typing import Annotated
+from typing import Annotated, Literal
 
 from ..base.record.base import RecordBase
 from ..base.record.types import ModelRef
@@ -40,8 +40,8 @@ class Credit(RecordBase["CreditManager"]):
     current_balance: float
     """The current remaining balance on the credit."""
 
-    expiry_date: date
-    """The date the credit expires."""
+    expiry_date: date | Literal[False]
+    """The date the credit expires, if an expiry date is set."""
 
     initial_balance: float
     """The initial balance this credit started off with."""

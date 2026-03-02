@@ -86,10 +86,10 @@ The current remaining balance on the credit.
 ### `expiry_date`
 
 ```python
-expiry_date: date
+expiry_date: date | Literal[False]
 ```
 
-The date the credit expires.
+The date the credit expires, if an expiry date is set.
 
 ### `initial_balance`
 
