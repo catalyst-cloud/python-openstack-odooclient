@@ -2,6 +2,13 @@
 
 <!-- towncrier release notes start -->
 
+## [0.2.6](https://github.com/catalyst-cloud/python-openstack-odooclient/releases/tag/0.2.6) - 2026-04-01
+
+### Fixed
+
+- Mark expiry_date fields as optional ([#31](https://github.com/catalyst-cloud/python-openstack-odooclient/pull/31))
+
+
 ## [0.2.5](https://github.com/catalyst-cloud/python-openstack-odooclient/releases/tag/0.2.5) - 2026-02-17
 
 ### Fixed
