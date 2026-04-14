@@ -41,7 +41,11 @@ class Credit(RecordBase["CreditManager"]):
     """The current remaining balance on the credit."""
 
     expiry_date: date | Literal[False]
-    """The date the credit expires, if an expiry date is set."""
+    """The date the credit expires, if an expiry date is set.
+
+    *Changed in version 0.2.6*: Fixed incorrect annotation for ``expiry_date``
+    by marking it as optional.
+    """
 
     initial_balance: float
     """The initial balance this credit started off with."""

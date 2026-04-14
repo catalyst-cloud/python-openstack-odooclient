@@ -56,6 +56,9 @@ expiry_date: date | Literal[False]
 
 The date the grant expires, if an expiry date is set.
 
+*Changed in version 0.2.6*: Fixed incorrect annotation for `expiry_date`
+by marking it as optional.
+
 ### `grant_type_id`
 
 ```python
