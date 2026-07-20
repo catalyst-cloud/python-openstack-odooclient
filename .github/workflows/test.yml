@@ -19,16 +19,17 @@ jobs:
           - "3.12"
           - "3.13"
           - "3.14"
+      fail-fast: false
     steps:
       - name: Clone and checkout branch
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
       - name: Setup Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: "${{ matrix.python_version }}"
           cache: "pip"
       - name: Run pre-commit hooks
-        uses: pre-commit/action@v3.0.1
+        uses: j178/prek-action@v3.0.0
 
   test:
     needs: pre-commit
@@ -41,20 +42,21 @@ jobs:
           - "3.12"
           - "3.13"
           - "3.14"
+      fail-fast: false
     steps:
       - name: Clone full tree, and checkout branch
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Setup Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: "${{ matrix.python_version }}"
           cache: "pip"
       - name: Setup uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@v10.0.1
         with:
-          version: "0.9.17"
+          version: "0.12.7"
       - name: Run tests
         run: uv run poe test
 
@@ -63,22 +65,22 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Clone full tree, and checkout branch
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Setup Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: "3.14"
           cache: "pip"
       - name: Setup uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@v10.0.1
         with:
-          version: "0.9.17"
+          version: "0.12.7"
       - name: Build source dist and wheels
         run: uv build
       - name: Upload source dist and wheels to artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist/

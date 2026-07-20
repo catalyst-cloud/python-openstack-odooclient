@@ -15,23 +15,23 @@ repos:
       - id: check-added-large-files
       - id: check-merge-conflict
   - repo: https://github.com/crate-ci/typos
-    rev: "v1.40.0"
+    rev: "v1.48.0"
     hooks:
       - id: typos
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: "0.9.17"
+    rev: "0.12.7"
     hooks:
       - id: uv-lock
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.14.9"
+    rev: "v0.16.5"
     hooks:
       - id: ruff-check
       - id: ruff-format
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.19.0"
+    rev: "v2.3.1"
     hooks:
       - id: mypy
         additional_dependencies:
           - OdooRPC>=0.9.0
           - packaging
-          - typing-extensions>=4.15.0
+          - typing-extensions>=4.12.2

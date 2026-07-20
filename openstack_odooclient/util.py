@@ -15,10 +15,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Type, TypeGuard, TypeVar
-
-if TYPE_CHECKING:
-    from collections.abc import Mapping
+from typing import Any, Type, TypeGuard, TypeVar
 
 # Same values as defined in odoo.tools.misc.
 DEFAULT_SERVER_DATE_FORMAT = "%Y-%m-%d"
@@ -28,37 +25,6 @@ DEFAULT_SERVER_DATETIME_FORMAT = (
 )
 
 T = TypeVar("T")
-
-
-def get_mapped_field(
-    field_mapping: Mapping[str | None, Mapping[str, str]],
-    odoo_version: str,
-    field: str,
-) -> str:
-    """Map a field name to its representative in the given field mapping,
-    based on the given Odoo version.
-
-    If a representative value is not found for the given Odoo version,
-    check the ``None`` mapping for all Odoo versions.
-    If none is found there either, return the field name as is.
-
-    :param field_mapping: Field mapping structure
-    :type field_mapping: Mapping[str | None, Mapping[str, str]]
-    :param odoo_version: Odoo server version
-    :type odoo_version: str
-    :param field: Field name to map
-    :type field: str
-    :return: Mapped field name
-    :rtype: str
-    """
-
-    try:
-        return field_mapping[odoo_version][field]
-    except KeyError:
-        try:
-            return field_mapping[None][field]
-        except KeyError:
-            return field
 
 
 def is_subclass(

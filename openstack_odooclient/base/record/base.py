@@ -114,19 +114,6 @@ class RecordProtocol(Protocol[RM]):
     and caches it for subsequence accesses.
     """
 
-    _field_mapping: dict[str | None, dict[str, str]] = {}
-    """A dictionary structure mapping field names in the local class
-    with the equivalents on specific versions of Odoo.
-
-    This allows for providing for backwards compatibility for older versions
-    of Odoo, while still providing a consistent API for applications using
-    this library.
-
-    Specify ``None`` instead of a version string to provide a general mapping
-    for all Odoo versions, allowing for local fields to have a different name
-    to their Odoo equivalent.
-    """
-
     @property
     def _client(self) -> ClientBase:
         """The Odoo client that created this record object."""

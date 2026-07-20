@@ -182,9 +182,19 @@ class SaleOrder(
         """Confirm this sale order."""
         self._env.action_confirm(self.id)
 
-    def create_invoices(self) -> None:
-        """Create invoices from this sale order."""
-        self._env.create_invoices(self.id)
+    def create_invoices(self) -> list[int]:
+        """Create invoices from this sale order.
+
+        *Changed in version 0.3.0*: Now returns a list of the IDs
+        of the created invoices on Odoo 18 and later.
+
+        :return:
+            The IDs of the created invoices (Odoo 18 and later),
+            an empty list (Odoo 17 and earlier)
+        :rtype: list[int]
+        """
+        res = self._env.create_invoices(self.id)
+        return res if isinstance(res, list) else []
 
 
 class SaleOrderManager(
@@ -224,19 +234,27 @@ class SaleOrderManager(
             ),
         )
 
-    def create_invoices(self, sale_order: int | SaleOrder) -> None:
+    def create_invoices(self, sale_order: int | SaleOrder) -> list[int]:
         """Create invoices from the given sale order.
+
+        *Changed in version 0.3.0*: Now returns a list of the IDs
+        of the created invoices on Odoo 18 and later.
 
         :param sale_order: The sale order to create invoices from
         :type sale_order: int | SaleOrder
+        :return:
+            The IDs of the created invoices (Odoo 18 and later),
+            an empty list (Odoo 17 and earlier)
+        :rtype: list[int]
         """
-        self._env.create_invoices(
+        res = self._env.create_invoices(
             (
                 sale_order.id
                 if isinstance(sale_order, SaleOrder)
                 else sale_order
             ),
         )
+        return res if isinstance(res, list) else []
 
 
 # NOTE(callumdickinson): Import here to avoid circular imports.
