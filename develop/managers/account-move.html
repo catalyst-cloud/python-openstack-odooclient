@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -33,7 +33,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -683,6 +683,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Returns
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -953,6 +964,17 @@
     <span class="md-ellipsis">
       
         Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Returns
       
     </span>
   </a>
@@ -2149,6 +2171,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Returns
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2425,6 +2458,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#returns_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Returns
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2538,15 +2582,15 @@ for account moves (invoices).</p>
 attribute on the Odoo client object.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">openstack_odooclient</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span> <span class="k">as</span> <span class="n">OdooClient</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">odoo_client</span> <span class="o">=</span> <span class="n">OdooClient</span><span class="p">(</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="o">...</span>     <span class="n">hostname</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="o">...</span>     <span class="n">hostname</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="o">...</span>     <span class="n">port</span><span class="o">=</span><span class="mi">8069</span><span class="p">,</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="o">...</span>     <span class="n">protocol</span><span class="o">=</span><span class="s2">&quot;jsonrpc&quot;</span><span class="p">,</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="o">...</span>     <span class="n">database</span><span class="o">=</span><span class="s2">&quot;odoodb&quot;</span><span class="p">,</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="o">...</span>     <span class="n">user</span><span class="o">=</span><span class="s2">&quot;test-user&quot;</span><span class="p">,</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="o">...</span>     <span class="n">password</span><span class="o">=</span><span class="s2">&quot;&lt;password&gt;&quot;</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="o">...</span>     <span class="n">protocol</span><span class="o">=</span><span class="s2">"jsonrpc"</span><span class="p">,</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="o">...</span>     <span class="n">database</span><span class="o">=</span><span class="s2">"odoodb"</span><span class="p">,</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="o">...</span>     <span class="n">user</span><span class="o">=</span><span class="s2">"test-user"</span><span class="p">,</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="o">...</span>     <span class="n">password</span><span class="o">=</span><span class="s2">"&lt;password&gt;"</span><span class="p">,</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="o">...</span> <span class="p">)</span>
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">odoo_client</span><span class="o">.</span><span class="n">account_moves</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="n">AccountMove</span><span class="p">(</span><span class="n">record</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="mi">1234</span><span class="p">,</span> <span class="o">...</span><span class="p">},</span> <span class="n">fields</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="n">AccountMove</span><span class="p">(</span><span class="n">record</span><span class="o">=</span><span class="p">{</span><span class="s1">'id'</span><span class="p">:</span> <span class="mi">1234</span><span class="p">,</span> <span class="o">...</span><span class="p">},</span> <span class="n">fields</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </span></code></pre></div>
 <p>For more information on how to use managers, refer to <a href="index.html">Managers</a>.</p>
 <p>The following manager methods are also available, in addition to the standard methods.</p>
@@ -2581,10 +2625,12 @@ either of those types. Multiple positional arguments are allowed.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">send_openstack_invoice_email</span><span class="p">(</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">account_move</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">AccountMove</span><span class="p">,</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">email_ctx</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </span></code></pre></div>
 <p>Send an OpenStack invoice email for the given
 account move (invoice).</p>
+<p><em>Changed in version 0.3.0</em>: Now returns <code>True</code> if the email was
+successfully sent, and <code>False</code> if it was not.</p>
 <h4 id="parameters_1">Parameters<a class="headerlink" href="#parameters_1" title="Permanent link">&para;</a></h4>
 <table>
 <thead>
@@ -2607,6 +2653,21 @@ account move (invoice).</p>
 <td><code>Mapping[str, Any] | None</code></td>
 <td>Optional email context</td>
 <td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns">Returns<a class="headerlink" href="#returns" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bool</code></td>
+<td><code>True</code> if the email was successfully sent, otherwise <code>False</code></td>
 </tr>
 </tbody>
 </table>
@@ -2685,13 +2746,13 @@ and caches it for subsequent accesses.</p>
 <p><em>Added in version 0.2.1.</em></p>
 <h3 id="move_type"><code>move_type</code><a class="headerlink" href="#move_type" title="Permanent link">&para;</a></h3>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">move_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
-</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>    <span class="s2">&quot;entry&quot;</span><span class="p">,</span>
-</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>    <span class="s2">&quot;out_invoice&quot;</span><span class="p">,</span>
-</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>    <span class="s2">&quot;out_refund&quot;</span><span class="p">,</span>
-</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>    <span class="s2">&quot;in_invoice&quot;</span><span class="p">,</span>
-</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>    <span class="s2">&quot;in_refund&quot;</span><span class="p">,</span>
-</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>    <span class="s2">&quot;out_receipt&quot;</span><span class="p">,</span>
-</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>    <span class="s2">&quot;in_receipt&quot;</span><span class="p">,</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>    <span class="s2">"entry"</span><span class="p">,</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>    <span class="s2">"out_invoice"</span><span class="p">,</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>    <span class="s2">"out_refund"</span><span class="p">,</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>    <span class="s2">"in_invoice"</span><span class="p">,</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>    <span class="s2">"in_refund"</span><span class="p">,</span>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>    <span class="s2">"out_receipt"</span><span class="p">,</span>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>    <span class="s2">"in_receipt"</span><span class="p">,</span>
 </span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="p">]</span>
 </span></code></pre></div>
 <p>The type of account move (invoice).</p>
@@ -2728,12 +2789,12 @@ was generated for, if this is an invoice for OpenStack project usage.</p>
 and caches it for subsequent accesses.</p>
 <h3 id="payment_state"><code>payment_state</code><a class="headerlink" href="#payment_state" title="Permanent link">&para;</a></h3>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="n">payment_state</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
-</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>    <span class="s2">&quot;not_paid&quot;</span><span class="p">,</span>
-</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>    <span class="s2">&quot;in_payment&quot;</span><span class="p">,</span>
-</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>    <span class="s2">&quot;paid&quot;</span><span class="p">,</span>
-</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>    <span class="s2">&quot;partial&quot;</span><span class="p">,</span>
-</span><span id="__span-22-6"><a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>    <span class="s2">&quot;reversed&quot;</span><span class="p">,</span>
-</span><span id="__span-22-7"><a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>    <span class="s2">&quot;invoicing_legacy&quot;</span><span class="p">,</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>    <span class="s2">"not_paid"</span><span class="p">,</span>
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>    <span class="s2">"in_payment"</span><span class="p">,</span>
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>    <span class="s2">"paid"</span><span class="p">,</span>
+</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>    <span class="s2">"partial"</span><span class="p">,</span>
+</span><span id="__span-22-6"><a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>    <span class="s2">"reversed"</span><span class="p">,</span>
+</span><span id="__span-22-7"><a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>    <span class="s2">"invoicing_legacy"</span><span class="p">,</span>
 </span><span id="__span-22-8"><a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a><span class="p">]</span>
 </span></code></pre></div>
 <p>The current payment state of the account move (invoice).</p>
@@ -2747,7 +2808,7 @@ and caches it for subsequent accesses.</p>
 <li><code>invoicing_legacy</code> - Invoicing App Legacy</li>
 </ul>
 <h3 id="state"><code>state</code><a class="headerlink" href="#state" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="n">state</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;draft&quot;</span><span class="p">,</span> <span class="s2">&quot;posted&quot;</span><span class="p">,</span> <span class="s2">&quot;cancel&quot;</span><span class="p">]</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="n">state</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"draft"</span><span class="p">,</span> <span class="s2">"posted"</span><span class="p">,</span> <span class="s2">"cancel"</span><span class="p">]</span>
 </span></code></pre></div>
 <p>The current state of the account move (invoice).</p>
 <p>Values:</p>
@@ -2763,9 +2824,11 @@ and caches it for subsequent accesses.</p>
 <h3 id="send_openstack_invoice_email_1"><code>send_openstack_invoice_email</code><a class="headerlink" href="#send_openstack_invoice_email_1" title="Permanent link">&para;</a></h3>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="n">send_openstack_invoice_email</span><span class="p">(</span>
 </span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>    <span class="n">email_ctx</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </span></code></pre></div>
 <p>Send an OpenStack invoice email for this account move (invoice).</p>
+<p><em>Changed in version 0.3.0</em>: Now returns <code>True</code> if the email was
+successfully sent, and <code>False</code> if it was not.</p>
 <h4 id="parameters_2">Parameters<a class="headerlink" href="#parameters_2" title="Permanent link">&para;</a></h4>
 <table>
 <thead>
@@ -2782,6 +2845,21 @@ and caches it for subsequent accesses.</p>
 <td><code>Mapping[str, Any] | None</code></td>
 <td>Optional email context</td>
 <td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_1">Returns<a class="headerlink" href="#returns_1" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bool</code></td>
+<td><code>True</code> if the email was successfully sent, otherwise <code>False</code></td>
 </tr>
 </tbody>
 </table>
@@ -2887,7 +2965,7 @@ and caches it for subsequent accesses.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.footer", "navigation.indexes", "navigation.path", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>
