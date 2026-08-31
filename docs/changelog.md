@@ -2,6 +2,17 @@
 
 <!-- towncrier release notes start -->
 
+## [0.3.0](https://github.com/catalyst-cloud/python-openstack-odooclient/releases/tag/0.3.0) - 2026-09-01
+
+### Removed
+
+- Remove Odoo 13 support ([#35](https://github.com/catalyst-cloud/python-openstack-odooclient/pull/35))
+
+### Changed
+
+- Add Odoo 18 support ([#35](https://github.com/catalyst-cloud/python-openstack-odooclient/pull/35))
+
+
 ## [0.2.6](https://github.com/catalyst-cloud/python-openstack-odooclient/releases/tag/0.2.6) - 2026-04-01
 
 ### Fixed
