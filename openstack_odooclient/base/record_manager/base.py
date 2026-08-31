@@ -43,10 +43,9 @@ from ...exceptions import MultipleRecordsFoundError, RecordNotFoundError
 from ...util import (
     DEFAULT_SERVER_DATE_FORMAT,
     DEFAULT_SERVER_DATETIME_FORMAT,
-    get_mapped_field,
 )
 from ..record.base import RecordBase
-from ..record.types import FieldAlias, ModelRef
+from ..record.types import FieldAlias, ModelRef, VersionMapping
 from .protocol import R, RecordManagerProtocol
 from .types import FilterCriterion
 
@@ -102,18 +101,18 @@ class RecordManagerBase(RecordManagerProtocol[R], Generic[R]):
             ),
         )
         """The type hints for the fields defined in the record class."""
-        self._field_mapping_reverse = {
-            odoo_version: {
-                remote_field: local_field
-                for local_field, remote_field in field_mapping.items()
-            }
-            for odoo_version, field_mapping in (
-                self.record_class._field_mapping.items()
-            )
-        }
-        """Dynamically generated "reverse" field mapping for the
-        record class, mapping Odoo version-specific remote field names
-        to their representations on the record class.
+        self._field_name_mapping: dict[str, str] = {}
+        """Mapping of local field names to the actual field names in Odoo
+        to use.
+
+        Primarily used for handling fields that have been renamed between
+        Odoo versions.
+        """
+        self._field_name_mapping_reverse: dict[str, str] = {}
+        """Reverse of `_field_name_mapping`.
+
+        Used for mapping actual field names in Odoo to their local
+        equivalents.
         """
         self._model_ref_mapping: dict[str, str] = {}
         """Mapping of the remote field name for a model ref
@@ -126,8 +125,20 @@ class RecordManagerBase(RecordManagerProtocol[R], Generic[R]):
         * (remote) ``os_project`` -> ``os_project_id`` (local)
         """
         for local_field, type_hint in self._record_type_hints.items():
+            # Model refs are handled differently to standard fields.
             model_ref = ModelRef.get(type_hint)
             if model_ref:
+                # Configure the field name mapping entries for the model ref.
+                remote_field = VersionMapping.get_field_name(
+                    name=model_ref.field,
+                    type_hint=type_hint,
+                    version=self._client.version,
+                )
+                self._field_name_mapping[model_ref.field] = remote_field
+                self._field_name_mapping_reverse[remote_field] = (
+                    model_ref.field
+                )
+                # Configure the model ref mapping entry for the model ref.
                 field_type = get_type_args(type_hint)[0]
                 try:
                     if field_type is int or (
@@ -137,6 +148,15 @@ class RecordManagerBase(RecordManagerProtocol[R], Generic[R]):
                         self._model_ref_mapping[model_ref.field] = local_field
                 except IndexError:
                     pass
+            else:
+                # Configure the field name mapping entries for standard fields.
+                remote_field = VersionMapping.get_field_name(
+                    name=local_field,
+                    type_hint=type_hint,
+                    version=self._client.version,
+                )
+                self._field_name_mapping[local_field] = remote_field
+                self._field_name_mapping_reverse[remote_field] = local_field
 
     @property
     def _client(self) -> ClientBase:
@@ -810,27 +830,15 @@ class RecordManagerBase(RecordManagerProtocol[R], Generic[R]):
             model_ref = ModelRef.get(self._record_type_hints[field])
             if model_ref:
                 field = model_ref.field
-        # Map the local field to the correct remote field name
-        # based on the version of the Odoo server.
-        return get_mapped_field(
-            field_mapping=self.record_class._field_mapping,
-            odoo_version=self._odoo.version,
-            field=field,
-        )
+        # Map the local field to the correct remote field name.
+        return self._field_name_mapping.get(field, field)
 
     def _get_local_field(self, field: str) -> str:
-        # Map the remote field to the correct local field name
-        # based on the version of the Odoo server.
-        local_field = get_mapped_field(
-            field_mapping=self._field_mapping_reverse,
-            odoo_version=self._odoo.version,
-            field=field,
-        )
+        # Map the remote field to the correct local field name.
+        local_field = self._field_name_mapping_reverse.get(field, field)
         # If the field is a model ref, find the local field
         # presenting the model ref's record IDs.
-        if local_field in self._model_ref_mapping:
-            return self._model_ref_mapping[local_field]
-        return local_field
+        return self._model_ref_mapping.get(local_field, local_field)
 
     def _resolve_alias(self, field: str) -> str:
         if field not in self._record_type_hints:

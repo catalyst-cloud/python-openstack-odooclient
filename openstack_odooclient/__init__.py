@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from .base.client import ClientBase
 from .base.record.base import RM, RecordBase, RecordProtocol, RM_co
-from .base.record.types import FieldAlias, ModelRef
+from .base.record.types import FieldAlias, ModelRef, VersionMapping
 from .base.record_manager.base import R, RecordManagerBase
 from .base.record_manager.protocol import RecordManagerProtocol
 from .client import Client
@@ -175,6 +175,7 @@ __all__ = [
     "UomManager",
     "User",
     "UserManager",
+    "VersionMapping",
     "VolumeDiscountRange",
     "VolumeDiscountRangeManager",
     "VoucherCode",

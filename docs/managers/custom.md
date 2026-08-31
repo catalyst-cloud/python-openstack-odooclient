@@ -36,6 +36,7 @@ from __future__ import annotations
 
 from openstack_odooclient import RecordBase
 
+
 class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: str
     """Description of the field."""
@@ -63,6 +64,7 @@ from __future__ import annotations
 
 from openstack_odooclient import RecordBase
 
+
 class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: bool
     """Description of the field."""
@@ -76,6 +78,7 @@ Corresponds to the `Integer` field type in Odoo.
 from __future__ import annotations
 
 from openstack_odooclient import RecordBase
+
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: int
@@ -91,6 +94,7 @@ from __future__ import annotations
 
 from openstack_odooclient import RecordBase
 
+
 class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: str
     """Description of the field."""
@@ -104,6 +108,7 @@ Corresponds to the `Float` field type in Odoo.
 from __future__ import annotations
 
 from openstack_odooclient import RecordBase
+
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: int
@@ -121,6 +126,7 @@ from datetime import date
 
 from openstack_odooclient import RecordBase
 
+
 class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: date
     """Description of the field."""
@@ -136,6 +142,7 @@ from __future__ import annotations
 from datetime import datetime
 
 from openstack_odooclient import RecordBase
+
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: datetime
@@ -154,6 +161,7 @@ from __future__ import annotations
 from typing import Literal
 
 from openstack_odooclient import RecordBase
+
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: Literal["value1", "value2", "value3"]
@@ -184,6 +192,7 @@ from typing import Literal
 
 from openstack_odooclient import RecordBase
 
+
 class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: str | Literal[False]
     """Description of the field."""
@@ -198,6 +207,7 @@ the type hint should be defined as shown below instead.
 from __future__ import annotations
 
 from openstack_odooclient import RecordBase
+
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: str | None
@@ -224,6 +234,7 @@ from __future__ import annotations
 from typing import Annotated
 
 from openstack_odooclient import FieldAlias, RecordBase
+
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: str
@@ -268,6 +279,7 @@ from typing import Annotated
 
 from openstack_odooclient import ModelRef, RecordBase, User
 
+
 class CustomRecord(RecordBase["CustomRecordManager"]):
     user_id: Annotated[int, ModelRef("user_id", User)]
     """ID for the user that owns this record."""
@@ -282,6 +294,7 @@ from typing import Annotated
 
 from openstack_odooclient import ModelRef, RecordBase, User
 
+
 class CustomRecord(RecordBase["CustomRecordManager"]):
     user_name: Annotated[str, ModelRef("user_id", User)]
     """Name of the user that owns this record."""
@@ -295,6 +308,7 @@ from __future__ import annotations
 from typing import Annotated
 
 from openstack_odooclient import ModelRef, RecordBase, User
+
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
     user: Annotated[User, ModelRef("user_id", User)]
@@ -320,6 +334,7 @@ from __future__ import annotations
 from typing import Annotated
 
 from openstack_odooclient import ModelRef, RecordBase, User
+
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
     user_id: Annotated[int, ModelRef("user_id", User)]
@@ -352,6 +367,7 @@ from typing import Annotated
 
 from openstack_odooclient import ModelRef, RecordBase, User
 
+
 class CustomRecord(RecordBase["CustomRecordManager"]):
     user_id: Annotated[int | None, ModelRef("user_id", User)]
     """ID for the user that owns this record."""
@@ -377,6 +393,7 @@ from typing import Annotated
 
 from openstack_odooclient import ModelRef, RecordBase
 from typing_extensions import Self
+
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
     record_id: Annotated[int | None, ModelRef("user_id", Self)]
@@ -414,6 +431,7 @@ from typing import Annotated
 
 from openstack_odooclient import ModelRef, RecordBase, Product
 
+
 class CustomRecord(RecordBase["CustomRecordManager"]):
     product_ids: Annotated[list[int], ModelRef("product_id", Product)]
     """The list of IDs for the products to use."""
@@ -427,6 +445,7 @@ from __future__ import annotations
 from typing import Annotated
 
 from openstack_odooclient import ModelRef, RecordBase, Product
+
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
     products: Annotated[list[Product], ModelRef("product_id", Product)]
@@ -452,6 +471,7 @@ from __future__ import annotations
 from typing import Annotated
 
 from openstack_odooclient import ModelRef, RecordBase, Product
+
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
     product_ids: Annotated[list[int], ModelRef("product_id", Product)]
@@ -481,6 +501,7 @@ from typing import Annotated
 
 from openstack_odooclient import ModelRef, RecordBase
 from typing_extensions import Self
+
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
     child_ids: Annotated[list[int], ModelRef("child_id", Self)]
@@ -514,6 +535,7 @@ from typing import Annotated
 
 from openstack_odooclient import ModelRef, RecordBase, RecordManagerBase
 
+
 class Parent(RecordBase["ParentManager"]):
     child_ids: Annotated[list[int], ModelRef("child_id", Child)]
     """The list of IDs for the children records."""
@@ -525,9 +547,11 @@ class Parent(RecordBase["ParentManager"]):
     and caches them for subsequent accesses.
     """
 
+
 class ParentManager(RecordManagerBase[Parent]):
     env_name = "custom.parent"
     record_class = Parent
+
 
 from .child import Child  # noqa: E402
 ```
@@ -538,6 +562,7 @@ from __future__ import annotations
 from typing import Annotated
 
 from openstack_odooclient import ModelRef, RecordBase, RecordManagerBase
+
 
 class Child(RecordBase["ChildManager"]):
     parent_id: Annotated[int | None, ModelRef("parent_id", Parent)]
@@ -553,39 +578,52 @@ class Child(RecordBase["ChildManager"]):
     and caches it for subsequent accesses.
     """
 
+
 class Child(RecordManagerBase[Child]):
     env_name = "custom.child"
     record_class = child
+
 
 from .parent import Parent  # noqa: E402
 ```
 
 ### Odoo Version Compatibility
 
-Major releases of Odoo may change the database models to introduce
-new functionality.
+Major releases of Odoo may change aspects of the API and database schema
+to introduce new functionality, fix bugs and so on. These changes can be
+difficult to manage when upgrading as generally the provisions for backwards
+compatibility are limited.
 
-The way models usually change in a backwards-incompatible way is
-that fields are renamed so that they are referenced using another name,
+The OpenStack Odoo Client library for Python provides features that allow
+record types and managers to be configured such that applications using the
+library do not need to be aware of differences between Odoo versions, which
+hopefully makes upgrading major Odoo versions easier.
+
+*Changed in version 0.3.0*: Replaced `_field_mapping` with the
+`VersionMapping` annotation.
+
+#### Version Mappings
+
+*New in version 0.3.0.*
+
+One way models can change in a backwards-incompatible way is that
+fields are renamed so that they are referenced using another name,
 without providing an alias for the old one.
 
-In the OpenStack Odoo Client library, this is handled by defining
-the `_field_mapping` attribute on the record class.
-
-```python
-_field_mapping: dict[str | None, dict[str, str]]
-```
-
-The `_field_mapping` attribute is a nested dictionary structure used
-to define local-to-remote field name mappings.
+These differences can be handled using the `VersionMapping` annotation.
+This annotation allows you to configure Odoo version differences for specific
+fields on a model, as shown in the example below.
 
 ```python
 from __future__ import annotations
 
-from openstack_odooclient import RecordBase
+from typing import Annotated
+
+from openstack_odooclient import RecordBase, VersionMapping
+
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
-    custom_field: str
+    custom_field: Annotated[str, VersionMapping("<18.0", "old_custom_field")]
     """Description of the field."""
 
     custom_field_2: int
@@ -593,28 +631,76 @@ class CustomRecord(RecordBase["CustomRecordManager"]):
 
     custom_field_3: float
     """Description of the third field."""
-
-    _field_mapping = {
-        # The Odoo version for which to generate the mapping.
-        "13.0": {
-            # Key is local field name. Value is the field name in Odoo 13.
-            "custom_field": "old_custom_field",
-        }
-        # Use None to provide a mapping to use for all Odoo versions.
-        None: {
-            "custom_field_2": "old_custom_field_2",
-        },
-        # custom_field_3 is not defined here.
-        # The field name will be used as-is on all Odoo versions.
-    }
 ```
 
-Mappings can be added for specific Odoo versions, or by using `None`,
-mappings that apply to all Odoo versions can be defined.
+By default `custom_field` will be used as the field name to query from Odoo,
+but if the connected Odoo server version satisfies the given version
+constraint (in this case it would match for Odoo 17 and earlier),
+`old_custom_field` is used instead.
 
-When the Odoo Client library interfaces with Odoo, it will automatically find
-and use the correct field name to present based on the server version
-and the record class's field mapping.
+Clients only need to reference the field name defined on the record object;
+the Python OpenStack Odoo Client library will transparently convert between
+the local and the correct remote field names, depending on the server's
+version.
+
+When defining the annotation, set the first argument to the version specifier
+that defines the set of versions to match, and set the second argument to the
+name of the field to use.
+
+```python
+from typing import Annotated
+
+from openstack_odooclient import RecordBase, User, VersionMapping
+
+
+class CustomRecord(RecordBase["CustomRecordManager"]):
+    name: Annotated[str, VersionMapping("<18.0", "old_name")]
+```
+
+For [model refs](#model-refs), the version mapping applies to the model ref
+field specified in the `ModelRef` annotation. The version mapping only needs
+to be defined on **one** of the defined model ref fields (the same version
+mapping will be used for all of them). It is recommended to add it to the
+field representing the record ID (or list of record IDs), as shown below.
+
+```python
+from typing import Annotated
+
+from openstack_odooclient import (
+    ModelRef,
+    RecordBase,
+    User,
+    VersionMapping,
+)
+
+
+class CustomRecord(RecordBase["CustomRecordManager"]):
+    user_id: Annotated[
+        int,
+        ModelRef("user_id", User),
+        VersionMapping("<18.0", "old_user_id"),
+    ]
+    user_name: Annotated[str, ModelRef("user_id", User)]
+    user: Annotated[User, ModelRef("user_id", User)]
+```
+
+Multiple version mappings can be defined for a single field.
+Version mappings are evaluated in order, and the first one that
+matches is used.
+
+```python
+from typing import Annotated
+
+from openstack_odooclient import RecordBase, User, VersionMapping
+
+
+class CustomRecord(RecordBase["CustomRecordManager"]):
+    name: Annotated[
+        str,
+        VersionMapping("<14.0", "old_name1"),
+        VersionMapping(">=14.0,<18.0", "old_name2"),
+    ]
+```
 
 ### Record Methods
 
@@ -624,6 +710,7 @@ Methods can be defined on record types to provide additional functionality.
 from __future__ import annotations
 
 from openstack_odooclient import RecordBase
+
 
 class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: str
@@ -685,9 +772,11 @@ from __future__ import annotations
 
 from openstack_odooclient import RecordBase, RecordManagerBase
 
+
 class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: str
     """Description of the field."""
+
 
 class CustomRecordManager(RecordManagerBase[CustomRecord]):
     env_name = "custom.record"
@@ -707,13 +796,16 @@ from __future__ import annotations
 
 from openstack_odooclient import Client, RecordBase, RecordManagerBase
 
+
 class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: str
     """Description of the field."""
 
+
 class CustomRecordManager(RecordManagerBase[CustomRecord]):
     env_name = "custom.record"
     record_class = CustomRecord
+
 
 odoo_client = Client(...)
 custom_records = CustomRecordManager(odoo_client)
@@ -731,13 +823,16 @@ from __future__ import annotations
 
 from openstack_odooclient import RecordBase, RecordManagerBase
 
+
 class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: str
     """Description of the field."""
 
+
 class CustomRecordManager(RecordManagerBase[CustomRecord]):
     env_name = "custom.record"
     record_class = CustomRecord
+
 
 class CustomClient(Client):
     custom_records: CustomRecordManager
@@ -761,9 +856,11 @@ from __future__ import annotations
 
 from openstack_odooclient import RecordBase, RecordManagerBase
 
+
 class CustomRecord(RecordBase["CustomRecordManager"]):
     custom_field: str
     """Description of the field."""
+
 
 class CustomRecordManager(RecordManagerBase[CustomRecord]):
     env_name = "custom.record"
@@ -822,12 +919,14 @@ from openstack_odooclient import (
     RecordManagerBase,
 )
 
+
 class CustomRecord(
     RecordBase["CustomRecordManager"],
     NamedRecordMixin["CustomRecordManager"],
 ):
     custom_field: str
     """Description of the field."""
+
 
 class CustomRecordManager(
     RecordManagerBase[CustomRecord],
@@ -859,6 +958,7 @@ from openstack_odooclient import (
     RecordManagerBase,
 )
 
+
 class CustomRecord(
     RecordBase["CustomRecordManager"],
     NamedRecordMixin["CustomRecordManager"],
@@ -870,6 +970,7 @@ class CustomRecord(
     #
     # name: str
     # """The unique name of the record."""
+
 
 class CustomRecordManager(
     RecordManagerBase[CustomRecord],
@@ -904,6 +1005,7 @@ from openstack_odooclient import (
     RecordManagerBase,
 )
 
+
 class CustomRecord(
     RecordBase["CustomRecordManager"],
     CodedRecordMixin["CustomRecordManager"],
@@ -915,6 +1017,7 @@ class CustomRecord(
     #
     # code: str
     # """The unique name for this record."""
+
 
 class CustomRecordManager(
     RecordManagerBase[CustomRecord],
@@ -947,6 +1050,7 @@ from openstack_odooclient import (
     RecordWithAttachmentMixin,
 )
 
+
 class CustomRecord(
     RecordBase["CustomRecordManager"],
     RecordWithAttachmentMixin["CustomRecordManager"],
@@ -978,6 +1082,7 @@ class CustomRecord(
     # and caches it for subsequent accesses.
     # """
 
+
 class CustomRecordManager(RecordManagerBase[CustomRecord]):
     env_name = "custom.record"
     record_class = CustomRecord
@@ -1007,6 +1112,7 @@ from typing import Generic
 
 from openstack_odooclient import RM, RecordProtocol
 
+
 class NamedRecordMixin(RecordProtocol[RM], Generic[RM]):
     name: str
     """The unique name of the record."""
@@ -1034,6 +1140,7 @@ from typing import Generic
 
 from openstack_odooclient import RM, RecordProtocol
 
+
 class NamedRecordMixin(RecordProtocol[RM], Generic[RM]):
     name: str
     """The unique name of the record."""
@@ -1054,6 +1161,7 @@ from __future__ import annotations
 from typing import Generic
 
 from openstack_odooclient import R, RecordManagerProtocol
+
 
 class NamedRecordManagerMixin(RecordManagerProtocol[R], Generic[R]):
     def custom_method(self, record: int | R) -> None:
@@ -1081,25 +1189,29 @@ from __future__ import annotations
 
 from openstack_odooclient import Client, RecordManagerBase, User, UserManager
 
+
 class CustomUser(User):
     custom_field: str
     """Description of the field."""
+
 
 class CustomUserManager(RecordManagerBase[CustomUser]):
     env_name = UserManager.env_name
     record_class = CustomUser
 
+
 class CustomClient(Client):
     custom_users: CustomUserManager
 ```
 
-Due to the Odoo Client library using type hints to determine what record classes to use,
-and the type hints being physically defined in code to allow type analysis tools such as Mypy
-and Pyright to properly evaluate the source, *existing* references on *existing* record classes
-cannot be automatically updated to use the custom versions.
+Due to the Odoo Client library using type hints to determine what record
+classes to use, and the type hints being physically defined in code to allow
+static analysis tools such as Mypy to properly evaluate the source, *existing*
+references on *existing* record classes cannot be automatically updated to use
+the custom versions.
 
-However, it is possible to **cast** a record object of the base type into the custom type
-using the record class's `from_record_obj` class method.
+However, it is possible to **cast** a record object of the base type into the
+custom type using the record class's `from_record_obj` class method.
 
 ```python
 >>> odoo_client = CustomClient(...)
@@ -1113,5 +1225,5 @@ CustomUser(record={'id': 1234, 'custom_field': 'Hello, world!', ...}, fields=Non
 'Hello, world!'
 ```
 
-This should cover the majority of use cases where custom add-ons add new functionality
-to existing models.
+This should cover the majority of use cases where custom add-ons add new
+functionality to existing models.

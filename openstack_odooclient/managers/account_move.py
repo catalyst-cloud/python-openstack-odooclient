@@ -151,16 +151,6 @@ class AccountMove(
     * ``cancel`` - Cancelled invoice
     """
 
-    _field_mapping = {
-        # Odoo version.
-        "13.0": {
-            # Key is local value, value is remote value.
-            "move_type": "type",
-            "is_move_sent": "invoice_sent",
-            "payment_state": "invoice_payment_state",
-        },
-    }
-
     def action_post(self) -> None:
         """Change this draft account move (invoice) into "posted" state."""
         self._env.action_post(self.id)
@@ -168,15 +158,23 @@ class AccountMove(
     def send_openstack_invoice_email(
         self,
         email_ctx: Mapping[str, Any] | None = None,
-    ) -> None:
+    ) -> bool:
         """Send an OpenStack invoice email for this account move (invoice).
+
+        *Changed in version 0.3.0*: Now returns ``True`` if the email was
+        successfully sent, and ``False`` if it was not.
 
         :param email_ctx: Optional email context, defaults to None
         :type email_ctx: Mapping[str, Any] | None, optional
+        :return:
+            ``True`` if the email was successfully sent, otherwise ``False``
+        :rtype: bool
         """
-        self._env.send_openstack_invoice_email(
-            self.id,
-            email_ctx=dict(email_ctx) if email_ctx else None,
+        return bool(
+            self._env.send_openstack_invoice_email(
+                self.id,
+                email_ctx=dict(email_ctx) if email_ctx else None,
+            ),
         )
 
 
@@ -223,22 +221,30 @@ class AccountMoveManager(
         self,
         account_move: int | AccountMove,
         email_ctx: Mapping[str, Any] | None = None,
-    ) -> None:
+    ) -> bool:
         """Send an OpenStack invoice email for the given
         account move (invoice).
+
+        *Changed in version 0.3.0*: Now returns ``True`` if the email was
+        successfully sent, and ``False`` if it was not.
 
         :param account_move: The account move (invoice) to send an email for
         :type account_move: int | AccountMove
         :param email_ctx: Optional email context, defaults to None
         :type email_ctx: Mapping[str, Any] | None, optional
+        :return:
+            ``True`` if the email was successfully sent, otherwise ``False``
+        :rtype: bool
         """
-        self._env.send_openstack_invoice_email(
-            (
-                account_move.id
-                if isinstance(account_move, AccountMove)
-                else account_move
+        return bool(
+            self._env.send_openstack_invoice_email(
+                (
+                    account_move.id
+                    if isinstance(account_move, AccountMove)
+                    else account_move
+                ),
+                email_ctx=dict(email_ctx) if email_ctx else None,
             ),
-            email_ctx=dict(email_ctx) if email_ctx else None,
         )
 
 

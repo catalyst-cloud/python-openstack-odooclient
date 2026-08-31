@@ -61,11 +61,14 @@ All specified records will be processed in a single request.
 send_openstack_invoice_email(
     account_move: int | AccountMove,
     email_ctx: Mapping[str, Any] | None = None,
-) -> None
+) -> bool
 ```
 
 Send an OpenStack invoice email for the given
 account move (invoice).
+
+*Changed in version 0.3.0*: Now returns ``True`` if the email was
+successfully sent, and ``False`` if it was not.
 
 #### Parameters
 
@@ -73,6 +76,12 @@ account move (invoice).
 |----------------|----------------------------|-------------------------------------------------|------------|
 | `account_move` | `int | AccountMove`        | The account move (invoice) to send an email for | (required) |
 | `email_ctx`    | `Mapping[str, Any] | None` | Optional email context                          | `None`     |
+
+#### Returns
+
+| Type   | Description                                                  |
+|--------|--------------------------------------------------------------|
+| `bool` | `True` if the email was successfully sent, otherwise `False` |
 
 ## Record
 
@@ -326,13 +335,22 @@ Change this draft account move (invoice) into "posted" state.
 ```python
 send_openstack_invoice_email(
     email_ctx: Mapping[str, Any] | None = None,
-) -> None
+) -> bool
 ```
 
 Send an OpenStack invoice email for this account move (invoice).
+
+*Changed in version 0.3.0*: Now returns ``True`` if the email was
+successfully sent, and ``False`` if it was not.
 
 #### Parameters
 
 | Name        | Type                       | Description            | Default |
 |-------------|----------------------------|------------------------|---------|
 | `email_ctx` | `Mapping[str, Any] | None` | Optional email context | `None`  |
+
+#### Returns
+
+| Type   | Description                                                  |
+|--------|--------------------------------------------------------------|
+| `bool` | `True` if the email was successfully sent, otherwise `False` |

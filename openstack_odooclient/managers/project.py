@@ -20,7 +20,7 @@ from typing import TYPE_CHECKING, Annotated, Any, Literal, overload
 from typing_extensions import Self
 
 from ..base.record.base import RecordBase
-from ..base.record.types import ModelRef
+from ..base.record.types import ModelRef, VersionMapping
 from ..base.record_manager.base import RecordManagerBase
 
 if TYPE_CHECKING:
@@ -70,17 +70,21 @@ class Project(RecordBase["ProjectManager"]):
     and caches it for subsequent accesses.
     """
 
-    parent_id: Annotated[int | None, ModelRef("parent", Self)]
+    parent_id: Annotated[
+        int | None,
+        ModelRef("parent_id", Self),
+        VersionMapping("<18.0", "parent"),
+    ]
     """The ID for the parent project, if this project
     is the child of another project.
     """
 
-    parent_name: Annotated[str | None, ModelRef("parent", Self)]
+    parent_name: Annotated[str | None, ModelRef("parent_id", Self)]
     """The name of the parent project, if this project
     is the child of another project.
     """
 
-    parent: Annotated[Self | None, ModelRef("parent", Self)]
+    parent: Annotated[Self | None, ModelRef("parent_id", Self)]
     """The parent project, if this project
     is the child of another project.
 

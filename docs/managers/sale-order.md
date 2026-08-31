@@ -104,7 +104,7 @@ Confirm the given sale order.
 ```python
 create_invoices(
     sale_order: int | SaleOrder,
-) -> None
+) -> list[int]
 ```
 
 Create invoices from the given sale order.
@@ -129,6 +129,15 @@ Create invoices from the given sale order.
 | Name         | Type              | Description                            | Default    |
 |--------------|-------------------|----------------------------------------|------------|
 | `sale_order` | `int | SaleOrder` | The sale order to create invoices from | (required) |
+
+*Changed in version 0.3.0*: Now returns a list of the IDs
+of the created invoices on Odoo 18 and later.
+
+#### Returns
+
+| Type        | Description                                                                              |
+|-------------|------------------------------------------------------------------------------------------|
+| `list[int]` | The IDs of the created invoices (Odoo 18 and later), an empty list (Odoo 17 and earlier) |
 
 ## Record
 
@@ -452,7 +461,7 @@ Confirm this sale order.
 ### `create_invoices`
 
 ```python
-create_invoices() -> None
+create_invoices() -> list[int]
 ```
 
 Create invoices from this sale order.
@@ -470,3 +479,12 @@ Create invoices from this sale order.
 >>> sale_order = odoo_client.sale_orders.get(1234)
 >>> sale_order.create_invoices()
 ```
+
+*Changed in version 0.3.0*: Now returns a list of the IDs
+of the created invoices on Odoo 18 and later.
+
+### Returns
+
+| Type        | Description                                                                              |
+|-------------|------------------------------------------------------------------------------------------|
+| `list[int]` | The IDs of the created invoices (Odoo 18 and later), an empty list (Odoo 17 and earlier) |
