@@ -41,8 +41,6 @@ from ...util import is_subclass
 from .types import FieldAlias, ModelRef
 
 if TYPE_CHECKING:
-    from collections.abc import Mapping, Sequence
-
     from odoorpc import ODOO  # type: ignore[import]
     from odoorpc.env import Environment  # type: ignore[import]
 
@@ -214,22 +212,43 @@ class RecordBase(RecordProtocol[RM], Generic[RM]):
     Python source file, as the generic type argument.
     """
 
-    def __init__(
-        self,
-        client: ClientBase,
-        record: Mapping[str, Any],
-        fields: Sequence[str] | None,
-    ) -> None:
-        self._client_ = client
-        self._record = MappingProxyType(record)
-        """The raw record fields from OdooRPC."""
-        self._fields = tuple(fields) if fields else None
-        """The fields selected in the query that created this record object."""
-        self._values: dict[str, Any] = {}
-        """The cache for the processed record field values."""
+    def __init__(self, **values: Any) -> None:
+        self._client_: ClientBase | None = values.pop("_client", None)
+        if self._client_:
+            # If a client object is specified, treat this as a regular
+            # record object and fetch the other required parameters.
+            self._record: MappingProxyType[str, Any] = MappingProxyType(
+                values.pop("_record"),
+            )
+            """The raw record fields from OdooRPC."""
+            _fields = values.pop("_fields", None)
+            self._fields: tuple[str, ...] | None = (
+                tuple(_fields) if _fields else None
+            )
+            """The fields selected in the query that created this
+            record object.
+            """
+            self._values: dict[str, Any] = {}
+            """The cache for the processed record field values."""
+        else:
+            # If no client object is specified, then treat this as a mock
+            # record object for unit testing. Use the provided keyword
+            # arguments to populate the values on the record object.
+            self._values = {
+                key: value
+                for key, value in values.items()
+                if not key.startswith("_")
+            }
 
     @property
     def _client(self) -> ClientBase:
+        if not self._client_:
+            raise ValueError(
+                (
+                    "Unable to use methods referencing a client "
+                    "on mock record objects"
+                ),
+            )
         return self._client_
 
     @property
@@ -303,6 +322,13 @@ class RecordBase(RecordProtocol[RM], Generic[RM]):
         # return the cached value.
         if name in self._values:
             return self._values[name]
+        # If this is a mock record object and the field wasn't
+        # been provided when the record object was created, then
+        # fail here as we cannot get the value from anywhere else.
+        if not self._client_:
+            raise AttributeError(
+                f"Field not set on mock record object: {name}",
+            )
         # NOTE(callumdickinson): Use the type hint to coerce
         # the field value returned in the record dict into the expected type.
         # First, check if the field has a type hint defined at all.
@@ -472,11 +498,22 @@ class RecordBase(RecordProtocol[RM], Generic[RM]):
         return value
 
     def __str__(self) -> str:
+        record_args: dict[str, Any] = {}
+        if self._client_:
+            # For real record objects, show unchanging internal state.
+            record_args["_client"] = self._client
+            record_args["_record"] = dict(self._record)
+            record_args["_fields"] = (
+                list(self._fields) if self._fields else None
+            )
+        else:
+            # For mock record objects, used the specified values themselves
+            # as keyword arguments.
+            record_args.update(self._values)
         return (
             f"{type(self).__name__}("
-            f"record={dict(self._record)}"
-            f", fields={list(self._fields) if self._fields else None}"
-            ")"
+            + ", ".join(f"{k}={v!r}" for k, v in record_args.items())
+            + ")"
         )
 
     def __repr__(self) -> str:
